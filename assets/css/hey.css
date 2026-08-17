@@ -653,11 +653,16 @@ input::placeholder {
 body.world-done #world .sw-route,
 body.world-done #world .sw-hint,
 body.world-done #world .sw-scrollbar,
-body.world-done #world .sw-copylayer {
+body.world-done #world .sw-copylayer,
+body.world-done #world .sw-sky {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-} /* l'ultima scena del viaggio tiene il suo testo/CTA a video per sempre
+} /* .sw-sky è il bagliore/gradiente ambientale del motore, anche lui fisso
+     sul viewport per sempre: senza questa riga restava visibile sopra la
+     sezione post-viaggio ogni volta che questa non copriva ancora tutto lo
+     schermo, leggibile come "uno sfondo" dietro al testo/divider in alto.
+     l'ultima scena del viaggio tiene il suo testo/CTA a video per sempre
      (scelta dell'engine) — una volta arrivati alla sezione post-viaggio,
      che ripete lo stesso invito, si spegne per non doppiarlo in sovrimpressione */
 
