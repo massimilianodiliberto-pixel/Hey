@@ -1,0 +1,72 @@
+{
+  "_readme": "Manifest del viaggio (Home). Per sostituire i placeholder con le clip vere: genera la nuova sequenza, sovrascrivi i file in questa cartella con lo stesso nome (o aggiorna i percorsi qui sotto), aggiorna 'placeholder' a false. Zero righe di codice da toccare — vedi HEY_MASTER_CONTEXT.md §6.1.",
+  "placeholder": true,
+  "engine": "scroll-world (scrub-engine.js) — motore video, non canvas+frame. Decisione chiusa 17/08/2026.",
+  "_reviewNotes_readme": "Note di regia in overlay, solo per la review con Gianluca — vedi HEY_Note_Regia_Overlay_Review_v01.md. Interruttore unico: metti reviewNotes a false (o rimuovi i tre campi reviewNotes/reviewIntroNote/directorNote) a review chiusa e spariscono ovunque, senza toccare altro.",
+  "reviewNotes": true,
+  "reviewIntroNote": "Le note in overlay descrivono l'intento di ogni scena — le clip qui sono segnaposto, non il girato finale.",
+  "_intro_readme": "intro = clip una tantum (non in loop, non guidata dallo scroll): la donna esce da dietro la colonna. Gira una volta sola all'apertura del sito, poi dissolve nel loop. clip/still a null = nessuna intro ancora, si salta dritti al loop (assets/js/home.js).",
+  "intro": {
+    "clip": null,
+    "still": null,
+    "directorNote": "Lei esce dalla colonna (pannello reale sul set), nota il raggio di luce, lo copre con la mano: nell'ombra appaiono microrganismi luminosi. Si gira verso camera. Non guarda mai in camera fino alla fine. ~2–4s."
+  },
+  "diveScroll": 1.3,
+  "connScroll": 0.7,
+  "sections": [
+    {
+      "_note": "sezione 0 = il loop pre-scroll: gira in loop nativo finché l'utente non inizia a scrollare (flag loopIdle impostato in home.js), poi passa a scrub normale — vedi assets/js/scroll-world.js.",
+      "id": "loop",
+      "label": "01 — Loop (HEY)",
+      "still": "assets/world/loop.jpg",
+      "clip": "assets/world/loop.mp4",
+      "accent": "#E5FD5D",
+      "title": "HEY.",
+      "directorNote": "Primo \"HEY\", primo contatto visivo. Loop nativo: respiro, bolle, leggero movimento della testa, dice di nuovo \"HEY\" dopo una pausa. Deve chiudersi senza scatto visibile. ~4–6s."
+    },
+    {
+      "id": "ritorno-inizio",
+      "label": "02 — Inizia il ritorno",
+      "still": "assets/world/ritorno-inizio.jpg",
+      "clip": "assets/world/ritorno-inizio.mp4",
+      "accent": "#E5FD5D",
+      "title": "IDEA.",
+      "directorNote": "Si rivela il mondo impossibile: rovine, colonne/torri, microrganismi ovunque nell'acqua. Comincia il reverse — i microrganismi spariscono, l'architettura perde dettaglio. ~3–6s."
+    },
+    {
+      "id": "ritorno-meta",
+      "label": "03 — A metà del ritorno",
+      "still": "assets/world/ritorno-meta.jpg",
+      "clip": "assets/world/ritorno-meta.mp4",
+      "accent": "#A8A8A0",
+      "title": "DIRECTION.",
+      "directorNote": "L'acqua si svuota, appare la vasca reale. Il raggio che sembrava sole si rivela un faro vero, definito e controllabile. ~3–6s."
+    },
+    {
+      "id": "mondo-smontato",
+      "label": "04 — Il mondo è quasi smontato",
+      "still": "assets/world/mondo-smontato.jpg",
+      "clip": "assets/world/mondo-smontato.mp4",
+      "accent": "#A8A8A0",
+      "title": "PRODUCTION.",
+      "directorNote": "Il set asciutto rivela luci e rig, il carrello circolare della camera diventa visibile. La camera viene vista — la spia REC si spegne — e appoggiata sul banco. ~3–6s."
+    },
+    {
+      "id": "arrivo",
+      "label": "05 — Punto di arrivo",
+      "still": "assets/world/arrivo.jpg",
+      "clip": "assets/world/arrivo.mp4",
+      "accent": "#E5FD5D",
+      "eyebrow": "Un’idea non è ancora successa.",
+      "title": "YOUR IDEA.",
+      "cta": { "primary": { "label": "Contact", "href": "/contact/" } },
+      "directorNote": "Reverse rapido di preparazione, styling, arrivo dell'attrice, fino al set completamente vuoto. Non è assenza: è lo spazio prima della prossima idea. ~3–6s."
+    }
+  ],
+  "connectors": [
+    "assets/world/connector-01.mp4",
+    "assets/world/connector-02.mp4",
+    "assets/world/connector-03.mp4",
+    "assets/world/connector-04.mp4"
+  ]
+}
