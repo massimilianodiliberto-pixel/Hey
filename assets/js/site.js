@@ -4,10 +4,14 @@
   "use strict";
 
   function markActiveNav() {
+    // Confronto su a.pathname (risolto dal browser, assoluto) e non sulla
+    // stringa href grezza: gli href sono relativi (necessario per funzionare
+    // sia in locale sia su GitHub Pages, che pubblica sotto un sottopercorso
+    // tipo /Hey/, non alla radice del dominio — vedi index.html).
     var path = window.location.pathname.replace(/\/index\.html$/, "/");
     document.querySelectorAll(".sitenav__links a[href]").forEach(function (a) {
-      var href = a.getAttribute("href");
-      if (href === path || (href !== "/" && path.indexOf(href) === 0)) {
+      var linkPath = a.pathname.replace(/\/index\.html$/, "/");
+      if (linkPath === path) {
         a.setAttribute("aria-current", "page");
       }
     });

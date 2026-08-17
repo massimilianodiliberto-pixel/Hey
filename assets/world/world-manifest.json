@@ -59,7 +59,7 @@
       "accent": "#E5FD5D",
       "eyebrow": "Un’idea non è ancora successa.",
       "title": "YOUR IDEA.",
-      "cta": { "primary": { "label": "Contact", "href": "/contact/" } },
+      "cta": { "primary": { "label": "Contact", "href": "contact/" } },
       "directorNote": "Reverse rapido di preparazione, styling, arrivo dell'attrice, fino al set completamente vuoto. Non è assenza: è lo spazio prima della prossima idea. ~3–6s."
     }
   ],
