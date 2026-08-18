@@ -246,14 +246,46 @@
       wake();
     }
 
-    function leave() {
+    // `subito` chiude di scatto invece di dissolvere: lo usa lo scroll, dove la
+    // rivelazione deve sparire nell'istante in cui il viaggio si muove. Con la
+    // sola dissolvenza (~800ms) la finestra restava visibile a cavallo del
+    // cambio di sezione. Uscendo col mouse invece la morbidezza serve, e resta.
+    function leave(subito) {
       openTarget = 0;
       vid.pause();
+      if (subito) {
+        open = 0;
+        grow = 0;
+        draw(performance.now());
+      }
       wake();
     }
 
+    // Lo scroll spegne la rivelazione all'istante. Serve perché scorrendo con
+    // la rotella il puntatore non si muove: senza questo il video resterebbe
+    // acceso "per inerzia" mentre si passa da una sezione all'altra, come se il
+    // mouse fosse ancora fermo sopra. Si riaccende solo quando lo scroll è
+    // finito e il puntatore si muove davvero.
+    var scrolling = false;
+    var scrollIdle = 0;
+    window.addEventListener(
+      "scroll",
+      function () {
+        if (!scrolling) {
+          scrolling = true;
+          leave(true);
+        }
+        clearTimeout(scrollIdle);
+        scrollIdle = setTimeout(function () {
+          scrolling = false;
+        }, 140);
+      },
+      { passive: true }
+    );
+
     if (!isCoarse()) {
       window.addEventListener("mousemove", function (e) {
+        if (scrolling) return; // in movimento: nessuna rivelazione
         enter(e.clientX, e.clientY);
       });
       document.addEventListener("mouseleave", leave);
@@ -267,6 +299,8 @@
       "touchmove",
       function (e) {
         if (!e.touches || !e.touches.length) return;
+        // su touch il dito scorre il viaggio: se sta scorrendo, niente finestra
+        if (scrolling) return;
         enter(e.touches[0].clientX, e.touches[0].clientY);
       },
       { passive: true }
@@ -280,7 +314,7 @@
 
     // quando il viaggio finisce, il rig sparisce: anche questa deve sparire
     var mo = new MutationObserver(function () {
-      if (document.body.classList.contains("world-done")) leave();
+      if (document.body.classList.contains("world-done")) leave(true);
     });
     mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
 

@@ -692,15 +692,13 @@ body.world-done #world .sw-route,
 body.world-done #world .sw-hint,
 body.world-done #world .sw-scrollbar,
 body.world-done #world .sw-copylayer,
-body.world-done #world .sw-stage,
 body.world-done #world .sw-sky {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-} /* .sw-stage porta le scene: essendo fixed e sopra la sezione finale (z 10
-     contro 2) ne copriva il testo durante il passaggio. Si può spegnere senza
-     stacco perché la sezione mostra come sfondo la stessa ultima scena: cambia
-     solo lo scurimento, l'immagine resta.
+} /* .sw-stage NON si spegne: l'ultimo fotogramma del viaggio deve restare a
+     schermo e fare da fondo alla sezione finale. È lo stesso identico frame,
+     non un secondo render — vedi il blocco "sezione finale" più sotto.
      .sw-sky è il bagliore/gradiente ambientale del motore, anche lui fisso
      sul viewport per sempre: senza questa riga restava visibile sopra la
      sezione post-viaggio ogni volta che questa non copriva ancora tutto lo
@@ -824,31 +822,43 @@ body.has-placeholder-banner #world {
    dietro al testo. Coprendo un viewport pieno la fascia non esiste — regge
    anche quando l'ultima clip sarà il set vuoto illuminato invece di un
    placeholder scuro. Il flex tiene la CTA centrata e il footer in fondo. */
-/* Lo sfondo e' l'ultima scena del viaggio (impostata da home.js in --post-bg,
-   letta dal manifest: nessun percorso scritto a mano qui), con sopra uno
-   scurimento a valore FISSO. Prima la sezione era nero pieno e l'ultima scena
-   si intravedeva solo finche' il suo layer fixed le restava sopra: appena
-   quello sfumava, lo sfondo spariva del tutto. Cosi' invece la stanza resta
-   sempre leggibile — pareti, finestre, pavimento — e lo scurimento serve solo
-   a staccare il testo bianco. --post-scrim e' il tetto massimo: non deve
-   salire, o la scena sparisce di nuovo. */
+/* SEZIONE FINALE — nessuno sfondo proprio.
+   Prima qui c'era di nuovo arrivo.jpg come background CSS: stesso file, ma in
+   cover centrato, mentre il motore lo mostra ingrandito e spostato dal suo
+   zoom di scena. Due inquadrature diverse della stessa stanza, che scorrendo
+   si leggevano come due fotogrammi quasi uguali in fila.
+   Ora la sezione non disegna nulla: resta a schermo l'ultimo fotogramma vero
+   del viaggio (il layer del motore, fisso e congelato qui sotto) e sopra ci
+   scorre solo il testo. Lo scurimento è un velo a sé (.final-scrim), non un
+   fondo di questa sezione, così non introduce un secondo render. */
 .postjourney {
-  --post-scrim: 0.62;
   position: relative;
-  z-index: 2;
-  background-color: var(--rhyme);
-  background-image: linear-gradient(
-      rgba(26, 28, 23, var(--post-scrim)),
-      rgba(26, 28, 23, var(--post-scrim))
-    ),
-    var(--post-bg, none);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-top: 1px solid var(--rule);
+  z-index: 20; /* sopra le scene (10) e il velo (16): il testo non va coperto */
+  background: transparent;
   min-height: calc(100vh - var(--bar-bottom-h));
   display: flex;
   flex-direction: column;
+}
+/* L'ultima scena resta accesa a fine viaggio: il motore la porterebbe a zero
+   uscendo dal suo intervallo di scroll, e lo sfondo diventerebbe nero.
+   !important perché il motore riscrive l'opacità inline a ogni fotogramma. */
+body.world-done #world .sw-stage .sw-scene:last-child {
+  opacity: 1 !important;
+}
+/* Il velo che stacca il testo dalla scena. Fisso a tutto schermo e non legato
+   al riquadro della sezione: così non compare nessuna linea di stacco mentre
+   la sezione sale. */
+.final-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 16;
+  background: rgba(26, 28, 23, 0.62);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+body.world-done .final-scrim {
+  opacity: 1;
 }
 /* il footer sta sopra la stessa immagine: un velo in piu' solo li', altrimenti
    il testo piccolo in mono si perde sul pavimento chiaro */

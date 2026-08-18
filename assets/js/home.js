@@ -132,31 +132,51 @@
         mount.setAttribute("data-placeholder", "true");
       }
 
-      // La sezione finale usa come sfondo l'ultima scena del viaggio, cosi' il
-      // racconto non si interrompe su un fondo nero. Il percorso viene dal
-      // manifest, non scritto a mano nel CSS: cambiando la scena finale li',
-      // cambia anche qui.
-      var last = sections[sections.length - 1];
-      var postEl = document.getElementById("post");
-      if (postEl && last && last.still) {
-        // URL assoluto, non relativo: un url() dentro una custom property viene
-        // risolto rispetto al foglio di stile che la consuma (assets/css/), non
-        // rispetto alla pagina — con il percorso relativo diventava
-        // assets/css/assets/world/... e non caricava nulla.
-        var abs = new URL(last.still, window.location.href).href;
-        postEl.style.setProperty("--post-bg", 'url("' + abs + '")');
-      }
-
       // Il rig del viaggio (route dots, hint, scrollbar) è in position:fixed sul
       // viewport per costruzione dell'engine — resta altrimenti visibile anche
       // dopo la fine del film, sopra la sezione post-viaggio. Lo si spegne
       // quando quella sezione entra in vista.
+      // L'ultimo fotogramma del viaggio fa da fondo alla sezione finale, quindi
+      // deve restare davvero fermo. Il motore però continua ad applicargli il
+      // suo zoom di scena anche dopo la fine (l'ingrandimento saliva ancora
+      // mentre si scorreva sul testo): qui lo si blocca al valore che aveva
+      // nell'istante in cui il viaggio si chiude. `important` perché il motore
+      // riscrive la trasformazione inline a ogni fotogramma.
+      // Non basta fissare lo stile inline: il motore riassegna
+      // img.style.transform a ogni fotogramma e così facendo cancella anche la
+      // priorità. Serve una regola in un foglio di stile, che batte l'inline.
+      var freezeStyle = null;
+      function freezeLastScene(freeze) {
+        // Uscendo si azzera, così rientrando si riparte dal fotogramma giusto.
+        if (!freeze) {
+          if (freezeStyle) freezeStyle.textContent = "";
+          return;
+        }
+        // Una cattura sola per ingresso: l'osservatore riemette mentre si
+        // scorre e, ricatturando, il fondo avrebbe continuato a ingrandirsi.
+        if (freezeStyle && freezeStyle.textContent) return;
+        var scenes = document.querySelectorAll("#world .sw-stage .sw-scene");
+        var last = scenes[scenes.length - 1];
+        var img = last && last.querySelector("img");
+        if (!img) return;
+        var t = window.getComputedStyle(img).transform;
+        if (!freezeStyle) {
+          freezeStyle = document.createElement("style");
+          document.head.appendChild(freezeStyle);
+        }
+        freezeStyle.textContent =
+          "body.world-done #world .sw-stage .sw-scene:last-child img{transform:" +
+          t +
+          " !important}";
+      }
+
       var post = document.getElementById("post");
       if (post && "IntersectionObserver" in window) {
         var io = new IntersectionObserver(
           function (entries) {
             entries.forEach(function (entry) {
               document.body.classList.toggle("world-done", entry.isIntersecting);
+              freezeLastScene(entry.isIntersecting);
             });
           },
           // rootMargin invece del semplice threshold 0: con quello la classe
