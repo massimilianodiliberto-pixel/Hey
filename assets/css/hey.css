@@ -21,6 +21,13 @@
 
   --pad: clamp(20px, 5vw, 64px);
   --nav-h: 84px;
+
+  /* le due fasce lime fisse che incorniciano il sito, sempre a schermo:
+     quella in alto è muta (solo segno), quella in basso porta contatti e
+     diritti su una riga sola. Le altezze sono token perché servono anche a
+     chi deve lasciare spazio libero sotto (body, .postjourney, .gate). */
+  --bar-top-h: 5px;
+  --bar-bottom-h: 30px;
 }
 
 * {
@@ -44,6 +51,9 @@ body {
   font-size: 16px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  /* la fascia lime in basso è fixed: senza questo spazio coprirebbe le
+     ultime righe di ogni pagina */
+  padding-bottom: var(--bar-bottom-h);
 }
 
 a {
@@ -560,7 +570,7 @@ input::placeholder {
 /* ---------- AREA PRIVATA — gate ---------- */
 
 .gate {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--bar-bottom-h));
   display: grid;
   place-items: center;
   padding: var(--pad);
@@ -673,8 +683,58 @@ body.world-done #world .sw-sky {
   left: 0;
   right: 0;
   z-index: 900;
-  height: 5px;
+  height: var(--bar-top-h);
   background: var(--lime);
+}
+
+/* fascia lime in basso, gemella di quella in alto: fissa, sempre visibile,
+   con contatti e diritti su una riga sola. Su schermi stretti la riga non
+   sta: resta una riga e si fa scorrere lateralmente invece di andare a capo
+   o troncare informazioni. */
+.edge-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  height: var(--bar-bottom-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* `safe` degrada a start quando il testo è più largo della barra: senza,
+     il centraggio taglia l'inizio della riga e su mobile si legge partendo
+     da metà parola. Il fallback sopra copre i browser che non lo supportano. */
+  justify-content: safe center;
+  gap: 0;
+  padding: 0 var(--pad);
+  background: var(--lime);
+  color: var(--rhyme);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.edge-bar::-webkit-scrollbar {
+  display: none;
+}
+.edge-bar a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(26, 28, 23, 0.35);
+}
+.edge-bar a:hover {
+  border-bottom-color: var(--rhyme);
+}
+@media (max-width: 640px) {
+  .edge-bar {
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    padding: 0 14px;
+  }
 }
 body.has-placeholder-banner .sitenav {
   top: 5px;
@@ -736,7 +796,7 @@ body.has-placeholder-banner #world {
   z-index: 2;
   background: var(--rhyme);
   border-top: 1px solid var(--rule);
-  min-height: 100vh;
+  min-height: calc(100vh - var(--bar-bottom-h));
   display: flex;
   flex-direction: column;
 }
