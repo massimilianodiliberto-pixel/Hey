@@ -724,16 +724,37 @@ body.has-placeholder-banner #world {
   z-index: 1;
 }
 
-/* sezione dopo la fine del viaggio: CTA + nav globale + credito fondatori */
+/* sezione dopo la fine del viaggio: CTA + nav globale + credito fondatori.
+   min-height 100vh non è estetica: i layer del viaggio sono position:fixed sul
+   viewport, quindi se questa sezione è più bassa di uno schermo resta scoperta
+   una fascia in alto in cui si continua a vedere l'ultimo fotogramma del film
+   dietro al testo. Coprendo un viewport pieno la fascia non esiste — regge
+   anche quando l'ultima clip sarà il set vuoto illuminato invece di un
+   placeholder scuro. Il flex tiene la CTA centrata e il footer in fondo. */
 .postjourney {
   position: relative;
   z-index: 2;
   background: var(--rhyme);
   border-top: 1px solid var(--rule);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 .postjourney__cta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* senza, i figli si stirano e il bottone diventa una barra */
   padding: clamp(70px, 12vw, 140px) var(--pad);
   text-align: center;
+}
+/* .wrap porta margin:0 auto — su un flex item il margine auto orizzontale
+   annulla lo stretch e restringe l'elemento al contenuto: il footer risultava
+   rientrato rispetto al resto del sito. width:100% lo riporta a piena
+   larghezza, lasciando intatto il centraggio via max-width sopra i 1180px. */
+.postjourney > .sitefooter {
+  width: 100%;
 }
 .postjourney__cta .d2 {
   margin-bottom: 26px;
