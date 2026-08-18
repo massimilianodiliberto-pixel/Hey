@@ -8,6 +8,7 @@
   "reviewIntroNote": "Le immagini qui sono reference di stile, non il girato finale. Le note in overlay descrivono l'intento di ogni scena.",
   "_intro_readme": "intro = clip una tantum (non in loop, non guidata dallo scroll): la donna esce da dietro la colonna. Gira una volta sola all'apertura del sito, poi dissolve nel loop. Senza 'clip' l'intro viene saltata e si parte dal loop (assets/js/home.js): lo still qui sotto è già pronto e serve da poster appena la clip esisterà.",
   "intro": {
+    "_reference": "ref-intro-a_microrganismi.png — primo piano stretto mano/viso, versione definitiva del beat dei microrganismi (sostituisce ref-intro-a.png).",
     "clip": null,
     "still": "assets/world/intro.jpg",
     "directorNote": "Lei esce dalla colonna (pannello reale sul set), nota il raggio di luce, lo copre con la mano: nell'ombra appaiono microrganismi luminosi. Si gira verso camera. Non guarda mai in camera fino alla fine. ~2–4s."
@@ -57,7 +58,7 @@
       "directorNote": "Il set asciutto rivela luci e rig, il carrello circolare della camera diventa visibile. La camera viene vista — la spia REC si spegne — e appoggiata sul banco. ~3–6s."
     },
     {
-      "_reference": "ref-mondo-smontato-c_arrivo-start.png — SHOT 09, il set si rivela (mood REALITY). La clip 'arrivo' non ha ancora reference dedicate: i suoi beat (styling, arrivo attrice, set vuoto) esistono solo nei pannelli 12–16 della storyboard.",
+      "_reference": "ref-arrivo.png — spazio circolare vuoto, binario a terra, luce naturale dalle finestre. Reference dedicata, arrivata il 18/08/2026: completa la mappa su tutte e 6 le clip. Sostituisce ref-mondo-smontato-c_arrivo-start.png, che era solo il frame d'inizio preso in prestito dalla scena precedente.",
       "id": "arrivo",
       "label": "05 — Punto di arrivo",
       "still": "assets/world/arrivo.jpg",

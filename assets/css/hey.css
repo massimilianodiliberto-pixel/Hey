@@ -641,12 +641,33 @@ input::placeholder {
   border-color: var(--rule) !important;
   color: var(--light) !important;
 }
-/* Niente pannello dietro al testo del viaggio (richiesto): resta solo la
-   scritta con la sua ombra morbida per restare leggibile sopra il video —
-   vale sia per il pannello laterale desktop sia per quello che sale dal
-   basso su mobile (stessa pseudo-classe, media query diversa nell'engine). */
+/* Il pannello piatto dell'engine (una fascia con un bordo netto verticale)
+   resta tolto. Al suo posto un alone radiale che si spegne a zero prima di
+   toccare i bordi: nessun contorno, nessun colore uniforme, solo una zona
+   d'ombra che si fonde nella scena e stacca il testo. Copre l'intera area
+   cosi' il gradiente non puo' essere tagliato dal bordo dell'elemento. */
 .sw-copylayer::before {
-  background: none !important;
+  width: 100% !important;
+  background: radial-gradient(
+    ellipse 62% 58% at 24% 50%,
+    rgba(26, 28, 23, 0.78) 0%,
+    rgba(26, 28, 23, 0.55) 34%,
+    rgba(26, 28, 23, 0.22) 58%,
+    rgba(26, 28, 23, 0) 76%
+  ) !important;
+}
+@media (max-width: 860px) {
+  /* su mobile il testo sta in basso, quindi l'alone segue lui */
+  .sw-copylayer::before {
+    height: 100% !important;
+    background: radial-gradient(
+      ellipse 92% 46% at 50% 88%,
+      rgba(26, 28, 23, 0.82) 0%,
+      rgba(26, 28, 23, 0.55) 38%,
+      rgba(26, 28, 23, 0.2) 62%,
+      rgba(26, 28, 23, 0) 80%
+    ) !important;
+  }
 }
 /* Senza il pannello dietro (tolto di proposito) il testo deve reggere da solo
    anche sulle scene chiare — il set asciutto e' quasi bianco. Ombra ampia e

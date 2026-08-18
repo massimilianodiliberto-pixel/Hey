@@ -115,7 +115,13 @@
               document.body.classList.toggle("world-done", entry.isIntersecting);
             });
           },
-          { threshold: 0 }
+          // rootMargin invece del semplice threshold 0: con quello la classe
+          // scattava appena un pixel della sezione entrava dal basso, spegnendo
+          // il testo del viaggio mentre l'ultima scena era ancora a schermo —
+          // "YOUR IDEA." spariva prima di essere letto. Con il margine negativo
+          // la sezione deve arrivare a meta' viewport, cioe' quando ha davvero
+          // preso il posto del film.
+          { threshold: 0, rootMargin: "0px 0px -50% 0px" }
         );
         io.observe(post);
       }

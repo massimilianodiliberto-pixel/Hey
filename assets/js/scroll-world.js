@@ -191,7 +191,13 @@ function mountScrollWorld(container, config) {
     let off = 0;
     SEGMENTS.forEach(s => { s.start = off * vh; off += s.w; s.end = off * vh; });
     totalW = off;
-    track.style.height = (totalW * vh + vh) + 'px';   // +1vh so the last flight completes
+    // Local patch (HEY, not upstream): l'originale aggiungeva +1vh dopo l'ultima
+    // scena. Quel margine e' scroll in cui nessuna scena e' piu' visibile (l'ultima
+    // si spegne gia' a end + crossfade): si traduceva in quasi uno schermo intero
+    // di nero fra la fine del viaggio e la sezione successiva, che faceva sembrare
+    // saltata la scena finale. Basta lo spazio del crossfade perche' l'ultima
+    // dissolvenza si completi.
+    track.style.height = (totalW * vh + CROSSFADE * vh) + 'px';
     read();
   }
 
