@@ -14,10 +14,14 @@
   // manifest.intro non c'è ancora una clip, la si salta subito — nessun
   // placeholder finto, il loop parte da solo.
   // ---------------------------------------------------------------------
+  // Durata dell'intro quando è un'immagine ferma: il concept prevede 2–4s per
+  // la clip, qui non c'è movimento da seguire quindi si sta nella parte bassa.
+  var INTRO_STILL_MS = 2600;
+
   function playIntro(intro) {
     var host = document.getElementById("intro");
     if (!host) return Promise.resolve();
-    if (!intro || !intro.clip) {
+    if (!intro || (!intro.clip && !intro.still)) {
       host.remove();
       window.__heyIntroDone = true;
       window.dispatchEvent(new CustomEvent("hey:intro-done"));
@@ -30,11 +34,36 @@
         done = true;
         host.classList.add("is-hidden");
         window.__heyIntroDone = true;
-      window.dispatchEvent(new CustomEvent("hey:intro-done"));
+        window.dispatchEvent(new CustomEvent("hey:intro-done"));
         setTimeout(function () {
           host.remove();
         }, 700);
         resolve();
+      }
+
+      // Finché la clip non esiste, l'intro riceve lo stesso trattamento delle
+      // altre scene: si mostra la sua reference come fermo immagine invece di
+      // saltarla. Resta one-shot — non entra nella timeline dello scroll — e
+      // si chiude da sola dopo INTRO_STILL_MS, oppure subito se l'utente
+      // inizia a scrollare (non ha senso trattenerlo su un fermo immagine).
+      if (!intro.clip) {
+        var still = document.createElement("img");
+        still.alt = "";
+        still.src = intro.still;
+        host.appendChild(still);
+        var byScroll = function () {
+          finish();
+        };
+        window.addEventListener("scroll", byScroll, { once: true, passive: true });
+        window.addEventListener("wheel", byScroll, { once: true, passive: true });
+        window.addEventListener("touchstart", byScroll, { once: true, passive: true });
+        setTimeout(function () {
+          window.removeEventListener("scroll", byScroll);
+          window.removeEventListener("wheel", byScroll);
+          window.removeEventListener("touchstart", byScroll);
+          finish();
+        }, INTRO_STILL_MS);
+        return;
       }
       var v = document.createElement("video");
       v.muted = true;
@@ -101,6 +130,21 @@
 
       if (manifest.placeholder) {
         mount.setAttribute("data-placeholder", "true");
+      }
+
+      // La sezione finale usa come sfondo l'ultima scena del viaggio, cosi' il
+      // racconto non si interrompe su un fondo nero. Il percorso viene dal
+      // manifest, non scritto a mano nel CSS: cambiando la scena finale li',
+      // cambia anche qui.
+      var last = sections[sections.length - 1];
+      var postEl = document.getElementById("post");
+      if (postEl && last && last.still) {
+        // URL assoluto, non relativo: un url() dentro una custom property viene
+        // risolto rispetto al foglio di stile che la consuma (assets/css/), non
+        // rispetto alla pagina — con il percorso relativo diventava
+        // assets/css/assets/world/... e non caricava nulla.
+        var abs = new URL(last.still, window.location.href).href;
+        postEl.style.setProperty("--post-bg", 'url("' + abs + '")');
       }
 
       // Il rig del viaggio (route dots, hint, scrollbar) è in position:fixed sul

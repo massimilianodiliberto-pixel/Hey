@@ -692,11 +692,16 @@ body.world-done #world .sw-route,
 body.world-done #world .sw-hint,
 body.world-done #world .sw-scrollbar,
 body.world-done #world .sw-copylayer,
+body.world-done #world .sw-stage,
 body.world-done #world .sw-sky {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-} /* .sw-sky è il bagliore/gradiente ambientale del motore, anche lui fisso
+} /* .sw-stage porta le scene: essendo fixed e sopra la sezione finale (z 10
+     contro 2) ne copriva il testo durante il passaggio. Si può spegnere senza
+     stacco perché la sezione mostra come sfondo la stessa ultima scena: cambia
+     solo lo scurimento, l'immagine resta.
+     .sw-sky è il bagliore/gradiente ambientale del motore, anche lui fisso
      sul viewport per sempre: senza questa riga restava visibile sopra la
      sezione post-viaggio ogni volta che questa non copriva ancora tutto lo
      schermo, leggibile come "uno sfondo" dietro al testo/divider in alto.
@@ -819,14 +824,36 @@ body.has-placeholder-banner #world {
    dietro al testo. Coprendo un viewport pieno la fascia non esiste — regge
    anche quando l'ultima clip sarà il set vuoto illuminato invece di un
    placeholder scuro. Il flex tiene la CTA centrata e il footer in fondo. */
+/* Lo sfondo e' l'ultima scena del viaggio (impostata da home.js in --post-bg,
+   letta dal manifest: nessun percorso scritto a mano qui), con sopra uno
+   scurimento a valore FISSO. Prima la sezione era nero pieno e l'ultima scena
+   si intravedeva solo finche' il suo layer fixed le restava sopra: appena
+   quello sfumava, lo sfondo spariva del tutto. Cosi' invece la stanza resta
+   sempre leggibile — pareti, finestre, pavimento — e lo scurimento serve solo
+   a staccare il testo bianco. --post-scrim e' il tetto massimo: non deve
+   salire, o la scena sparisce di nuovo. */
 .postjourney {
+  --post-scrim: 0.62;
   position: relative;
   z-index: 2;
-  background: var(--rhyme);
+  background-color: var(--rhyme);
+  background-image: linear-gradient(
+      rgba(26, 28, 23, var(--post-scrim)),
+      rgba(26, 28, 23, var(--post-scrim))
+    ),
+    var(--post-bg, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border-top: 1px solid var(--rule);
   min-height: calc(100vh - var(--bar-bottom-h));
   display: flex;
   flex-direction: column;
+}
+/* il footer sta sopra la stessa immagine: un velo in piu' solo li', altrimenti
+   il testo piccolo in mono si perde sul pavimento chiaro */
+.postjourney > .sitefooter {
+  background: rgba(26, 28, 23, 0.55);
 }
 .postjourney__cta {
   flex: 1;
