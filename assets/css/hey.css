@@ -648,8 +648,15 @@ input::placeholder {
 .sw-copylayer::before {
   background: none !important;
 }
-.sw-copy__eyebrow {
-  text-shadow: 0 1px 12px color-mix(in srgb, var(--sw-bg) 90%, transparent);
+/* Senza il pannello dietro (tolto di proposito) il testo deve reggere da solo
+   anche sulle scene chiare — il set asciutto e' quasi bianco. Ombra ampia e
+   morbida invece di una fascia: alone che stacca il testo, nessun riquadro. */
+.sw-copy__title {
+  text-shadow: 0 2px 24px rgba(26, 28, 23, 0.92), 0 0 70px rgba(26, 28, 23, 0.75) !important;
+}
+.sw-copy__eyebrow,
+.sw-copy__num {
+  text-shadow: 0 1px 14px rgba(26, 28, 23, 0.95), 0 0 42px rgba(26, 28, 23, 0.85);
 }
 /* Il pulsante primario dell'ultima scena ("Contact") era chiaro-su-chiaro
    (sfondo = --sw-ink, che qui è il chiaro del sito, non uno scuro come nel
