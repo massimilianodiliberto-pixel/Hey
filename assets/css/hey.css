@@ -882,6 +882,12 @@ body.has-placeholder-banner #world {
 .director-note[hidden] {
   display: none;
 }
+/* le note stanno fuori da #world, quindi non le prende la regola che spegne
+   il rig del viaggio: senza questa restavano sovrapposte al CTA finale */
+body.world-done .director-note {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 @media (max-width: 640px) {
   .director-note {
     max-width: calc(100vw - 2 * var(--pad));
