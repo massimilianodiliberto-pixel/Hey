@@ -1,0 +1,965 @@
+/* HEY — design system
+   Fonti: Big Shoulders Display / Instrument Sans / JetBrains Mono — vincolate
+   dall'app "Building the Vision" (vedi files/CLAUDE.md).
+   Colori: RHYME/LIME/GRAY/LIGHT — vedi HEY_MASTER_CONTEXT.md §3. Palette del
+   SITO, distinta da quella (lime-bg) dell'app interna: qui il nero è il
+   contenitore, il lime è intervento, mai fondale pieno. */
+
+@import url("https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+:root {
+  --lime: #e5fd5d;
+  --rhyme: #1a1c17;
+  --gray: #a8a8a0;
+  --light: #e6e6df;
+  --rhyme-raised: #22251e;
+  --rule: rgba(230, 230, 223, 0.14);
+
+  --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --body: "Instrument Sans", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --pad: clamp(20px, 5vw, 64px);
+  --nav-h: 84px;
+
+  /* le due fasce lime fisse che incorniciano il sito, sempre a schermo:
+     quella in alto è muta (solo segno), quella in basso porta contatti e
+     diritti su una riga sola. Le altezze sono token perché servono anche a
+     chi deve lasciare spazio libero sotto (body, .postjourney, .gate). */
+  --bar-top-h: 5px;
+  --bar-bottom-h: 30px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--rhyme);
+  color: var(--light);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  /* la fascia lime in basso è fixed: senza questo spazio coprirebbe le
+     ultime righe di ogni pagina */
+  padding-bottom: var(--bar-bottom-h);
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--lime);
+  color: var(--rhyme);
+}
+
+/* ---------- typography ---------- */
+
+.display {
+  font-family: var(--display);
+  font-weight: 800;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.d1 {
+  font-size: clamp(48px, 10vw, 120px);
+}
+.d2 {
+  font-size: clamp(34px, 6vw, 64px);
+}
+.d3 {
+  font-size: clamp(24px, 3.4vw, 36px);
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.lede {
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.5;
+  max-width: 62ch;
+  color: var(--light);
+}
+
+.dim {
+  color: var(--gray);
+}
+
+/* ---------- layout ---------- */
+
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 var(--pad);
+}
+
+.narrow {
+  max-width: 720px;
+}
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 0;
+}
+
+.pt {
+  padding-top: clamp(48px, 8vw, 110px);
+}
+.pb {
+  padding-bottom: clamp(48px, 8vw, 110px);
+}
+
+/* ---------- site nav (overlay, fixed) ---------- */
+
+.sitenav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px var(--pad);
+  pointer-events: none;
+}
+.sitenav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--rhyme) 78%, transparent) 0%,
+    transparent 100%
+  );
+}
+.sitenav > * {
+  pointer-events: auto;
+}
+.sitenav__mark {
+  display: block;
+  width: 58px;
+  height: auto;
+  color: var(--lime);
+  transition: color 0.2s ease;
+}
+.sitenav__mark:hover {
+  color: var(--light);
+}
+.sitenav__right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.sitenav__links {
+  display: flex;
+  gap: 26px;
+}
+.sitenav__links a {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--light);
+  opacity: 0.72;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+}
+.sitenav__links a:hover,
+.sitenav__links a[aria-current="page"] {
+  opacity: 1;
+  color: var(--lime);
+}
+.sitenav__private {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  color: var(--gray);
+  text-decoration: none;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.sitenav__private:hover {
+  border-color: var(--lime);
+  color: var(--lime);
+}
+.sitenav__private svg {
+  width: 14px;
+  height: 14px;
+}
+@media (max-width: 720px) {
+  .sitenav__links {
+    gap: 16px;
+  }
+  .sitenav__links a {
+    font-size: 10px;
+  }
+  .sitenav__mark {
+    width: 46px;
+  }
+}
+
+/* ---------- buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 16px 26px;
+  border: 1px solid var(--lime);
+  background: var(--lime);
+  color: var(--rhyme);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.18s ease, color 0.18s ease, opacity 0.18s ease;
+}
+.btn:hover {
+  background: transparent;
+  color: var(--lime);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--light);
+  border-color: var(--rule);
+}
+.btn.ghost:hover {
+  border-color: var(--lime);
+  color: var(--lime);
+}
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ---------- footer tagline + legal ----------
+   Non più il credito fondatori (rimosso su richiesta: già presente in About,
+   ridondante qui) — una riga di posizionamento, contatti e diritti al suo
+   posto. Indirizzo/email/telefono sono segnaposto (§ non ancora forniti da
+   Massimiliano/Gianluca) — vedi nota nel markup, da sostituire con i dati
+   veri appena ci sono. */
+.sitefooter__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  text-align: right;
+}
+.footer-tagline,
+.footer-legal {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray);
+  max-width: 46ch;
+  margin: 0;
+}
+.footer-legal {
+  opacity: 0.7;
+}
+@media (max-width: 640px) {
+  .sitefooter__meta {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.sitefooter {
+  border-top: 1px solid var(--rule);
+  padding: 34px var(--pad) 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+}
+.sitefooter__links {
+  display: flex;
+  gap: 22px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.sitefooter__links a {
+  text-decoration: none;
+  color: var(--light);
+  opacity: 0.7;
+}
+.sitefooter__links a:hover {
+  opacity: 1;
+  color: var(--lime);
+}
+
+/* ---------- generic page hero ---------- */
+
+.pagehero {
+  padding: clamp(140px, 22vw, 220px) var(--pad) clamp(48px, 8vw, 90px);
+}
+.pagehero .mono {
+  color: var(--gray);
+  display: block;
+  margin-bottom: 22px;
+}
+
+/* ---------- cards ---------- */
+
+.card {
+  border: 1px solid var(--rule);
+  padding: 28px;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+  transition: border-color 0.2s ease;
+}
+.card:hover {
+  border-color: var(--lime);
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+.grid2 > * {
+  background: var(--rhyme);
+}
+
+/* ---------- WORK ---------- */
+
+.worklist {
+  border-top: 1px solid var(--rule);
+}
+.workrow {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 22px;
+  align-items: baseline;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.workrow .mono {
+  color: var(--gray);
+}
+.workrow .status {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lime);
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .workrow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.banner {
+  border: 1px solid var(--rule);
+  padding: 18px 20px;
+  margin-bottom: 30px;
+  color: var(--gray);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.banner strong {
+  color: var(--light);
+}
+
+/* ---------- ABOUT ---------- */
+
+.founder {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 28px;
+  padding: 34px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.founder h3 {
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(22px, 3vw, 30px);
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+.founder .role {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lime);
+}
+@media (max-width: 720px) {
+  .founder {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.taglist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.taglist li {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  border: 1px solid var(--rule);
+  color: var(--gray);
+}
+
+/* ---------- CONTACT — multi-step form ---------- */
+
+.formstep {
+  display: none;
+}
+.formstep.is-active {
+  display: block;
+}
+
+.steprail {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 40px;
+}
+.steprail span {
+  flex: 1;
+  height: 2px;
+  background: var(--rule);
+}
+.steprail span.done {
+  background: var(--gray);
+}
+.steprail span.now {
+  background: var(--lime);
+}
+
+.choice {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+}
+.choice .box {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+  border: 1px solid var(--rule);
+  position: relative;
+  transition: border-color 0.15s, background 0.15s;
+}
+.choice:hover .box {
+  border-color: var(--lime);
+}
+.choice.sel .box {
+  border-color: var(--lime);
+  background: var(--lime);
+}
+.choice.sel {
+  color: var(--lime);
+}
+.choice input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.choice__label {
+  font-size: 17px;
+}
+
+.field {
+  display: block;
+  margin-bottom: 22px;
+}
+.field > .mono {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--gray);
+}
+
+textarea,
+input[type="email"],
+input[type="text"] {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 17px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+  border-radius: 0;
+  outline: none;
+  line-height: 1.55;
+}
+textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+textarea:focus,
+input[type="email"]:focus,
+input[type="text"]:focus {
+  border-color: var(--lime);
+}
+textarea::placeholder,
+input::placeholder {
+  color: var(--gray);
+  opacity: 0.6;
+}
+
+.formnav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 36px;
+  gap: 16px;
+}
+
+.formdone {
+  display: none;
+}
+.formdone.is-active {
+  display: block;
+}
+
+/* ---------- AREA PRIVATA — gate ---------- */
+
+.gate {
+  min-height: calc(100vh - var(--bar-bottom-h));
+  display: grid;
+  place-items: center;
+  padding: var(--pad);
+}
+.gate__box {
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}
+.gate input[type="password"] {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  color: var(--light);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  padding: 14px 0;
+  text-align: center;
+  outline: none;
+  margin: 28px 0 18px;
+}
+.gate input[type="password"]:focus {
+  border-color: var(--lime);
+}
+.gate__note {
+  margin-top: 22px;
+  font-size: 13px;
+  color: var(--gray);
+  min-height: 1.4em;
+}
+
+/* ---------- il viaggio (scroll-world engine) — retema sui token del sito ----------
+   Il layer @layer sw dell'engine (assets/js/scroll-world.js) dichiara i suoi
+   default dentro un cascade layer apposta perché queste regole, non essendo in
+   un layer, vincano sempre — vedi commento in fondo a scroll-world.js. */
+/* :root soli non basterebbe: l'engine dichiara i suoi default direttamente su
+   .sw-root (classe che aggiunge a #world stesso) — una dichiarazione diretta
+   sull'elemento vince sempre sull'ereditarietà da :root, layer o non layer.
+   Bisogna quindi ridichiarare gli stessi custom property anche su .sw-root. */
+:root,
+.sw-root {
+  --sw-bg: var(--rhyme);
+  --sw-ink: var(--light);
+  --sw-ink-soft: var(--gray);
+  --sw-accent: var(--lime);
+  --sw-font-display: var(--display);
+  --sw-font-body: var(--body);
+}
+.sw-copy__num {
+  font-family: var(--mono) !important;
+}
+.sw-copy__title {
+  text-transform: uppercase;
+}
+.sw-brand,
+.sw-topbar {
+  display: none;
+} /* la navbar del sito (.sitenav) sostituisce quella interna dell'engine */
+
+.sw-hint span:first-child {
+  display: none;
+} /* niente testo istruttivo ("scroll"): resta solo il segno visivo — §6.4 */
+
+.sw-route__label {
+  background: var(--rhyme-raised) !important;
+  border-color: var(--rule) !important;
+  color: var(--light) !important;
+}
+/* Il pannello piatto dell'engine (una fascia con un bordo netto verticale)
+   resta tolto. Al suo posto un alone radiale che si spegne a zero prima di
+   toccare i bordi: nessun contorno, nessun colore uniforme, solo una zona
+   d'ombra che si fonde nella scena e stacca il testo. Copre l'intera area
+   cosi' il gradiente non puo' essere tagliato dal bordo dell'elemento. */
+.sw-copylayer::before {
+  width: 100% !important;
+  background: radial-gradient(
+    ellipse 62% 58% at 24% 50%,
+    rgba(26, 28, 23, 0.78) 0%,
+    rgba(26, 28, 23, 0.55) 34%,
+    rgba(26, 28, 23, 0.22) 58%,
+    rgba(26, 28, 23, 0) 76%
+  ) !important;
+}
+@media (max-width: 860px) {
+  /* su mobile il testo sta in basso, quindi l'alone segue lui */
+  .sw-copylayer::before {
+    height: 100% !important;
+    background: radial-gradient(
+      ellipse 92% 46% at 50% 88%,
+      rgba(26, 28, 23, 0.82) 0%,
+      rgba(26, 28, 23, 0.55) 38%,
+      rgba(26, 28, 23, 0.2) 62%,
+      rgba(26, 28, 23, 0) 80%
+    ) !important;
+  }
+}
+/* Senza il pannello dietro (tolto di proposito) il testo deve reggere da solo
+   anche sulle scene chiare — il set asciutto e' quasi bianco. Ombra ampia e
+   morbida invece di una fascia: alone che stacca il testo, nessun riquadro. */
+.sw-copy__title {
+  text-shadow: 0 2px 24px rgba(26, 28, 23, 0.92), 0 0 70px rgba(26, 28, 23, 0.75) !important;
+}
+.sw-copy__eyebrow,
+.sw-copy__num {
+  text-shadow: 0 1px 14px rgba(26, 28, 23, 0.95), 0 0 42px rgba(26, 28, 23, 0.85);
+}
+/* Il pulsante primario dell'ultima scena ("Contact") era chiaro-su-chiaro
+   (sfondo = --sw-ink, che qui è il chiaro del sito, non uno scuro come nel
+   tema originale dell'engine) — invisibile. Stesso stile del bottone .btn
+   del resto del sito: lime pieno, testo scuro. */
+.sw-btn--primary {
+  color: var(--rhyme) !important;
+  background: var(--lime) !important;
+}
+
+body.world-done #world .sw-route,
+body.world-done #world .sw-hint,
+body.world-done #world .sw-scrollbar,
+body.world-done #world .sw-copylayer,
+body.world-done #world .sw-stage,
+body.world-done #world .sw-sky {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+} /* .sw-stage porta le scene: essendo fixed e sopra la sezione finale (z 10
+     contro 2) ne copriva il testo durante il passaggio. Si può spegnere senza
+     stacco perché la sezione mostra come sfondo la stessa ultima scena: cambia
+     solo lo scurimento, l'immagine resta.
+     .sw-sky è il bagliore/gradiente ambientale del motore, anche lui fisso
+     sul viewport per sempre: senza questa riga restava visibile sopra la
+     sezione post-viaggio ogni volta che questa non copriva ancora tutto lo
+     schermo, leggibile come "uno sfondo" dietro al testo/divider in alto.
+     l'ultima scena del viaggio tiene il suo testo/CTA a video per sempre
+     (scelta dell'engine) — una volta arrivati alla sezione post-viaggio,
+     che ripete lo stesso invito, si spegne per non doppiarlo in sovrimpressione */
+
+/* barretta lime muta: nessun testo, nessuna spiegazione — solo il segno */
+#placeholder-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  height: var(--bar-top-h);
+  background: var(--lime);
+}
+
+/* fascia lime in basso, gemella di quella in alto: fissa, sempre visibile,
+   con contatti e diritti su una riga sola. Su schermi stretti la riga non
+   sta: resta una riga e si fa scorrere lateralmente invece di andare a capo
+   o troncare informazioni. */
+.edge-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  height: var(--bar-bottom-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* `safe` degrada a start quando il testo è più largo della barra: senza,
+     il centraggio taglia l'inizio della riga e su mobile si legge partendo
+     da metà parola. Il fallback sopra copre i browser che non lo supportano. */
+  justify-content: safe center;
+  gap: 0;
+  padding: 0 var(--pad);
+  background: var(--lime);
+  color: var(--rhyme);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.edge-bar::-webkit-scrollbar {
+  display: none;
+}
+.edge-bar a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(26, 28, 23, 0.35);
+}
+.edge-bar a:hover {
+  border-bottom-color: var(--rhyme);
+}
+@media (max-width: 640px) {
+  .edge-bar {
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    padding: 0 14px;
+  }
+}
+body.has-placeholder-banner .sitenav {
+  top: 5px;
+}
+body.has-placeholder-banner #world {
+  top: 5px;
+}
+
+.world-fallback {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.world-fallback[hidden] {
+  display: none;
+}
+
+/* INTRO — clip una tantum sopra il viaggio, dissolve nel loop (assets/js/home.js) */
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: var(--rhyme);
+  opacity: 1;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+}
+#intro.is-hidden {
+  opacity: 0;
+}
+#intro video,
+#intro img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+}
+#intro img {
+  z-index: 0;
+}
+#intro video {
+  z-index: 1;
+}
+
+/* sezione dopo la fine del viaggio: CTA + nav globale + credito fondatori.
+   min-height 100vh non è estetica: i layer del viaggio sono position:fixed sul
+   viewport, quindi se questa sezione è più bassa di uno schermo resta scoperta
+   una fascia in alto in cui si continua a vedere l'ultimo fotogramma del film
+   dietro al testo. Coprendo un viewport pieno la fascia non esiste — regge
+   anche quando l'ultima clip sarà il set vuoto illuminato invece di un
+   placeholder scuro. Il flex tiene la CTA centrata e il footer in fondo. */
+/* Lo sfondo e' l'ultima scena del viaggio (impostata da home.js in --post-bg,
+   letta dal manifest: nessun percorso scritto a mano qui), con sopra uno
+   scurimento a valore FISSO. Prima la sezione era nero pieno e l'ultima scena
+   si intravedeva solo finche' il suo layer fixed le restava sopra: appena
+   quello sfumava, lo sfondo spariva del tutto. Cosi' invece la stanza resta
+   sempre leggibile — pareti, finestre, pavimento — e lo scurimento serve solo
+   a staccare il testo bianco. --post-scrim e' il tetto massimo: non deve
+   salire, o la scena sparisce di nuovo. */
+.postjourney {
+  --post-scrim: 0.62;
+  position: relative;
+  z-index: 2;
+  background-color: var(--rhyme);
+  background-image: linear-gradient(
+      rgba(26, 28, 23, var(--post-scrim)),
+      rgba(26, 28, 23, var(--post-scrim))
+    ),
+    var(--post-bg, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-top: 1px solid var(--rule);
+  min-height: calc(100vh - var(--bar-bottom-h));
+  display: flex;
+  flex-direction: column;
+}
+/* il footer sta sopra la stessa immagine: un velo in piu' solo li', altrimenti
+   il testo piccolo in mono si perde sul pavimento chiaro */
+.postjourney > .sitefooter {
+  background: rgba(26, 28, 23, 0.55);
+}
+.postjourney__cta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* senza, i figli si stirano e il bottone diventa una barra */
+  padding: clamp(70px, 12vw, 140px) var(--pad);
+  text-align: center;
+}
+/* .wrap porta margin:0 auto — su un flex item il margine auto orizzontale
+   annulla lo stretch e restringe l'elemento al contenuto: il footer risultava
+   rientrato rispetto al resto del sito. width:100% lo riporta a piena
+   larghezza, lasciando intatto il centraggio via max-width sopra i 1180px. */
+.postjourney > .sitefooter {
+  width: 100%;
+}
+.postjourney__cta .d2 {
+  margin-bottom: 26px;
+}
+
+/* ---------- note di regia (review Gianluca) ----------
+   Temporanee, spente da world-manifest.json → reviewNotes:false. Deliberatamente
+   dimesse — testo in --gray non --lime, bordo tratteggiato — per essere
+   inequivocabili come annotazione interna, mai scambiabili per copy del sito. */
+.director-note {
+  position: fixed;
+  top: calc(5px + 78px);
+  left: var(--pad);
+  z-index: 400;
+  max-width: min(340px, 70vw);
+  margin: 0;
+  padding: 9px 13px;
+  border: 1px dashed var(--rule);
+  background: color-mix(in srgb, var(--rhyme) 80%, transparent);
+  backdrop-filter: blur(6px);
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--gray);
+  pointer-events: none;
+}
+.director-note--context {
+  border-style: solid;
+}
+.director-note:not(.director-note--context) {
+  /* la nota di scena sta sempre sotto quella di contesto (che è più in alto,
+     vedi id sopra) quando entrambe sono visibili, così non si sovrappongono */
+  top: calc(5px + 78px + 44px);
+}
+.director-note[hidden] {
+  display: none;
+}
+/* le note stanno fuori da #world, quindi non le prende la regola che spegne
+   il rig del viaggio: senza questa restavano sovrapposte al CTA finale */
+body.world-done .director-note {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+@media (max-width: 640px) {
+  .director-note {
+    max-width: calc(100vw - 2 * var(--pad));
+  }
+}
+
+*:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ---------- rivelazione a due livelli (assets/js/reveal-overlay.js) ----------
+   Il canvas sta sopra le scene del viaggio (z 10) ma sotto il suo testo (z 20),
+   così la finestra rivela l'immagine senza mai coprire le parole. Non intercetta
+   il puntatore: i movimenti li ascolta la finestra, e lo scroll deve continuare
+   a passare sotto. */
+.reveal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+body.world-done .reveal-overlay {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+/* Il video sorgente non si guarda: serve solo come fotogramma da copiare sul
+   canvas. Va tenuto nel DOM (iOS non decodifica un elemento staccato) e
+   nascosto senza display:none né visibility:hidden, che lo fermerebbero. */
+.reveal-overlay__src {
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  opacity: 0.01;
+  pointer-events: none;
+  z-index: -1;
+}

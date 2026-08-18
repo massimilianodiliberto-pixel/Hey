@@ -1,0 +1,87 @@
+{
+  "_readme": "Manifest del viaggio (Home). Per sostituire i segnaposto con le clip vere: metti i .mp4 in questa cartella, rimetti il percorso nel campo 'clip' di ogni sezione (oggi null), aggiorna 'placeholder' a false. Zero righe di codice da toccare — vedi HEY_MASTER_CONTEXT.md §6.1.",
+  "placeholder": true,
+  "engine": "scroll-world (scrub-engine.js) — motore video, non canvas+frame. Decisione chiusa 17/08/2026.",
+  "_stato_asset": "18/08/2026 — gli still sono le reference generate da Massimiliano (files/chatGpt_Reference/), ritagliate dello slate tecnico e convertite in JPEG. NON sono frame da montare: sono immagini di stile/continuità che qui fanno da segnaposto rappresentativi al posto delle clip verdi di prima. Il campo 'clip' è null ovunque, quindi il motore scrolla gli still applicando il suo zoom progressivo. Rimettendo i .mp4 nel campo 'clip' il motore torna a fare scrub video, senza altre modifiche.",
+  "_reviewNotes_readme": "Note di regia in overlay, solo per la review con Gianluca — vedi HEY_Note_Regia_Overlay_Review_v01.md. Interruttore unico: metti reviewNotes a false (o rimuovi i tre campi reviewNotes/reviewIntroNote/directorNote) a review chiusa e spariscono ovunque, senza toccare altro.",
+  "reviewNotes": true,
+  "reviewIntroNote": "Le immagini qui sono reference di stile, non il girato finale. Le note in overlay descrivono l'intento di ogni scena.",
+  "_intro_readme": "intro = clip una tantum (non in loop, non guidata dallo scroll): la donna esce da dietro la colonna. Gira una volta sola all'apertura del sito, poi dissolve nel loop. Senza 'clip' l'intro viene saltata e si parte dal loop (assets/js/home.js): lo still qui sotto è già pronto e serve da poster appena la clip esisterà.",
+  "intro": {
+    "_reference": "ref-intro-a_microrganismi.png — primo piano stretto mano/viso, versione definitiva del beat dei microrganismi (sostituisce ref-intro-a.png).",
+    "clip": null,
+    "still": "assets/world/intro.jpg",
+    "directorNote": "Lei esce dalla colonna (pannello reale sul set), nota il raggio di luce, lo copre con la mano: nell'ombra appaiono microrganismi luminosi. Si gira verso camera. Non guarda mai in camera fino alla fine. ~2–4s.",
+    "hoverClip": "assets/world/hover/intro.mp4"
+  },
+  "diveScroll": 1.3,
+  "connScroll": 0.7,
+  "sections": [
+    {
+      "_note": "sezione 0 = il loop pre-scroll: con la clip vera girerà in loop nativo finché non si inizia a scrollare (flag loopIdle in home.js), poi passa a scrub normale — vedi assets/js/scroll-world.js.",
+      "_reference": "ref-intro-b_loop-start.png — SHOT 05, si gira / HEY",
+      "id": "loop",
+      "label": "01 — Loop (HEY)",
+      "still": "assets/world/loop.jpg",
+      "clip": null,
+      "accent": "#E5FD5D",
+      "title": "HEY.",
+      "directorNote": "Primo \"HEY\", primo contatto visivo. Loop nativo: respiro, bolle, leggero movimento della testa, dice di nuovo \"HEY\" dopo una pausa. Deve chiudersi senza scatto visibile. ~4–6s.",
+      "hoverClip": "assets/world/hover/loop.mp4"
+    },
+    {
+      "_reference": "ref-ritorno-inizio.png — SHOT 06, carrello circolare",
+      "id": "ritorno-inizio",
+      "label": "02 — Inizia il ritorno",
+      "still": "assets/world/ritorno-inizio.jpg",
+      "clip": null,
+      "accent": "#E5FD5D",
+      "title": "IDEA.",
+      "directorNote": "Si rivela il mondo impossibile: rovine, colonne/torri, microrganismi ovunque nell'acqua. Comincia il reverse — i microrganismi spariscono, l'architettura perde dettaglio. ~3–6s.",
+      "hoverClip": "assets/world/hover/ritorno-inizio.mp4"
+    },
+    {
+      "_reference": "ref-ritorno-meta-a.png — SHOT 07, l'acqua si ritira",
+      "id": "ritorno-meta",
+      "label": "03 — A metà del ritorno",
+      "still": "assets/world/ritorno-meta.jpg",
+      "clip": null,
+      "accent": "#A8A8A0",
+      "title": "DIRECTION.",
+      "directorNote": "L'acqua si svuota, appare la vasca reale. Il raggio che sembrava sole si rivela un faro vero, definito e controllabile. ~3–6s.",
+      "hoverClip": "assets/world/hover/ritorno-meta.mp4"
+    },
+    {
+      "_reference": "ref-mondo-smontato-a.png — SHOT 08, il mondo fantastico si rivela",
+      "id": "mondo-smontato",
+      "label": "04 — Il mondo è quasi smontato",
+      "still": "assets/world/mondo-smontato.jpg",
+      "clip": null,
+      "accent": "#A8A8A0",
+      "title": "PRODUCTION.",
+      "directorNote": "Il set asciutto rivela luci e rig, il carrello circolare della camera diventa visibile. La camera viene vista — la spia REC si spegne — e appoggiata sul banco. ~3–6s.",
+      "hoverClip": "assets/world/hover/mondo-smontato.mp4"
+    },
+    {
+      "_reference": "ref-arrivo.png — spazio circolare vuoto, binario a terra, luce naturale dalle finestre. Reference dedicata, arrivata il 18/08/2026: completa la mappa su tutte e 6 le clip. Sostituisce ref-mondo-smontato-c_arrivo-start.png, che era solo il frame d'inizio preso in prestito dalla scena precedente.",
+      "id": "arrivo",
+      "label": "05 — Punto di arrivo",
+      "still": "assets/world/arrivo.jpg",
+      "clip": null,
+      "accent": "#E5FD5D",
+      "eyebrow": "Un’idea non è ancora successa.",
+      "title": "YOUR IDEA.",
+      "cta": {
+        "primary": {
+          "label": "Contact",
+          "href": "contact/"
+        }
+      },
+      "directorNote": "Reverse rapido di preparazione, styling, arrivo dell'attrice, fino al set completamente vuoto. Non è assenza: è lo spazio prima della prossima idea. ~3–6s.",
+      "hoverClip": "assets/world/hover/arrivo.mp4"
+    }
+  ],
+  "_connectors_readme": "Le clip di raccordo fra una scena e l'altra: vuoto = le scene si dissolvono direttamente l'una nell'altra. Erano segnaposto generici, tolti insieme alle clip.",
+  "connectors": [],
+  "_hoverClip_readme": "hoverClip = Livello 02 della rivelazione a due livelli: il micro-loop che si vede sotto la maschera quando il puntatore passa sulla scena (assets/js/reveal-overlay.js). Oggi sono segnaposto generati dalla still della sezione stessa con un lento zoom/pan, quindi mostrano lo stesso soggetto che si muove, non ancora il backstage: appena esisteranno le clip 'set' con lo stesso framing, si sostituiscono qui i percorsi e non cambia altro."
+}

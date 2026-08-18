@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Network — HEY</title>
+<meta name="description" content="Entra nello specialist network di HEY. Raccontaci chi sei e cosa fai." />
+<link rel="manifest" href="../site.webmanifest" />
+<link rel="icon" href="../assets/img/brand/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="../assets/img/brand/apple-touch-icon.png" />
+<meta name="theme-color" content="#1A1C17" />
+<link rel="stylesheet" href="../assets/css/hey.css" />
+</head>
+<body>
+
+<header class="sitenav">
+  <a href="../" class="sitenav__mark" aria-label="HEY — home">
+    <svg viewBox="0 0 1000 723" fill="currentColor" fill-rule="evenodd" role="img" aria-label="HEY">
+      <path d="M177.6,722.1 174.9,427.1 133.5,452.2 133.5,644.5 0,721.2 0,78.6 133.5,1.1 135.6,294.5 175.9,269.7 175.9,78.2 308.7,0.2 309.6,644.1Z"/>
+      <path d="M501.3,722.9 345.5,632.4 345.5,90.7 500.2,0 656,89.9 655.6,360.8 479.6,463.9 481.3,579.3 521.9,555 524,486.4 655.5,410.5 656,632.4Z"/>
+      <path d="M481.5,306.8 521.9,283 521,143.4 479.6,168.1Z"/>
+      <path d="M779.8,722.1 777.7,478.7 689.6,425.4 689.6,78.6 823.8,1.5 823.4,369.9 826.2,371.9 865.7,347.6 865.7,78.2 998.5,0.2 999.8,424.6 911.8,479 911.4,644.5Z"/>
+    </svg>
+  </a>
+  <div class="sitenav__right">
+    <nav class="sitenav__links">
+      <a href="../work/">Work</a>
+      <a href="../about/">About</a>
+      <a href="../network/">Network</a>
+      <a href="../contact/">Contact</a>
+    </nav>
+    <a href="../area-privata/" class="sitenav__private" aria-label="Area privata">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </a>
+  </div>
+</header>
+
+<main>
+  <section class="pagehero wrap" style="padding-bottom:0;">
+    <span class="mono">Network</span>
+    <h1 class="display d1">ENTRA NEL<br />NETWORK.</h1>
+    <p class="lede dim" style="margin-top:26px; max-width:56ch;">
+      HEY lavora con un core team ristretto e uno specialist network coinvolto
+      in base alle necessità di ogni progetto — registi, DoP, VFX artist, 3D
+      artist, motion designer, editor, colorist, sound designer, compositori,
+      scenografi, stylist, creative director, copywriter, art director,
+      specialisti AI. Se lavori nell'audiovisivo e vuoi entrare in questa
+      rete, raccontaci chi sei.
+    </p>
+  </section>
+
+  <section class="wrap pb narrow">
+    <form id="network-form" class="multistep" novalidate data-pending-note="Il modulo non è ancora collegato a un sistema di invio automatico. Appena c'è un indirizzo a cui instradare le candidature, questo messaggio cambia.">
+      <div class="steprail" aria-hidden="true">
+        <span class="now"></span><span></span><span></span>
+      </div>
+
+      <div class="formstep is-active" data-key="ruolo">
+        <p class="mono dim" style="margin-bottom:20px;">01 / 03 — Che ruolo ricopri</p>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">Regia</span></label>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">DoP / Camera</span></label>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">VFX / 3D</span></label>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">Motion design</span></label>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">Editing / Color</span></label>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">Sound design</span></label>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">Scenografia / Styling</span></label>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">Creative / Art direction</span></label>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">Copywriting</span></label>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">Specialista AI generativa</span></label>
+        <label class="choice"><input type="radio" name="ruolo" /><span class="box"></span><span class="choice__label">Altro</span></label>
+      </div>
+
+      <div class="formstep" data-key="lavoro">
+        <p class="mono dim" style="margin-bottom:20px;">02 / 03 — Il tuo lavoro</p>
+        <div class="field">
+          <span class="mono">Link al tuo portfolio / reel</span>
+          <input type="text" id="network-portfolio" data-key="portfolio" placeholder="https://…" />
+        </div>
+        <div class="field">
+          <span class="mono">La tua email</span>
+          <input type="email" id="network-email" data-key="email" placeholder="nome@dominio.com" />
+        </div>
+      </div>
+
+      <div class="formstep">
+        <p class="mono dim" style="margin-bottom:20px;">03 / 03 — Raccontaci di te</p>
+        <div class="field">
+          <textarea id="network-free" data-key="racconto" placeholder="Chi sei, cosa fai, con chi hai lavorato…"></textarea>
+        </div>
+      </div>
+
+      <div class="formnav">
+        <button type="button" class="btn ghost" data-action="back">← Indietro</button>
+        <button type="button" class="btn" data-action="next" disabled>Avanti →</button>
+        <button type="submit" class="btn" data-action="submit" hidden>Invia</button>
+      </div>
+    </form>
+
+    <div class="formdone">
+      <p class="mono dim" style="margin-bottom:14px;">Riepilogo</p>
+      <p class="d3 display" data-summary style="text-transform:uppercase;"></p>
+      <p class="dim" data-note style="margin-top:22px;"></p>
+      <a class="btn ghost" href="../" style="margin-top:30px;">Torna alla Home</a>
+    </div>
+  </section>
+</main>
+
+<footer class="sitefooter wrap">
+  <div class="sitefooter__links">
+    <a href="../work/">Work</a>
+    <a href="../about/">About</a>
+    <a href="../network/">Network</a>
+    <a href="../contact/">Contact</a>
+    <a href="../area-privata/">Area privata</a>
+  </div>
+  <div class="sitefooter__meta">
+    <p class="footer-tagline">HEY è una production company basata a Verona, con esperti nella comunicazione e la produzione video da oltre quarant'anni.</p>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<div class="edge-bar">Verona, Italia · indirizzo da inserire · email da inserire · tel da inserire · © 2026 HEY. Tutti i diritti riservati.</div>
+</body>
+</html>
