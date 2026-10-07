@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.DS_Store
+.env*.local
+.vercel
+
+# Materiale video e fotografico vero: mai nel repository (BRIEF §0.7)
+public/clips/*
+!public/clips/.gitkeep
+public/freeze/
