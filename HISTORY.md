@@ -35,3 +35,10 @@ nel tempo tra le esperienze; nel sito solo le sue frasi. Applicato:
 - corretto: entrando in una stazione oltre l'inizio, mondo e frase compaiono comunque;
 - BRIEF §1, §3 e §4 e TIMELINE (§H) aggiornati.
 La trascrizione della telefonata non arriverà: si lavora con i dati che ci sono.
+
+## 2026-11-07 — Salti di scroll
+Segnalazione della regia: dopo un salto istantaneo la scena sembrava restare indietro. Verificato:
+si riallineava in circa mezzo secondo (smorzamento dello scrub). Corretto comunque: sui salti
+grandi (barra trascinata, ancora, scrollTo) la scena va subito al punto giusto. Trovato e corretto
+un difetto più vecchio: i salti dall'indice accendevano i sensi delle stazioni saltate. Ora un senso
+si accende solo se la sua stazione è sullo schermo quando il senso si apre.

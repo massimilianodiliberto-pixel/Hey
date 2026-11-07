@@ -365,7 +365,9 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     const tl = s.tl;
     if (!tl) return;
     const tp = tl.progress();
-    if (!jumping && tp >= P.traceOn) s.visited = true; // i sensi saltati con l'indice restano spenti
+    // Acceso solo se la stazione è sullo schermo quando il senso si apre: i sensi delle stazioni
+    // saltate (indice, richiami, salti di scroll) restano spenti.
+    if (!jumping && tp >= P.traceOn && !!s.st && inRange(s.st)) s.visited = true;
     const senseOnScreen = !!s.st && inRange(s.st) && tp > P.senseIn[0] && tp < P.traceOn;
     const lit = s.visited && !senseOnScreen && arr.p < A.converge[0];
     if (lit !== s.traceLit && s.trace) {
@@ -679,7 +681,21 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     if (target != null && Math.abs(target - y) > 1) scrollToY(target, 0.6, power2Out);
   }
 
+  // Salto grande senza passare dall'indice (barra trascinata, ancora, scrollTo): la scena va
+  // subito al punto giusto invece di recuperare con lo smorzamento, e le stazioni attraversate
+  // non accendono il loro senso, come per i salti dall'indice.
+  let lastY = scrollY();
+  function settleAfterJump() {
+    const was = jumping;
+    jumping = true;
+    [opening.st, ...S.map((x) => x.st), arr.st].forEach((st) => st?.getTween()?.progress(1));
+    jumping = was;
+  }
+
   const onScroll = () => {
+    const y = scrollY();
+    if (!auto && !jumping && Math.abs(y - lastY) > window.innerHeight * 1.5) settleAfterJump();
+    lastY = y;
     updateCurrent();
     S.forEach(onStationScroll); // anche l'arrivo esatto a p = 0, che ScrollTrigger non segnala
     window.clearTimeout(snapTimer);
