@@ -2,6 +2,14 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — Documenti di agosto letti
+- In `docs/` (commit fabeea6 della regia): master context 17/08, note di regia, spec clip, CLAUDE di agosto,
+  storyboard. Letti tutti; aggiunto il §8 a STATO-HEY.md con 8 conflitti (C1–C8), le 6 verifiche chieste
+  dalla regia e i documenti che servono ancora. **Nessuna modifica al sito**: decide Massimiliano.
+- Da ricordare alla ripresa: descrittore "AI GENERATIVE MEDIA" deciso il 17/08 ma assente dal sito;
+  "Trascina / Scorri col dito" in SYSTEM viola il §6.4; lo scrub di SYSTEM è la "timeline a stati
+  cliccabili" che il §6.6 abbandona; il mobile del blocco 3 va oltre il §6.5.
+
 ## 07/11/2026 — Anteprima e vercel.json
 - Massimiliano ha autorizzato un'anteprima; la regia l'ha pubblicata su https://hey-site-anteprima.vercel.app
   (progetto Vercel separato, senza git: si aggiorna solo quando la regia ripubblica).

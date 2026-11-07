@@ -152,3 +152,77 @@ desktop + telefono + movimento ridotto).
 
 **E. Hai il master context più recente e i documenti citati (note di regia, mapping reference, pipeline)?**
 Se sì, servono nel repository prima di costruire.
+
+---
+
+## 8. Riletto alla luce dei documenti di agosto (07/11/2026, sera)
+
+Documenti ora in `docs/`: master context del 17/08, note di regia, spec delle clip, CLAUDE di agosto,
+storyboard in 16 tavole. **Regola:** dove sono in conflitto, valgono le decisioni prese oggi da
+Massimiliano. Qui sotto i conflitti sono solo **segnalati**: sul sito non ho cambiato nulla.
+
+### 8.1 Conflitti tra il 17/08 e le scelte di oggi
+
+| # | Documento di agosto | Sito oggi (scelta del 07/11) | Chi decide |
+|---|---|---|---|
+| C1 | Menu WORK / ABOUT / CONTACT + icona area privata (§5) | Work / System / About / Network / Contact | Resta oggi (Massimiliano) |
+| C2 | SYSTEM e Transformation Lab fanno parte dell'"architettura vecchia, abbandonata il 16/08" (CLAUDE di agosto) | Pagina `system/` con metodo, scrub e Lab | Resta oggi, ma è il conflitto più grosso: da confermare che sia voluto |
+| C3 | §6.6: "il canvas-scrub sostituisce sia il comparator che **la vecchia timeline a stati cliccabili**" | Lo scrub di SYSTEM *è* una timeline a stati cliccabili (senza linea prima/dopo) | Massimiliano |
+| C4 | §4.2: nuotatore suggerito come case study in WORK | Nuotatore nello scrub di SYSTEM, in via provvisoria | Massimiliano (lo dice anche il §10) |
+| C5 | §6.5 mobile: "stesso film, lo scroll guida la timeline identica a desktop, nessuna esperienza diversa" (sostituisce lo swipe del 16/08) | Blocco 3: swipe orizzontale fra le scene + rivelazione che si muove da sola su telefono | Massimiliano: tenere, togliere o tenere solo lo swipe |
+| C6 | Fasce lime: non previste; "il lime è materia che rivela, mai fondale" (§3) | Fasce restano | Resta oggi |
+| C7 | Contact: logica di instradamento da definire prima del backend (§5.1) | mailto a hey@hey.it; le domande a scelta multipla del §5.1 sono quelle del sito | Resta oggi |
+| C8 | Note di regia: un solo interruttore nel manifest (§4 delle note) | Interruttore nel manifest **più** `?review` nell'indirizzo | Compatibile; segnalo solo la differenza |
+
+### 8.2 Verifiche richieste dalla regia
+
+1. **Descrittore "AI GENERATIVE MEDIA" sotto il logo (§2, 17/08):** **non c'è** sul sito. In nav c'è solo
+   il wordmark HEY in SVG. Il file con il descrittore esiste (`assets/img/brand/hey-full-lime.jpg`,
+   marchio su lime) ma non è usato. Il §9 stesso chiede una prova visiva per decidere se in navbar va
+   con o senza descrittore. *Nota mia:* "AI" accanto al logo convive male con la regola "mai AI in
+   navigazione primaria" e con "production company, non agenzia AI": la decisione è chiusa (§2) ma vale
+   una prova visiva prima di applicarla. Anche l'agente `guardiano-identita` dice ancora "HEY senza
+   descrittore": va aggiornato quando si decide.
+2. **Tipografia (§3):** **sì.** Big Shoulders Display, Instrument Sans, JetBrains Mono, ora in locale.
+   Il "drift" di cui parla il §3 riguardava la v1 (Archivo Narrow); dalla v2 è corretto.
+3. **§6.4 nessun testo istruttivo:** **una violazione, mia:** l'etichetta "Trascina / Scorri col dito"
+   sullo scrub di SYSTEM. In home nessun testo istruttivo (l'indicatore di scroll del motore è senza
+   testo). Da togliere: una riga.
+4. **§6.6 nessun prima/dopo con linea o slider:** in home **rispettato** (la rivelazione è una zona
+   morbida, nessuna linea). In SYSTEM non c'è una linea di confronto, ma c'è una timeline trascinabile:
+   vedi C3.
+5. **§6.3bis stesso mondo o mondi paralleli:** **non scelto.** Oggi i micro-loop del secondo livello sono
+   ricavati dalla stessa immagine di ogni scena, quindi di fatto mostrano lo stesso mondo, ma è solo
+   una conseguenza dei segnaposto: basta cambiare `hoverClip` nel manifest, il codice regge entrambe
+   le strade.
+6. **Documenti citati e mancanti:** vedi 8.4.
+
+### 8.3 Altro emerso dai documenti
+
+- **Credito fondatori in footer (§5):** previsto "chi c'è dietro HEY", solo nomi e ruolo, stile credits.
+  Sul sito non c'è; il formato è ancora aperto (§10).
+- **"HEY / THE IDEA":** nello storyboard è la chiusura del film ("HEY — THE IDEA", logo con "THE IDEA"
+  sotto). La scritta che ho tolto dalla reference della scena 03 era probabilmente quella dicitura,
+  messa lì dalla generazione, non un difetto casuale. Su un segnaposto toglierla resta corretto, ma va
+  segnalato: l'originale è nella storia git (commit 0d9b77e) e si ripristina in un attimo.
+  "THE IDEA" sotto il logo è un **terzo descrittore** oltre ad "AI GENERATIVE MEDIA" e a "HUMAN.
+  EVOLUTION. YDEA.": da chiarire con Massimiliano quale vale.
+- **Copy del viaggio:** il concept v02 §15 prevede HEY. / IDEA. / DIRECTION. / PRODUCTION. / POST. /
+  COLOR. / RESULT. / YOUR IDEA. Il sito ne usa 5, coerenti con la spec v2 a 6 clip. Copy definitivo non
+  chiuso (§8).
+- **Storyboard 16 tavole contro 6 clip:** la spec v2 raggruppa le 16 tavole in intro + loop + 4 clip.
+  La chiusura dello storyboard dice "YOUR IDEA. WHAT'S YOUR IDEA? LET'S MAKE IT REAL.": sul sito c'è
+  "YOUR IDEA. LET'S MAKE IT REAL." (manca la domanda centrale).
+- **Spec clip:** 30 fps, 1080p, GOP 8, senza audio. Il motore è pronto; i micro-loop della rivelazione
+  (segnaposto, 854×480, 24 fps) non sono coperti dalla spec.
+- **Cucitura loop → prima clip (§6.3ter):** flash o blur di 150–250 ms. Da fare quando arrivano le clip.
+
+### 8.4 Documenti ancora mancanti: quali servono davvero
+
+| Documento | Serve? | Perché |
+|---|---|---|
+| `HEY_Il_Viaggio_a_Ritroso_Nuovo_Concept_v02.md` | **Sì, subito** | Copy del viaggio (§15), struttura A→J, regole produttive: è la fonte per titoli e tappe del manifest |
+| `HEY_Stato_e_Prossimi_Passi.md` | Sì | Evita di rifare cose già scartate ad agosto |
+| `HEY_Reference_Prompts_Viaggio.md` | Più avanti | Serve quando si producono le clip e i connettori (le note di regia rimandano al suo §6) |
+| `HEY_Scroll_World_Higgsfield_Documento_per_Claude_v01.md` | No, per ora | Il motore è già scelto e montato; utile solo se si genera con Higgsfield |
+| `HEY_Bibbia_di_Progetto.md` | No | Business e governance, non decisioni sul sito |
