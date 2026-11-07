@@ -160,3 +160,17 @@ export const arrival = {
   portrait: { src: "PLACEHOLDER — ritratto", alt: "PLACEHOLDER — ritratto" },
   contacts: [{ label: "PLACEHOLDER — contatti", href: "#" }],
 };
+
+// Stringhe dell'interfaccia. Struttura pronta per una seconda lingua (BRIEF §7).
+export const ui = {
+  index: "Indice",
+  soon: "in arrivo",
+  skip: "Salta",
+  replay: "Rivedi",
+  fullWork: "Watch full work",
+  continue: "Continua",
+  links: "Richiami",
+  placeholderClip: "PLACEHOLDER — clip simulata",
+  playClip: "Avvia clip",
+  end: "Fine del prototipo. Le altre stazioni arrivano al Passo 2.",
+};

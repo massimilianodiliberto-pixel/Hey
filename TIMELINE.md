@@ -1,6 +1,6 @@
 # TIMELINE — Punto G
 
-Versione 0, scritta dalle sezioni 2 e 5 del `BRIEF.md`. **Il materiale di riferimento non è
+Versione 1. Versione 0 scritta dalle sezioni 2 e 5 del `BRIEF.md`. **Il materiale di riferimento non è
 ancora arrivato**: quando arrivano i fotogrammi in `reference/`, valori e durate vanno corretti
 su di essi.
 
@@ -74,9 +74,9 @@ Desktop. La colonna "vh" vale per il pin di 300vh.
 
 | p | vh | Elemento | Cosa succede | Proprietà | Easing |
 |---|---|---|---|---|---|
-| 0.00 → 0.86 | 0 → 258 | `bg` | La camera avanza nel fermo | scale 1→1.08, x 0→−2% | linear |
-| 0.00 → 0.86 | 0 → 258 | `mid` | Parallax medio | scale 1→1.18, x 0→−4%, y 0→−1% | linear |
-| 0.00 → 0.86 | 0 → 258 | `fg` | Parallax forte, può uscire dal quadro | scale 1→1.35, x 0→−8%, y 0→+3% | linear |
+| 0.00 → 0.86 | 0 → 258 | `bg` | La camera avanza nel fermo | scale 1→1.05, x 0→+2% | linear |
+| 0.00 → 0.86 | 0 → 258 | `mid` | Parallax medio | scale 1→1.12, x 0→+4%, y 0→−1% | linear |
+| 0.00 → 0.86 | 0 → 258 | `fg` | Parallax forte, resta nel quadro (è la finestra della transizione) | scale 1→1.22, x 0→+8%, y 0→+3% | linear |
 | 0.00 → 0.08 | 0 → 24 | riga "ricevuto" | Esce: il passato si chiude | opacity 1→0, y 0→−12px | power1.in |
 | 0.00 → 0.08 | 0 → 24 | link "watch full work" | Esce | opacity 1→0 | power1.in |
 | **0.14 → 0.28** | 42 → 84 | **senso** | **Entra con una maschera da sinistra a destra, al centro del quadro** | clip-path inset(0 100% 0 0)→inset(0 0 0 0), opacity 0→1 | power2.out |
@@ -107,7 +107,8 @@ confermato (domanda 1).
 ### Scroll all'indietro
 
 Dentro la sosta tutto si ripercorre al contrario. Tornati a `p = 0`, la scena resta sul
-fotogramma chiave: **la clip non riparte**. Titolo clip e link ricompaiono, statici.
+fotogramma chiave: **la clip non riparte**. Titolo clip e link ricompaiono, statici, con il
+comando **Rivedi** per riavviarla a mano.
 
 ---
 
@@ -125,7 +126,7 @@ camera spinge oltre A (§3: trasformazione, non sostituzione).
 |---|---|---|---|---|---|
 | 0.86 | 258 | `fg` di A | Smette di seguire il parallax e si blocca: sarà la finestra | — | — |
 | 0.86 → 0.90 | 258 → 270 | B (tutti i piani) | Compare dentro la sagoma di `fg` di A | clip-path circle(0% at fg)→circle(6% at fg) | power2.in |
-| 0.88 → 1.00 | 264 → 300 | `bg` + `mid` di A | La camera spinge oltre A | scale 1.08→1.5 / 1.18→1.7 | power2.in |
+| 0.88 → 1.00 | 264 → 300 | scena A intera | La camera spinge oltre A | scale 1→1.45 | power2.in |
 | 0.90 → 1.00 | 270 → 300 | maschera di B | La finestra si apre fino a coprire il quadro di B. Il centro scivola dalla posizione di `fg` di A al centro di B | circle(6%)→circle(75%), centro interpolato | power3.inOut |
 | 0.90 → 1.00 | 270 → 300 | piani di B | Contro-zoom: entriamo in B invece di vederla arrivare | scale 1.25→1, ognuno con il suo fattore | power2.out |
 | 0.94 → 1.00 | 282 → 300 | `fg` di A | Si dissolve dentro il bordo della finestra | opacity 1→0 | power1.in |
@@ -153,7 +154,7 @@ Stessi rapporti, pin più corto, meno piani.
 | Voce | Desktop | Mobile |
 |---|---|---|
 | Pin | 300vh | 180vh |
-| Piani | `bg` + `mid` + `fg` | `bg` + `fg` |
+| Piani in movimento | `bg` + `mid` + `fg` | due: `bg` e `mid` insieme, `fg` separato (le forme restano tutte) |
 | Parallax (ampiezze) | come tabella B | dimezzate |
 | Freeze | sequenza piena | sequenza corta a risoluzione ridotta, oppure fotogramma fisso con parallax leggero |
 | Senso → traccia | si sposta al margine laterale | si sposta al bordo superiore, in riga |
@@ -174,13 +175,10 @@ il nuovo quadro si apre (0,5 s) e la clip parte. I sensi delle stazioni saltate 
 
 ---
 
-## Domande aperte
+## Decisioni
 
-1. **Avanzamento automatico:** sposta lo scroll reale (la mia proposta) o è un progresso virtuale
-   separato?
-2. **Tornando a `p = 0`:** la clip non riparte. Serve un piccolo comando "rivedi" a mano, o resta
-   solo il fotogramma fermo?
-3. **Scroll durante una clip che non è l'ultima:** ho supposto che porti dritto al freeze
-   dell'ultima clip, saltando le altre. È corretto?
-4. **Quadro:** clip e freeze in una finestra con fondo neutro attorno (la mia proposta, per il
-   §6) o a tutto schermo?
+1. **Avanzamento automatico:** muove lo scroll reale, interrompibile da qualunque gesto.
+2. **Tornando a `p = 0`:** fotogramma fermo e comando **Rivedi**. La clip non riparte da sola.
+3. **Scroll durante una clip che non è l'ultima:** porta al freeze dell'ultima clip, saltando le
+   altre (supposizione, non ancora confermata).
+4. **Quadro:** finestra con fondo neutro attorno, non a tutto schermo.

@@ -1,3 +1,32 @@
+:root {
+  --bg: #ebe9e4;
+  --ink: #1b1b19;
+  --muted: #77736c;
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --frame-w: min(62vw, 104vh);
+  --frame-h: calc(var(--frame-w) * 9 / 16);
+  --frame-top: 15vh;
+  --frame-left: calc(50% - var(--frame-w) / 2);
+  --below: calc(var(--frame-top) + var(--frame-h) + 24px);
+
+  --pin: 300vh;
+  --opening: 200vh;
+  --sense-size: clamp(30px, 3.6vw, 60px);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --frame-w: 88vw;
+    --frame-h: calc(var(--frame-w) * 5 / 4);
+    --frame-top: 12vh;
+    --below: calc(var(--frame-top) + var(--frame-h) + 18px);
+    --pin: 180vh;
+    --opening: 140vh;
+    --sense-size: clamp(26px, 8vw, 38px);
+  }
+}
+
 *,
 *::before,
 *::after {
@@ -7,6 +36,443 @@
 html,
 body {
   margin: 0;
-  background: #efede8;
-  color: #1a1a18;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 4px;
+}
+
+a {
+  color: inherit;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ---------- Palco fisso: tutte le scene vivono qui, lo scroll le trasforma ---------- */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.frame-box {
+  position: absolute;
+  left: var(--frame-left);
+  top: var(--frame-top);
+  width: var(--frame-w);
+  height: var(--frame-h);
+}
+
+.frame {
+  overflow: hidden;
+  background: #d9d6cf;
+}
+
+.live,
+.clip-layer,
+.clip-cam,
+.plane {
+  position: absolute;
+  inset: 0;
+}
+
+.plane {
+  will-change: transform;
+}
+
+.shape {
+  position: absolute;
+  display: block;
+}
+
+/* Clip segnaposto: stesso quadro, stessi piani, scorre nel tempo */
+.clip-layer {
+  visibility: hidden;
+}
+.clip-tint {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: multiply;
+  opacity: 0;
+}
+.clip-caption {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: var(--sense-size);
+  font-weight: 500;
+  color: #f4f1ea;
+  opacity: 0;
+}
+.clip-hud {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  mix-blend-mode: difference;
+}
+
+/* Scene */
+.scene,
+.scene-entry,
+.scene-zoom,
+.scene-exit {
+  position: absolute;
+  inset: 0;
+}
+.scene {
+  pointer-events: none; /* le scene sono impilate: solo i comandi ricevono il puntatore */
+}
+.scene-entry {
+  clip-path: circle(0px at 50% 50%);
+}
+
+.scene-text {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.scene-text button,
+.scene-text a {
+  pointer-events: auto;
+}
+
+.clipui-wrap {
+  position: absolute;
+  left: var(--frame-left);
+  width: var(--frame-w);
+  top: calc(var(--frame-top) - 34px);
+}
+.clipui {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+}
+.clip-title {
+  color: var(--ink);
+  margin-right: auto;
+}
+.clipui button,
+.clipui a {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.clipui button:hover,
+.clipui a:hover {
+  border-bottom-color: currentColor;
+}
+.clip-replay {
+  display: none;
+}
+.clipui.is-frozen .clip-skip {
+  display: none;
+}
+.clipui.is-frozen .clip-replay {
+  display: inline;
+}
+.clip-full[aria-disabled="true"] {
+  opacity: 0.55;
+}
+
+.received-wrap {
+  position: absolute;
+  left: var(--frame-left);
+  top: var(--below);
+  width: calc(var(--frame-w) * 0.55);
+}
+.received,
+.today {
+  margin: 0;
+  font-size: clamp(17px, 1.45vw, 22px);
+  line-height: 1.32;
+}
+.today {
+  position: absolute;
+  right: var(--frame-left);
+  top: var(--below);
+  width: calc(var(--frame-w) * 0.5);
+  text-align: right;
+}
+
+/* Il senso: bianco in differenza, leggibile sul quadro e scuro sul fondo quando va al margine */
+.sense {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--frame-top) + var(--frame-h) / 2);
+  margin: 0;
+  font-size: var(--sense-size);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: #f7f5f0;
+  mix-blend-mode: difference;
+}
+
+.links {
+  position: absolute;
+  right: var(--frame-left);
+  top: calc(var(--below) + 64px);
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+}
+.links button {
+  border-bottom: 1px solid var(--ink);
+}
+
+/* Apertura */
+.opening {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+.opening-shape {
+  background: var(--ink);
+  clip-path: circle(14% at 50% 50%);
+}
+.opening-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--below);
+  margin: 0;
+  text-align: center;
+  font-size: clamp(18px, 1.8vw, 26px);
+}
+
+.end {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  color: var(--muted);
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ---------- Strati fissi sopra il palco ---------- */
+
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.traces {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+.trace {
+  position: absolute;
+  left: var(--tx);
+  top: var(--ty);
+  font-size: calc(var(--sense-size) * 0.32);
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.index {
+  position: fixed;
+  top: 22px;
+  right: 24px;
+  z-index: 70;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+.index ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.index li button {
+  color: var(--muted);
+  transition: color 0.3s;
+}
+.index li button:hover,
+.index li button.is-current {
+  color: var(--ink);
+}
+.index li button.is-current::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 1px;
+  margin: 0 8px 3px 0;
+  background: var(--ink);
+}
+.index .is-soon {
+  color: var(--muted);
+  opacity: 0.4;
+}
+.index-toggle {
+  display: none;
+}
+
+.invite {
+  position: fixed;
+  left: 50%;
+  bottom: 4vh;
+  z-index: 65;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+  visibility: hidden;
+}
+.invite-line {
+  width: 1px;
+  height: 28px;
+  background: currentColor;
+}
+
+/* Le tracce di scroll: solo altezza, il palco è fisso */
+.track-opening {
+  height: var(--opening);
+}
+.track-station {
+  height: var(--pin);
+}
+.track-end {
+  height: 100vh;
+}
+
+/* ---------- Mobile: meno piani, tracce in riga in alto, indice a scomparsa ---------- */
+
+@media (max-width: 768px) {
+  .received-wrap {
+    width: var(--frame-w);
+  }
+  .today {
+    left: var(--frame-left);
+    right: auto;
+    width: var(--frame-w);
+    text-align: left;
+  }
+  .links {
+    left: var(--frame-left);
+    right: auto;
+  }
+  .clipui {
+    gap: 12px;
+    font-size: 11px;
+  }
+  .trace {
+    left: var(--mx);
+    top: var(--my);
+  }
+  .index {
+    top: auto;
+    bottom: 18px;
+    right: 18px;
+  }
+  .index-toggle {
+    display: block;
+    border-bottom: 1px solid var(--ink);
+  }
+  .index ul {
+    display: none;
+    position: absolute;
+    right: 0;
+    bottom: 28px;
+    padding: 12px 14px;
+    background: var(--bg);
+  }
+  .index.is-open ul {
+    display: flex;
+  }
+}
+
+/* ---------- prefers-reduced-motion: pagine statiche ---------- */
+
+.static-page {
+  position: relative;
+  min-height: 100vh;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.static-page.is-in {
+  opacity: 1;
+}
+.static-page > .received {
+  position: absolute;
+  left: var(--frame-left);
+  top: var(--below);
+  width: calc(var(--frame-w) * 0.55);
+}
+.static-shape {
+  clip-path: circle(14% at 50% 50%);
+}
+.static-sense {
+  transform: translate(-50%, -50%);
+}
+.static-clipui {
+  position: absolute;
+  left: var(--frame-left);
+  width: var(--frame-w);
+  top: calc(var(--frame-top) - 34px);
+}
+.index.is-static a {
+  color: var(--muted);
+  text-decoration: none;
 }

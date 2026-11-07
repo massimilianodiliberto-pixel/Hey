@@ -1,10 +1,8 @@
-// Fase 1 in attesa di conferma della TIMELINE. Il motore di scroll non è ancora scritto.
-import { opening } from "@/content/stations";
+import Journey from "@/components/Journey";
+import { opening, stations, ui } from "@/content/stations";
+import { config } from "@/config";
 
 export default function Page() {
-  return (
-    <main>
-      <p>{opening.line}</p>
-    </main>
-  );
+  const built = stations.filter((s) => (config.prototypeStations as readonly string[]).includes(s.id));
+  return <Journey opening={opening} stations={built} allStations={stations} ui={ui} />;
 }
