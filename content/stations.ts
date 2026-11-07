@@ -172,5 +172,6 @@ export const ui = {
   links: "Richiami",
   placeholderClip: "PLACEHOLDER — clip simulata",
   playClip: "Avvia clip",
-  end: "Fine del prototipo. Le altre stazioni arrivano al Passo 2.",
+  arrival: "Lui",
+  preview: "Anteprima — contenuti PLACEHOLDER",
 };

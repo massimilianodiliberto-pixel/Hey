@@ -1,8 +1,9 @@
 // Flag e misure del prototipo. Le fasi in scroll sono in lib/phases.ts (specchio di TIMELINE.md).
 
 export const config = {
-  // Passo 1: solo apertura + queste due stazioni. Passo 2: tutte quelle in content/stations.ts.
-  prototypeStations: ["occhi", "orecchie"],
+  // Stazioni costruite. null = tutte quelle in content/stations.ts, nell'ordine del file.
+  // Il Passo 1 rifinito è su apertura, Occhi e Orecchie; le altre usano lo stesso motore e i segnaposto.
+  stations: null as readonly string[] | null,
 
   // Aggancio morbido alle stazioni (BRIEF §2). Disattivabile.
   snap: true,

@@ -175,6 +175,25 @@ il nuovo quadro si apre (0,5 s) e la clip parte. I sensi delle stazioni saltate 
 
 ---
 
+## G. Arrivo (traccia di 250vh su desktop, 170vh su mobile)
+
+L'ultima stazione si chiude come tutte le altre: la sua finestra si apre e da lì emerge la scena
+di arrivo. `p` qui va da 0 a 1 sulla traccia dell'arrivo.
+
+| p | Elemento | Cosa succede | Proprietà |
+|---|---|---|---|
+| 0.02 → 0.22 | ritratto | La forma astratta dell'apertura torna come disco e si apre fino a diventare la persona | clip-path circle(22%)→circle(75%) |
+| 0.08 | tracce al margine | Si spengono: i sensi passano alla scena | opacity →0 |
+| 0.08 → 0.34 | sensi | Partono dal loro posto al margine e convergono attorno al ritratto. Quelli delle stazioni non visitate restano spenti (opacity 0.18) | translate verso il cerchio, scale 0.85→1 |
+| 0.30 → 0.52 | linee | Partono da Gambe verso tutti gli altri sensi | stroke-dashoffset 1→0 |
+| 0.48 → 0.58 | «Istinto» | Entra sotto il ritratto | opacity 0→1, y 10px→0 |
+| 0.60 → 0.70 | frase dell'arrivo | Entra | opacity, y |
+| 0.72 → 0.80 | chiusura | Entra | opacity, y |
+| 0.82 → 0.90 | nome e contatti (PLACEHOLDER) | Entrano | opacity |
+
+Disposizione dei sensi: su desktop un'ellisse larga attorno al ritratto, che parte a −60° così
+nessun senso cade sopra o sotto il centro. Su mobile tre sopra e tre sotto il ritratto.
+
 ## Decisioni
 
 1. **Avanzamento automatico:** muove lo scroll reale, interrompibile da qualunque gesto.

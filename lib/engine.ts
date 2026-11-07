@@ -10,7 +10,7 @@ import Lenis from "lenis";
 import type { Station } from "@/content/stations";
 import { config } from "@/config";
 import { looks } from "@/components/looks";
-import { P, span } from "./phases";
+import { A, P, span } from "./phases";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -61,7 +61,10 @@ const power2Out = (t: number) => 1 - (1 - t) * (1 - t);
 const pad = (n: number) => String(Math.floor(n)).padStart(2, "0");
 const circ = (r: number, c: { x: number; y: number }) => `circle(${r.toFixed(1)}px at ${c.x.toFixed(1)}px ${c.y.toFixed(1)}px)`;
 
-export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
+// Ciò che emerge alla fine di una stazione: la stazione successiva o la scena di arrivo.
+type Next = { entry: HTMLElement; zoom: HTMLElement | null; text: HTMLElement | null; center: () => { x: number; y: number } };
+
+export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub: string }) {
   const q = <T extends HTMLElement = HTMLElement>(el: ParentNode, sel: string) => el.querySelector(sel) as T;
 
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -120,8 +123,21 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
     st: null as ScrollTrigger | null,
   };
   const stage = q(root, ".stage");
-  const endLayer = q(root, ".end");
-  const endTrack = q(root, '[data-track="end"]');
+  const arr = {
+    entry: q(root, ".arrival-entry"),
+    track: q(root, '[data-track="lui"]'),
+    portrait: q(root, ".portrait"),
+    instinct: q(root, ".instinct"),
+    line: q(root, ".arrival-line"),
+    closing: q(root, ".arrival-closing"),
+    name: q(root, ".arrival-name"),
+    contacts: q(root, ".arrival-contacts"),
+    rings: S.map((s) => ({ s, el: q(root, `[data-ring="${s.data.id}"]`) })),
+    lines: [...root.querySelectorAll<SVGLineElement>("[data-line]")],
+    indexBtn: root.querySelector<HTMLElement>('[data-index="lui"]'),
+    st: null as ScrollTrigger | null,
+    p: 0,
+  };
   const veil = q(root, ".veil");
   const invite = q(root, ".invite");
 
@@ -317,7 +333,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
     const tp = tl.progress();
     if (!jumping && tp >= P.traceOn) s.visited = true; // i sensi saltati con l'indice restano spenti
     const senseOnScreen = !!s.st && inRange(s.st) && tp > P.senseIn[0] && tp < P.traceOn;
-    const lit = s.visited && !senseOnScreen;
+    const lit = s.visited && !senseOnScreen && arr.p < A.converge[0];
     if (lit !== s.traceLit && s.trace) {
       s.traceLit = lit;
       gsap.set(s.trace, { autoAlpha: lit ? 0.7 : 0 });
@@ -334,10 +350,13 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
       const lead = prev ? (1 - P.indexSwap) * (prev.end - prev.start) : 0;
       if (y >= s.st.start - lead) cur = s;
     });
-    const id = (cur as St | null)?.data.id ?? "";
+    let id = (cur as St | null)?.data.id ?? "";
+    const last = S[S.length - 1]?.st;
+    if (arr.st && last && y >= arr.st.start - (1 - P.indexSwap) * (last.end - last.start)) id = "lui";
     if (id === currentId) return;
     currentId = id;
     S.forEach((s) => s.indexBtn?.classList.toggle("is-current", s.data.id === id));
+    arr.indexBtn?.classList.toggle("is-current", id === "lui");
   }
 
   // ---------- Timeline in scrub ----------
@@ -362,7 +381,15 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
     return tl;
   }
 
-  function buildStation(s: St, next: St | undefined, mobile: boolean) {
+  const asNext = (n: St): Next => ({ entry: n.entry, zoom: n.zoom, text: n.text, center: () => frameCenter(n) });
+  const arrivalNext: Next = {
+    entry: arr.entry,
+    zoom: null,
+    text: null,
+    center: () => ({ x: arr.portrait.offsetLeft + arr.portrait.offsetWidth / 2, y: arr.portrait.offsetTop + arr.portrait.offsetHeight / 2 }),
+  };
+
+  function buildStation(s: St, next: Next, mobile: boolean) {
     const amp = mobile ? 0.5 : 1;
     const fe = P.freezeEnd;
     const tl = gsap.timeline({ paused: true, defaults: { ease: "none" }, onUpdate: () => onStationTimeline(s) });
@@ -409,7 +436,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
     tl.to(s.text, { autoAlpha: 0, duration: 0.03 }, 0.9);
     tl.to(s.exit, { scale: mobile ? 1.3 : 1.45, duration: span(P.pushA), ease: "power2.in" }, P.pushA[0]);
     tl.to(s.exit, { autoAlpha: 0, duration: span(P.fadeA), ease: "power1.in" }, P.fadeA[0]);
-    if (next) {
+    {
       const r0 = () => 0.06 * maxR();
       tl.fromTo(
         next.entry,
@@ -417,12 +444,89 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
         { clipPath: () => circ(r0(), windowOrigin(s, amp)), duration: span(P.windowOpen), ease: "power2.in" },
         P.windowOpen[0],
       );
-      tl.to(next.entry, { clipPath: () => circ(maxR(), frameCenter(next)), duration: span(P.windowGrow), ease: "power3.inOut" }, P.windowGrow[0]);
-      if (!mobile) tl.fromTo(next.zoom, { scale: 1.25 }, { scale: 1, duration: span(P.windowGrow), ease: "power2.out" }, P.windowGrow[0]);
-      tl.fromTo(next.text, { autoAlpha: 0 }, { autoAlpha: 1, duration: span(P.textB) }, P.textB[0]);
-    } else {
-      tl.fromTo(endLayer, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.08 }, 0.92);
+      tl.to(next.entry, { clipPath: () => circ(maxR(), next.center()), duration: span(P.windowGrow), ease: "power3.inOut" }, P.windowGrow[0]);
+      if (!mobile && next.zoom) tl.fromTo(next.zoom, { scale: 1.25 }, { scale: 1, duration: span(P.windowGrow), ease: "power2.out" }, P.windowGrow[0]);
+      if (next.text) tl.fromTo(next.text, { autoAlpha: 0 }, { autoAlpha: 1, duration: span(P.textB) }, P.textB[0]);
     }
+    return tl;
+  }
+
+  // ---------- Arrivo: i sensi convergono attorno alla persona, le linee partono da Gambe ----------
+
+  const center = (el: HTMLElement) => ({ x: el.offsetLeft + el.offsetWidth / 2, y: el.offsetTop + el.offsetHeight / 2 });
+
+  // Posizioni dei sensi attorno al ritratto, nell'ordine del file dati.
+  // Desktop: ellisse larga e bassa che parte a −60°, così nessun senso cade sopra o sotto il
+  // centro, dove stanno «Istinto» e le frasi. Mobile: tre sopra e tre sotto il ritratto.
+  function ringPos(i: number, mobile: boolean) {
+    const c = center(arr.portrait);
+    const n = arr.rings.length;
+    const H = arr.portrait.offsetHeight;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    if (mobile) {
+      const half = Math.ceil(n / 2);
+      const row = i < half ? 0 : 1;
+      const k = row ? i - half : i;
+      const cols = row ? n - half : half;
+      const x = vw * (cols > 1 ? 0.18 + (0.64 * k) / (cols - 1) : 0.5);
+      return { x, y: row ? c.y + H / 2 + vh * 0.06 : c.y - H / 2 - vh * 0.07 };
+    }
+    const a = -Math.PI / 3 + (i / n) * Math.PI * 2;
+    return { x: c.x + Math.cos(a) * vw * 0.38, y: c.y + Math.sin(a) * H * 0.66 };
+  }
+
+  function layoutArrival(mobile: boolean) {
+    arr.rings.forEach(({ el }, i) => {
+      const r = ringPos(i, mobile);
+      gsap.set(el, { left: r.x, top: r.y, xPercent: -50, yPercent: -50 });
+    });
+    const hub = arr.rings.findIndex((r) => r.s.data.id === opts.hub);
+    const h = hub >= 0 ? ringPos(hub, mobile) : center(arr.portrait);
+    arr.lines.forEach((ln) => {
+      const i = arr.rings.findIndex((r) => r.s.data.id === ln.dataset.line);
+      const t = ringPos(i, mobile);
+      // Le linee si fermano prima delle parole, per non attraversarle.
+      const k = 0.16;
+      ln.setAttribute("x1", String(h.x + (t.x - h.x) * k));
+      ln.setAttribute("y1", String(h.y + (t.y - h.y) * k));
+      ln.setAttribute("x2", String(t.x - (t.x - h.x) * k));
+      ln.setAttribute("y2", String(t.y - (t.y - h.y) * k));
+      ln.setAttribute("pathLength", "1");
+    });
+  }
+
+  function onArrivalUpdate(tl: gsap.core.Timeline) {
+    arr.p = tl.progress();
+    const on = arr.p >= A.converge[0];
+    arr.rings.forEach(({ s, el }) => gsap.set(el, { autoAlpha: on ? (s.visited ? 0.9 : 0.18) : 0 }));
+    arr.lines.forEach((ln) => {
+      const s = S.find((x) => x.data.id === ln.dataset.line);
+      ln.style.strokeOpacity = s?.visited ? "0.55" : "0.15";
+    });
+    S.forEach(onStationTimeline);
+  }
+
+  function buildArrival(mobile: boolean) {
+    const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
+    tl.eventCallback("onUpdate", () => onArrivalUpdate(tl));
+    layoutArrival(mobile);
+    // La forma astratta dell'apertura torna e diventa la persona.
+    tl.fromTo(arr.portrait, { clipPath: "circle(22% at 50% 50%)" }, { clipPath: "circle(75% at 50% 50%)", duration: span(A.portrait), ease: "power2.inOut" }, A.portrait[0]);
+    arr.rings.forEach(({ s, el }) => {
+      const from = () => {
+        const t = s.trace ? center(s.trace) : center(arr.portrait);
+        const r = { x: el.offsetLeft, y: el.offsetTop };
+        return { x: t.x - r.x, y: t.y - r.y };
+      };
+      tl.fromTo(el, { x: () => from().x, y: () => from().y, scale: 0.85 }, { x: 0, y: 0, scale: 1, duration: span(A.converge), ease: "power2.inOut" }, A.converge[0]);
+    });
+    tl.fromTo(arr.lines, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: span(A.lines), ease: "power1.inOut", stagger: 0.02 }, A.lines[0]);
+    tl.fromTo(arr.instinct, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: span(A.instinct), ease: "power2.out" }, A.instinct[0]);
+    tl.fromTo(arr.line, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: span(A.line), ease: "power2.out" }, A.line[0]);
+    tl.fromTo(arr.closing, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: span(A.closing), ease: "power2.out" }, A.closing[0]);
+    tl.fromTo([arr.name, arr.contacts], { autoAlpha: 0 }, { autoAlpha: 1, duration: span(A.name) }, A.name[0]);
+    tl.set({}, {}, 1);
     return tl;
   }
 
@@ -435,7 +539,8 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
     opening.st = ScrollTrigger.create({ trigger: opening.track, start: "top top", end: "bottom top", animation: otl, scrub, invalidateOnRefresh: true });
 
     S.forEach((s, i) => {
-      s.tl = buildStation(s, S[i + 1], mobile);
+      const n = S[i + 1];
+      s.tl = buildStation(s, n ? asNext(n) : arrivalNext, mobile);
       s.st = ScrollTrigger.create({
         trigger: s.track,
         start: "top top",
@@ -444,6 +549,16 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
         scrub,
         invalidateOnRefresh: true,
       });
+    });
+    const atl = buildArrival(mobile);
+    arr.st = ScrollTrigger.create({
+      trigger: arr.track,
+      start: "top top",
+      end: "bottom bottom",
+      animation: atl,
+      scrub,
+      invalidateOnRefresh: true,
+      onRefresh: () => layoutArrival(mobile),
     });
     updateCurrent();
   });
@@ -480,7 +595,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
       const len = s.st.end - s.st.start;
       const p = (y - s.st.start) / len;
       if (p > P.freezeEnd + 0.005 && p < 0.998) {
-        const nextStart = S[i + 1]?.st?.start ?? endTrack.offsetTop;
+        const nextStart = S[i + 1]?.st?.start ?? arr.st?.start ?? y;
         target = p >= P.indexSwap ? nextStart : s.st.start + P.freezeEnd * len;
       }
     });
@@ -500,7 +615,8 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
 
   function jumpTo(id: string) {
     const s = S.find((x) => x.data.id === id);
-    if (!s?.st || jumping) return;
+    const targetSt = id === "lui" ? arr.st : s?.st;
+    if (!targetSt || jumping) return;
     jumping = true;
     cancelAuto();
     showInvite(false);
@@ -510,15 +626,17 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[] }) {
       duration: 0.5,
       ease: "power1.inOut",
       onComplete: () => {
-        jumpY(s.st!.start);
+        jumpY(targetSt.start);
         // Niente scrub attraverso le stazioni intermedie: ogni timeline va subito al suo posto.
-        [opening.st, ...S.map((x) => x.st)].forEach((st) => {
+        [opening.st, ...S.map((x) => x.st), arr.st].forEach((st) => {
           st?.getTween()?.progress(1);
           st?.animation?.progress(st.progress);
         });
         updateCurrent();
-        s.phase = "waiting";
-        playClips(s);
+        if (s) {
+          s.phase = "waiting";
+          playClips(s);
+        }
         gsap.to(veil, { autoAlpha: 0, duration: 0.5, ease: "power1.inOut", onComplete: () => void (jumping = false) });
       },
     });

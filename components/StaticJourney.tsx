@@ -27,7 +27,7 @@ function ManualClip({ label, title }: { label: string; title?: string }) {
   );
 }
 
-export function StaticJourney({ opening, stations, allStations, ui }: JourneyProps) {
+export function StaticJourney({ opening, stations, allStations, arrival, ui }: JourneyProps) {
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,8 +50,12 @@ export function StaticJourney({ opening, stations, allStations, ui }: JourneyPro
               {stations.some((x) => x.id === s.id) ? <a href={`#${s.id}`}>{s.title}</a> : <span className="is-soon">{s.title}</span>}
             </li>
           ))}
+          <li>
+            <a href="#lui">{ui.arrival}</a>
+          </li>
         </ul>
       </nav>
+      <p className="preview-tag">{ui.preview}</p>
       <section className="static-page">
         <div className="frame-box opening-shape static-shape" />
         <p className="opening-line">{opening.line}</p>
@@ -69,6 +73,31 @@ export function StaticJourney({ opening, stations, allStations, ui }: JourneyPro
           <p className="today">{s.today.text}</p>
         </section>
       ))}
+      <section id="lui" className="static-page static-arrival" aria-label={ui.arrival}>
+        <div className="portrait static-portrait" role="img" aria-label={arrival.portrait.alt}>
+          <span className="portrait-head" />
+          <span className="portrait-body" />
+          <span className="portrait-tag">{arrival.portrait.src}</span>
+        </div>
+        <ul className="static-senses">
+          {stations.map((s) => (
+            <li key={s.id}>{s.sense}</li>
+          ))}
+        </ul>
+        <p className="instinct static-visible">{arrival.sense}</p>
+        <div className="arrival-text static-text">
+          <p>{arrival.line}</p>
+          <p>{arrival.closing}</p>
+          <p className="arrival-name">{arrival.name}</p>
+          <p className="arrival-contacts">
+            {arrival.contacts.map((c) => (
+              <a key={c.label} href={c.href}>
+                {c.label}
+              </a>
+            ))}
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

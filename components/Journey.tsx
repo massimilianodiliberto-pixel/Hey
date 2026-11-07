@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import type { Station } from "@/content/stations";
+import type { Station, arrival as Arrival } from "@/content/stations";
 import { createEngine } from "@/lib/engine";
 import { looks } from "./looks";
 import { Planes } from "./Planes";
@@ -12,11 +12,12 @@ export type JourneyProps = {
   opening: { line: string };
   stations: Station[]; // quelle costruite in questo passo
   allStations: Station[]; // tutte, per indice e tracce
+  arrival: typeof Arrival;
   ui: Record<string, string>;
 };
 
 export default function Journey(props: JourneyProps) {
-  const { opening, stations, allStations, ui } = props;
+  const { opening, stations, allStations, arrival, ui } = props;
   const root = useRef<HTMLDivElement>(null);
   const [reduced, setReduced] = useState<boolean | null>(null);
   const [indexOpen, setIndexOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function Journey(props: JourneyProps) {
 
   useEffect(() => {
     if (reduced !== false || !root.current) return;
-    return createEngine(root.current, { stations });
+    return createEngine(root.current, { stations, hub: "gambe" });
   }, [reduced, stations]);
 
   if (reduced) return <StaticJourney {...props} />;
@@ -114,9 +115,42 @@ export default function Journey(props: JourneyProps) {
           );
         })}
 
-        <div className="end">
-          <p>{ui.end}</p>
-        </div>
+        <section className="arrival" data-scene="lui" aria-label={ui.arrival}>
+          <div className="arrival-entry">
+            <svg className="arrival-lines" aria-hidden="true">
+              {stations
+                .filter((s) => s.id !== "gambe")
+                .map((s) => (
+                  <line key={s.id} data-line={s.id} />
+                ))}
+            </svg>
+            <div className="portrait" role="img" aria-label={arrival.portrait.alt}>
+              <span className="portrait-head" />
+              <span className="portrait-body" />
+              <span className="portrait-tag">{arrival.portrait.src}</span>
+            </div>
+            <div className="ring">
+              {stations.map((s) => (
+                <span key={s.id} className="ring-sense" data-ring={s.id}>
+                  {s.sense}
+                </span>
+              ))}
+            </div>
+            <p className="instinct">{arrival.sense}</p>
+            <div className="arrival-text">
+              <p className="arrival-line">{arrival.line}</p>
+              <p className="arrival-closing">{arrival.closing}</p>
+              <p className="arrival-name">{arrival.name}</p>
+              <p className="arrival-contacts">
+                {arrival.contacts.map((c) => (
+                  <a key={c.label} href={c.href}>
+                    {c.label}
+                  </a>
+                ))}
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
 
       <div className="veil" />
@@ -157,8 +191,15 @@ export default function Journey(props: JourneyProps) {
               )}
             </li>
           ))}
+          <li>
+            <button type="button" data-jump="lui" data-index="lui" onClick={() => setIndexOpen(false)}>
+              {ui.arrival}
+            </button>
+          </li>
         </ul>
       </nav>
+
+      <p className="preview-tag">{ui.preview}</p>
 
       <div className="invite" aria-hidden="true">
         {ui.continue}
@@ -170,7 +211,7 @@ export default function Journey(props: JourneyProps) {
         {stations.map((s) => (
           <div key={s.id} className="track track-station" data-track={s.id} />
         ))}
-        <div className="track track-end" data-track="end" />
+        <div className="track track-arrival" data-track="lui" />
       </div>
     </div>
   );
