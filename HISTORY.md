@@ -2,6 +2,12 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — Anteprima e vercel.json
+- Massimiliano ha autorizzato un'anteprima; la regia l'ha pubblicata su https://hey-site-anteprima.vercel.app
+  (progetto Vercel separato, senza git: si aggiorna solo quando la regia ripubblica).
+- Aggiunto `vercel.json` con `X-Robots-Tag: noindex, nofollow` su tutte le pagine. GitHub Pages lo ignora.
+- "Indirizzo da inserire" e "Tel da inserire" nella fascia restano segnaposto finché Massimiliano non dà i dati.
+
 ## 07/11/2026 — Indirizzo email confermato
 - Nuotatore nello scrub di SYSTEM: confermato dalla regia in via provvisoria, si cambia solo se Massimiliano dice altro.
 - `hey@hey.it` (confermato da Massimiliano via regia) in `HEY_CONFIG` e come testo di riserva nell'HTML
