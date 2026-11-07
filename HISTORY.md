@@ -2,6 +2,13 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — Indirizzo email confermato
+- `hey@hey.it` (confermato da Massimiliano via regia) in `HEY_CONFIG` e come testo di riserva nell'HTML
+  della fascia (per chi non ha JavaScript). Nessun `EMAIL-DA-CONFERMARE` rimasto nelle pagine.
+- In arrivo dalla regia, da mettere in `docs/`: master context del 17/08, note di regia, `files/CLAUDE.md`,
+  `HEY_Spec_Tecnica_Clip_Viaggio.md` (il "pipeline.md" citato nel codice), reference. Alla ricezione:
+  rileggere STATO-HEY.md e il piano.
+
 ## 07/11/2026 — Blocco 9: collaudo complessivo (parte fattibile ora)
 - 8 pagine × 3 configurazioni (desktop, iPhone 13, movimento ridotto): console pulita, nessun 404,
   nessuna richiesta esterna, nessuno scroll orizzontale, larghezza su telefono = 390, focus visibile

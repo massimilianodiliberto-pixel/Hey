@@ -105,7 +105,7 @@ abbiamo è **superato in parte**. Prima di costruire bisogna sapere quale raccon
 | 4 | SYSTEM + scrub di processo | Fatto |
 | 5 | Transformation Lab | Struttura con segnaposto fatta; mancano i frame |
 | 6 | Modello case study | Fatto (`work/modello/`) |
-| 7 | Form | Fatto via mailto; manca l'indirizzo vero (`HEY_CONFIG` in `assets/js/site.js`) |
+| 7 | Form | Fatto via mailto a hey@hey.it |
 | 8 | Contenuti reali | In attesa di materiale |
 | 9 | Collaudo | Parte fattibile fatta; resta quello finale con contenuti, dominio e immagine social |
 

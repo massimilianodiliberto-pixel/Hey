@@ -5,12 +5,13 @@
 
   // ---------------------------------------------------------------------
   // CONFIGURAZIONE — unico punto da cambiare quando arriva l'indirizzo vero.
-  // Finché resta il segnaposto, il sito lo mostra così com'è (ben visibile)
+  // Indirizzo confermato da Massimiliano il 07/11/2026. Se si torna al
+  // segnaposto "EMAIL-DA-CONFERMARE", il sito lo mostra così com'è (ben visibile)
   // e i moduli aprono la mail verso il segnaposto: nessun invio nascosto,
   // nessun servizio esterno (decisione di Massimiliano, 07/11/2026).
   // ---------------------------------------------------------------------
   var HEY_CONFIG = {
-    email: "EMAIL-DA-CONFERMARE"
+    email: "hey@hey.it"
   };
   var EMAIL_PLACEHOLDER = HEY_CONFIG.email === "EMAIL-DA-CONFERMARE";
 
