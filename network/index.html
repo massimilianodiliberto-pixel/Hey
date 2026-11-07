@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Network — HEY</title>
 <meta name="description" content="Entra nello specialist network di HEY. Raccontaci chi sei e cosa fai." />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="HEY" />
+<meta property="og:locale" content="it_IT" />
+<meta property="og:title" content="Network — HEY" />
+<meta property="og:description" content="Entra nello specialist network di HEY. Raccontaci chi sei e cosa fai." />
 <link rel="manifest" href="../site.webmanifest" />
 <link rel="icon" href="../assets/img/brand/favicon.ico" sizes="any" />
 <link rel="apple-touch-icon" href="../assets/img/brand/apple-touch-icon.png" />
@@ -75,18 +80,18 @@
         <p class="mono dim" style="margin-bottom:20px;">02 / 03 — Il tuo lavoro</p>
         <div class="field">
           <span class="mono">Link al tuo portfolio / reel</span>
-          <input type="text" id="network-portfolio" data-key="portfolio" placeholder="https://…" />
+          <input type="url" id="network-portfolio" aria-label="Link al tuo portfolio o reel" data-key="portfolio" placeholder="https://…" />
         </div>
         <div class="field">
           <span class="mono">La tua email</span>
-          <input type="email" id="network-email" data-key="email" placeholder="nome@dominio.com" />
+          <input type="email" id="network-email" aria-label="La tua email" autocomplete="email" data-key="email" placeholder="nome@dominio.com" />
         </div>
       </div>
 
       <div class="formstep">
         <p class="mono dim" style="margin-bottom:20px;">03 / 03 — Raccontaci di te</p>
         <div class="field">
-          <textarea id="network-free" data-key="racconto" placeholder="Chi sei, cosa fai, con chi hai lavorato…"></textarea>
+          <textarea id="network-free" aria-label="Raccontaci di te" data-key="racconto" placeholder="Chi sei, cosa fai, con chi hai lavorato…"></textarea>
         </div>
       </div>
 

@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Contact — HEY</title>
 <meta name="description" content="Parliamo del tuo progetto. HEY — production company." />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="HEY" />
+<meta property="og:locale" content="it_IT" />
+<meta property="og:title" content="Contact — HEY" />
+<meta property="og:description" content="Parliamo del tuo progetto. HEY — production company." />
 <link rel="manifest" href="../site.webmanifest" />
 <link rel="icon" href="../assets/img/brand/favicon.ico" sizes="any" />
 <link rel="apple-touch-icon" href="../assets/img/brand/apple-touch-icon.png" />
@@ -77,11 +82,11 @@
       <div class="formstep">
         <p class="mono dim" style="margin-bottom:20px;">04 / 04 — Raccontaci il progetto</p>
         <div class="field">
-          <textarea id="contact-free" data-key="racconto" placeholder="In poche righe: cosa avete in mente?"></textarea>
+          <textarea id="contact-free" aria-label="Raccontaci il progetto" data-key="racconto" placeholder="In poche righe: cosa avete in mente?"></textarea>
         </div>
         <div class="field">
           <span class="mono">La tua email</span>
-          <input type="email" id="contact-email" data-key="email" placeholder="nome@azienda.com" />
+          <input type="email" id="contact-email" aria-label="La tua email" autocomplete="email" data-key="email" placeholder="nome@azienda.com" />
         </div>
       </div>
 

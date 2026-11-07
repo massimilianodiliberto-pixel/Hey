@@ -94,6 +94,21 @@ abbiamo è **superato in parte**. Prima di costruire bisogna sapere quale raccon
 
 ---
 
+## 5b. Avanzamento (aggiornato 07/11/2026)
+
+| # | Blocco | Stato |
+|---|---|---|
+| 0 | Decisioni | Prese da Massimiliano (vedi HISTORY.md); aperta: nuotatore nello scrub di SYSTEM |
+| 1 | Pulizia | Fatto |
+| 2 | Scia lime nella rivelazione (fasce lime restano, scelta di Massimiliano) | Fatto |
+| 3 | Mobile: swipe tra le scene + percorso automatico | Fatto |
+| 4 | SYSTEM + scrub di processo | Fatto |
+| 5 | Transformation Lab | Struttura con segnaposto fatta; mancano i frame |
+| 6 | Modello case study | Fatto (`work/modello/`) |
+| 7 | Form | Fatto via mailto; manca l'indirizzo vero (`HEY_CONFIG` in `assets/js/site.js`) |
+| 8 | Contenuti reali | In attesa di materiale |
+| 9 | Collaudo | Parte fattibile fatta; resta quello finale con contenuti, dominio e immagine social |
+
 ## 6. Strada per arrivare al sito finito
 
 Stima in **blocchi** (un blocco = una sessione di lavoro chiusa con prove Playwright

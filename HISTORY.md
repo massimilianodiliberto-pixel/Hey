@@ -2,6 +2,16 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — Blocco 9: collaudo complessivo (parte fattibile ora)
+- 8 pagine × 3 configurazioni (desktop, iPhone 13, movimento ridotto): console pulita, nessun 404,
+  nessuna richiesta esterna, nessuno scroll orizzontale, larghezza su telefono = 390, focus visibile
+  sui primi elementi da tastiera. Home ~0,8–1,0 MB, pagine interne < 0,15 MB.
+- Corretti: h1 nascosto per lettori di schermo in home; etichette accessibili sui campi dei moduli;
+  descrizione e `noindex` in area privata; meta social base (senza immagine: serve il dominio);
+  pagina `404.html` che funziona sia in locale sia sotto `/Hey/` su GitHub Pages.
+- Lessico vietato e "Verona": nessuna occorrenza.
+- Resta per il collaudo finale: immagine social e dominio, contenuti reali, prova su telefoni veri.
+
 ## 07/11/2026 — Blocco 6: modello di case study
 - `work/modello/`: pagina vuota con la struttura Challenge · Idea · Approach · Making · Role of AI · Result,
   slot per il film principale, etichette delle tecniche (solo qui, mai nel menu), crediti con la scelta
