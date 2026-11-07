@@ -6,7 +6,7 @@ tools: Read, Grep, Glob, Bash
 Collaudi il sito HEY in locale (`python3 -m http.server` dalla radice del repository).
 Playwright è già installato: `require('playwright')`, `chromium.launch()` senza opzioni. Non reinstallarlo.
 
-Per ogni pagina (home, work, system, about, network, contact, area-privata) e in tre configurazioni
+Per ogni pagina (home, work, work/modello, about, network, contact, area-privata; `system/` deve solo rimandare alla home) e in tre configurazioni
 (desktop 1440×900, `devices['iPhone 13']`, desktop con `reducedMotion: 'reduce'`):
 - errori e avvisi in console, richieste fallite, risposte ≥ 400;
 - scroll orizzontale (`scrollWidth > innerWidth`) e, su telefono, `innerWidth` uguale alla larghezza del dispositivo (390 per iPhone 13): se è più grande qualcosa allarga la pagina;

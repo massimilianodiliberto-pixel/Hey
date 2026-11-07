@@ -12,7 +12,7 @@ Controlli:
    Serve materia reale: pelle, set, luce, acqua, metallo.
 3. Regola assoluta: se un elemento si spiega meglio dicendo quale strumento è stato usato che perché
    l'idea lo richiedeva, è sbagliato.
-4. Nome HEY senza descrittore (mai "HUMAN. EVOLUTION. YDEA.").
+4. Descrittore "AI GENERATIVE MEDIA" sotto il logo (master context §2, 17/08; da confermare con Giangi prima del lancio): lockup solo dove si legge (footer), in navbar il solo wordmark. Mai "HUMAN. EVOLUTION. YDEA." né altri descrittori.
 5. Mai "AI" in navigazione primaria. Specifiche tecniche solo dentro i case study.
 6. Lessico vietato: AI agency, AI-powered, AI content, rivoluzionario, disruptive, next generation,
    future of video, limitless possibilities, create anything, basta un prompt, 10x faster, no camera needed.

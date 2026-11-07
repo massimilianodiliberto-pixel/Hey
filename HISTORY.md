@@ -2,6 +2,20 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — Decisioni E, A, B, C applicate
+- E: parole del viaggio in reverse nel manifest (RESULT. / COLOR. POST. / PRODUCTION. / DIRECTION. → IDEA. +
+  YOUR IDEA.); finale con "WHAT'S YOUR IDEA?".
+- A: SYSTEM tolta (pagina, scrub, Lab, frame del nuotatore, CSS e JS); `system/` è un rimando alla home;
+  menu e footer Work / About / Network / Contact. Agenti aggiornati.
+- B: tolta la rivelazione automatica su telefono, resta lo swipe.
+- C: lockup "AI GENERATIVE MEDIA" in SVG; navbar col solo wordmark (illeggibile a 42–58 px), lockup nel footer.
+  Da confermare con Giangi.
+- Sezione finale ricompattata: con la riga in più e il lockup tornava sotto la nav; ora sta nello schermo
+  su desktop 1440×900, laptop 1280×720 e iPhone 13; su iPhone SE scorre sotto la nav a fondo pieno.
+- Collaudo: 7 pagine × desktop, iPhone 13, movimento ridotto: console pulita, nessun 404, nessuna richiesta
+  esterna, nessuno scroll orizzontale; parole e finale verificati scena per scena; swipe 0→1→2→1;
+  nessuna rivelazione senza tocco; lockup caricato in footer.
+
 ## 07/11/2026 — Concept v02 e Stato di agosto letti
 - Aggiunti §8.5 e §8.6 a STATO-HEY.md. Punto chiave: le parole del viaggio sul sito sono nell'ordine del
   processo, ma il film corre al contrario (IDEA. sta sopra il risultato). Proposta di riordino in reverse

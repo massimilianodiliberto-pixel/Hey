@@ -33,11 +33,11 @@
     {
       "_reference": "ref-ritorno-inizio.png — SHOT 06, carrello circolare",
       "id": "ritorno-inizio",
-      "label": "02 — IDEA",
+      "label": "02 — RESULT",
       "still": "assets/world/ritorno-inizio.jpg",
       "clip": null,
       "accent": "#E5FD5D",
-      "title": "IDEA.",
+      "title": "RESULT.",
       "directorNote": "Si rivela il mondo impossibile: rovine, colonne/torri, microrganismi ovunque nell'acqua. Comincia il reverse — i microrganismi spariscono, l'architettura perde dettaglio. ~3–6s.",
       "hoverClip": "assets/world/hover/ritorno-inizio.mp4",
       "_label_lavoro": "02 — Inizia il ritorno"
@@ -45,11 +45,11 @@
     {
       "_reference": "ref-ritorno-meta-a.png — SHOT 07, l'acqua si ritira",
       "id": "ritorno-meta",
-      "label": "03 — DIRECTION",
+      "label": "03 — COLOR / POST",
       "still": "assets/world/ritorno-meta.jpg",
       "clip": null,
       "accent": "#A8A8A0",
-      "title": "DIRECTION.",
+      "title": "COLOR. POST.",
       "directorNote": "L'acqua si svuota, appare la vasca reale. Il raggio che sembrava sole si rivela un faro vero, definito e controllabile. ~3–6s.",
       "hoverClip": "assets/world/hover/ritorno-meta.mp4",
       "_label_lavoro": "03 — A metà del ritorno"
@@ -73,7 +73,7 @@
       "still": "assets/world/arrivo.jpg",
       "clip": null,
       "accent": "#E5FD5D",
-      "eyebrow": "Un’idea non è ancora successa.",
+      "eyebrow": "Direction. → Idea.",
       "title": "YOUR IDEA.",
       "cta": {
         "primary": {
@@ -89,5 +89,6 @@
   "_connectors_readme": "Le clip di raccordo fra una scena e l'altra: vuoto = le scene si dissolvono direttamente l'una nell'altra. Erano segnaposto generici, tolti insieme alle clip.",
   "connectors": [],
   "_hoverClip_readme": "hoverClip = Livello 02 della rivelazione a due livelli: il micro-loop che si vede sotto la maschera quando il puntatore passa sulla scena (assets/js/reveal-overlay.js). Oggi sono segnaposto generati dalla still della sezione stessa con un lento zoom/pan, quindi mostrano lo stesso soggetto che si muove, non ancora il backstage: appena esisteranno le clip 'set' con lo stesso framing, si sostituiscono qui i percorsi e non cambia altro.",
-  "_label_readme": "label = etichetta pubblica del punto di navigazione a destra (usa il titolo della scena). _label_lavoro = vecchio nome di lavorazione, solo promemoria interno."
+  "_label_readme": "label = etichetta pubblica del punto di navigazione a destra (usa il titolo della scena). _label_lavoro = vecchio nome di lavorazione, solo promemoria interno.",
+  "_copy_readme": "Parole del viaggio in reverse (decisione di Massimiliano, 07/11/2026): il film corre dal risultato all'origine, quindi le coordinate del processo (concept v02 §15) si leggono al contrario: HEY. → RESULT. → COLOR. POST. → PRODUCTION. → DIRECTION. → IDEA. → YOUR IDEA. Copy non ancora definitivo (concept §15)."
 }

@@ -98,12 +98,12 @@ abbiamo è **superato in parte**. Prima di costruire bisogna sapere quale raccon
 
 | # | Blocco | Stato |
 |---|---|---|
-| 0 | Decisioni | Prese da Massimiliano (vedi HISTORY.md); nuotatore nello scrub di SYSTEM tenuto in via provvisoria |
+| 0 | Decisioni | Prese da Massimiliano (vedi HISTORY.md e §9) |
 | 1 | Pulizia | Fatto |
 | 2 | Scia lime nella rivelazione (fasce lime restano, scelta di Massimiliano) | Fatto |
-| 3 | Mobile: swipe tra le scene + percorso automatico | Fatto |
-| 4 | SYSTEM + scrub di processo | Fatto |
-| 5 | Transformation Lab | Struttura con segnaposto fatta; mancano i frame |
+| 3 | Mobile: swipe tra le scene (rivelazione automatica tolta il 07/11) | Fatto |
+| 4 | SYSTEM + scrub di processo | **Tolto il 07/11** (decisione di Massimiliano; codice nella storia git) |
+| 5 | Transformation Lab | **Tolto con SYSTEM** il 07/11 |
 | 6 | Modello case study | Fatto (`work/modello/`) |
 | 7 | Form | Fatto via mailto a hey@hey.it |
 | 8 | Contenuti reali | In attesa di materiale |
@@ -289,3 +289,19 @@ di sezioni senza toccare il codice), ma mostra due punti stretti:
   già montato.
 - Citati ma non nel repository: `HEY_Moodboard_Viaggio_a_Ritroso.png` (utile per le scelte visive,
   non bloccante), `README_STRUTTURA.md`, `HEY_01_Istruzioni_di_Progetto.md` (non servono al sito).
+
+---
+
+## 9. Decisioni di Massimiliano sui conflitti (07/11/2026, sera) — applicate
+
+| | Decisione | Sul sito |
+|---|---|---|
+| E | Parole del viaggio **in reverse** + domanda finale dello storyboard | loop HEY. · ritorno-inizio RESULT. · ritorno-meta COLOR. POST. · mondo-smontato PRODUCTION. · arrivo DIRECTION. → IDEA. / YOUR IDEA. Finale: "YOUR IDEA. WHAT'S YOUR IDEA? LET'S MAKE IT REAL." Solo manifest e una riga di HTML |
+| A | **SYSTEM tolta.** Menu Work / About / Network / Contact | Pagina, scrub, Lab e frame del nuotatore rimossi (restano nella storia git). `system/` rimanda alla home: funziona su GitHub Pages e su Vercel senza regole server. Nessun link verso system/ rimasto |
+| — | Nuotatore | Torna disponibile. Il §4.2 lo suggerisce come case study in WORK: **non messo, serve l'ok** |
+| B | Telefono: **solo swipe** | Rivelazione automatica tolta; swipe avanti/indietro tra le scene resta |
+| C | Descrittore **"AI GENERATIVE MEDIA"** | Lockup vettoriale `assets/img/brand/hey-lockup.svg` (wordmark del sito + descrittore vettorializzato dal raster). **In navbar solo il wordmark**: alla misura della nav (42–58 px) il descrittore è alto circa 5 px e non si legge (prova visiva). **Lockup nel footer** di tutte le pagine con footer, home compresa (sezione finale). **Da confermare con Giangi prima del lancio** (lo chiede lo Stato di agosto) |
+
+Ancora aperti: §6.3bis (stesso mondo o mondi paralleli), credito fondatori in footer, crediti sui lavori,
+clip vere e shot list, indirizzo e telefono, dominio e immagine social, "THE IDEA" come eventuale
+chiusura del logo (storyboard).

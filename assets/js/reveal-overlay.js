@@ -364,18 +364,16 @@
     window.addEventListener("touchend", leave, { passive: true });
     window.addEventListener("touchcancel", leave, { passive: true });
 
-    // MOBILE (§6.4) — stesso viaggio, gesto naturale.
-    // 1) Swipe orizzontale: scena successiva / precedente. Lo scroll verticale
-    //    resta la timeline; lo swipe è una scorciatoia, non la sostituisce.
+    // MOBILE — stesso film del desktop (master context §6.5): lo scroll resta
+    // la timeline. In più solo lo swipe orizzontale, come scorciatoia verso la
+    // scena successiva / precedente (decisione di Massimiliano, 07/11/2026).
+    // La rivelazione automatica senza tocchi è stata tolta lo stesso giorno.
     var sw = null;
     window.addEventListener("touchstart", function (e) {
-      lastTouch = performance.now();
-      stopDrift();
       if (e.touches.length !== 1 || document.body.classList.contains("world-done")) { sw = null; return; }
       sw = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: e.timeStamp };
     }, { passive: true });
     window.addEventListener("touchend", function (e) {
-      lastTouch = performance.now();
       if (!sw || !e.changedTouches.length) return;
       var dx = e.changedTouches[0].clientX - sw.x, dy = e.changedTouches[0].clientY - sw.y;
       // niente limite di tempo: conta solo la direzione (un gesto lento ma
@@ -388,32 +386,6 @@
       if (i >= 0 && to >= 0 && to < dots.length) dots[to].click();
     }, { passive: true });
 
-    // 2) Se nessuno tocca, la rivelazione fa il suo percorso da sola: la
-    //    finestra si muove lenta sulla scena, come farebbe il dito. Si ferma
-    //    al primo tocco o scroll e riparte dopo qualche secondo di quiete.
-    //    Solo su touch, mai con movimento ridotto.
-    var lastTouch = performance.now();
-    var DRIFT_AFTER = 3500;
-    var drifting = false, driftRaf = 0;
-    function driftOK() {
-      return isCoarse() && !reduce && !scrolling && !document.hidden &&
-        !document.body.classList.contains("world-done") &&
-        performance.now() - lastTouch > DRIFT_AFTER && activeIndex() >= 0;
-    }
-    function stopDrift() {
-      if (drifting) { drifting = false; leave(); }
-    }
-    function driftLoop(t) {
-      driftRaf = requestAnimationFrame(driftLoop);
-      if (!driftOK()) { stopDrift(); return; }
-      drifting = true;
-      var w = window.innerWidth, h = window.innerHeight;
-      enter(w * (0.5 + 0.24 * Math.sin(t * 0.00031)), h * (0.42 + 0.15 * Math.sin(t * 0.00047 + 1.3)));
-    }
-    if (isCoarse() && !reduce) {
-      driftRaf = requestAnimationFrame(driftLoop);
-      window.addEventListener("scroll", function () { lastTouch = performance.now(); stopDrift(); }, { passive: true });
-    }
 
     // quando il viaggio finisce, il rig sparisce: anche questa deve sparire
     var mo = new MutationObserver(function () {
