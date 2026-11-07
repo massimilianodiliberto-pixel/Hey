@@ -221,8 +221,71 @@ Massimiliano. Qui sotto i conflitti sono solo **segnalati**: sul sito non ho cam
 
 | Documento | Serve? | Perché |
 |---|---|---|
-| `HEY_Il_Viaggio_a_Ritroso_Nuovo_Concept_v02.md` | **Sì, subito** | Copy del viaggio (§15), struttura A→J, regole produttive: è la fonte per titoli e tappe del manifest |
-| `HEY_Stato_e_Prossimi_Passi.md` | Sì | Evita di rifare cose già scartate ad agosto |
+| `HEY_Il_Viaggio_a_Ritroso_Nuovo_Concept_v02.md` | Arrivato (07/11) | Vedi 8.5 |
+| `HEY_Stato_e_Prossimi_Passi.md` | Arrivato (07/11) | Vedi 8.6 |
 | `HEY_Reference_Prompts_Viaggio.md` | Più avanti | Serve quando si producono le clip e i connettori (le note di regia rimandano al suo §6) |
 | `HEY_Scroll_World_Higgsfield_Documento_per_Claude_v01.md` | No, per ora | Il motore è già scelto e montato; utile solo se si genera con Higgsfield |
 | `HEY_Bibbia_di_Progetto.md` | No | Business e governance, non decisioni sul sito |
+
+### 8.5 Concept del viaggio v02: copy e struttura A→J contro il manifest
+
+**Copy (§15 del concept)** — "coordinate del processo", copy *non chiuso* (lo dice il concept stesso):
+
+| Concept §15 | Sito oggi |
+|---|---|
+| HEY. | HEY. (loop) |
+| IDEA. | IDEA. (ritorno-inizio) |
+| DIRECTION. | DIRECTION. (ritorno-meta) |
+| PRODUCTION. | PRODUCTION. (mondo-smontato) |
+| POST. | — manca |
+| COLOR. | — manca |
+| RESULT. | — manca |
+| YOUR IDEA. | YOUR IDEA. (arrivo) |
+
+Il problema non è solo che mancano tre parole: **l'ordine sul sito va contro il film.** Il §15 elenca le
+parole nell'ordine del processo (idea → regia → produzione → post → color → risultato), ma il viaggio
+corre al contrario (§1: RISULTATO → PRODUZIONE → ORIGINE). Oggi il sito scrive **IDEA.** sopra il mondo
+impossibile, che nel film è il **risultato**, e **DIRECTION.** sopra l'acqua che si ritira, che è
+produzione/post. Lette in reverse, le otto parole si allineano al film da sole:
+
+| Momento del manifest | Beat A→J | Proposta (solo proposta, il copy lo decide Massimiliano) |
+|---|---|---|
+| intro + loop | A | HEY. |
+| ritorno-inizio | B (+ inizio C) | RESULT. |
+| ritorno-meta | C → D (generato che si dissolve, look tolto, acqua che scende) | COLOR. / POST. |
+| mondo-smontato | E → F → G (scenografia, carrello, camera) | PRODUCTION. |
+| arrivo | H → I → J (preparazione, arrivo, set vuoto) | DIRECTION. → IDEA. → YOUR IDEA. |
+
+Applicarla vuol dire cambiare solo i campi `title` (e `label`) nel manifest: nessuna riga di codice.
+Anche la chiusura: lo storyboard dice "YOUR IDEA. WHAT'S YOUR IDEA? LET'S MAKE IT REAL."; il sito ha
+"YOUR IDEA. LET'S MAKE IT REAL.".
+
+**Struttura A→J contro i 6 momenti** — non cambia l'architettura (il manifest regge qualunque numero
+di sezioni senza toccare il codice), ma mostra due punti stretti:
+1. **G e H sono compressi.** La camera presa, la REC che si spegne e la camera sul banco (G), poi
+   make-up, hair, styling e crew (H): nello storyboard sono 7 tavole su 16 (08–14), sul sito stanno tutte
+   tra la coda di `mondo-smontato` e `arrivo`. Con le clip vere probabilmente serve un **settimo momento**
+   (es. `camera` tra mondo-smontato e arrivo) o i connettori della spec.
+2. **Post e color (§11) non hanno un momento proprio**: vivono dentro `ritorno-meta`. Se le parole
+   POST. / COLOR. entrano, conviene dare loro uno spazio di scroll leggibile.
+
+**Altri punti del concept da tenere a mente**
+- Durata: lo storyboard indica 60–90 s a 25 fps; la spec v2 3–6 s per clip a 30 fps (≈ 25–35 s in
+  tutto). Le due cifre non tornano: da chiarire prima di produrre.
+- A: nel loop la donna entra ed esce dalla colonna e dice HEY; sul sito l'uscita dalla colonna è
+  nell'intro (spec v2). Coerente.
+- §18 "Nessun prima/dopo con slider": la home lo rispetta; per lo scrub di SYSTEM vedi C3.
+- §17 "Non è una dimostrazione di quanto sappiamo generare": è un argomento in più per la versione
+  "stesso mondo" del §6.3bis, che però resta aperto.
+
+### 8.6 Stato e prossimi passi (17/08)
+- Conferma C2: il sito v1 a sezioni impilate (nuotatore, comparator, testi istruttivi) era stato scartato
+  il 16/08.
+- Il descrittore "AI GENERATIVE MEDIA" ribaltava una decisione chiusa il giorno prima: il documento
+  stesso chiede una **conferma diretta di Gianluca prima del lancio**. Rafforza la domanda C.
+- Le priorità di agosto (shot list, prototipo, girato o generato, revisione di Gianluca) restano tutte
+  aperte e sono a monte delle clip vere: senza di esse il blocco 8 (contenuti reali) non può partire.
+- Il "prototipo 20–30 s canvas o video" è superato: il motore video è stato chiuso lo stesso giorno ed è
+  già montato.
+- Citati ma non nel repository: `HEY_Moodboard_Viaggio_a_Ritroso.png` (utile per le scelte visive,
+  non bloccante), `README_STRUTTURA.md`, `HEY_01_Istruzioni_di_Progetto.md` (non servono al sito).

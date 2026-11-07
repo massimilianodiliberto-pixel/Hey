@@ -2,6 +2,13 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — Concept v02 e Stato di agosto letti
+- Aggiunti §8.5 e §8.6 a STATO-HEY.md. Punto chiave: le parole del viaggio sul sito sono nell'ordine del
+  processo, ma il film corre al contrario (IDEA. sta sopra il risultato). Proposta di riordino in reverse
+  (HEY. → RESULT. → COLOR./POST. → PRODUCTION. → DIRECTION. → IDEA. → YOUR IDEA.), da decidere.
+  A→J non cambia l'architettura; G e H sono compressi (probabile settimo momento con le clip vere).
+  Nessuna modifica al sito.
+
 ## 07/11/2026 — §6.4: tolto il testo istruttivo in SYSTEM
 - Rimossa l'etichetta "Trascina / Scorri col dito" dallo scrub (HTML, CSS e JS), con l'ok della regia.
   Collaudo desktop, telefono e movimento ridotto: scrub, tastiera, trascinamento e autoplay invariati, console pulita.
