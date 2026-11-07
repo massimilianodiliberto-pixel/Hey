@@ -5,7 +5,56 @@
    SITO, distinta da quella (lime-bg) dell'app interna: qui il nero è il
    contenitore, il lime è intervento, mai fondale pieno. */
 
-@import url("https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap");
+/* Font in locale (latin), niente richieste a Google Fonts. Solo i pesi davvero
+   usati dal sito (misurati in browser). Licenze OFL in assets/fonts/. */
+@font-face {
+  font-family: "Big Shoulders Display";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/big-shoulders-display-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Big Shoulders Display";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("../fonts/big-shoulders-display-latin-800-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/instrument-sans-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/instrument-sans-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 :root {
   --lime: #e5fd5d;
@@ -972,4 +1021,123 @@ body.world-done .reveal-overlay {
   opacity: 0.01;
   pointer-events: none;
   z-index: -1;
+}
+
+/* =====================================================================
+   v4 — Blocco 1, pulizia (07/11/2026)
+   ===================================================================== */
+
+/* Un solo linguaggio di bottone in tutto il sito: quello di .btn
+   (rettangolare, mono maiuscolo). Il motore portava la sua pillola. */
+#world .sw-btn {
+  border-radius: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 16px 26px;
+  border: 1px solid var(--lime);
+  transition: background 0.18s ease, color 0.18s ease;
+}
+#world .sw-btn--primary:hover {
+  transform: none;
+  background: transparent !important;
+  color: var(--lime) !important;
+}
+
+/* Etichette dei punti di navigazione del viaggio: col font del sito, non
+   col font di sistema del motore. */
+#world .sw-route__label {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 0;
+  color: var(--light);
+  background: color-mix(in srgb, var(--rhyme) 82%, transparent);
+  border-color: var(--rule);
+}
+
+/* Nella sezione finale e nelle pagine interne il testo scorre sotto la
+   nav fissa: con il solo sfumato si leggevano due testi uno sopra l'altro
+   (telefono, "YOUR IDEA." sotto i link). Il fondo della nav diventa pieno
+   appena c'è testo che le passa sotto. */
+body.world-done .sitenav::before,
+body:not(:has(#world)) .sitenav::before {
+  background: linear-gradient(
+    180deg,
+    var(--rhyme) 0%,
+    color-mix(in srgb, var(--rhyme) 94%, transparent) 72%,
+    transparent 100%
+  );
+}
+@media (max-width: 640px) {
+  /* a fine pagina la sezione deve stare tutta nello schermo, sotto la nav:
+     niente padding generico, lo spazio in alto è esattamente la nav */
+  .postjourney__cta {
+    padding: var(--nav-h) var(--pad) 12px;
+  }
+  .postjourney__cta .lede {
+    margin: 14px auto 22px !important;
+  }
+}
+
+/* Fascia in basso su telefono: la riga intera non ci sta e veniva tagliata
+   a metà ("… · TEL"). La fascia resta (scelta di Massimiliano), ma su
+   schermi stretti va su due righe centrate invece di troncare. */
+@media (max-width: 640px) {
+  :root {
+    --bar-bottom-h: 42px;
+  }
+  .edge-bar {
+    white-space: normal;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+    row-gap: 2px;
+    line-height: 1.3;
+    overflow: hidden;
+  }
+}
+
+/* Note di regia (solo con ?review): su telefono una sola nota, corta,
+   così non copre la scena. */
+@media (max-width: 640px) {
+  .director-note--context {
+    display: none !important;
+  }
+  .director-note:not(.director-note--context) {
+    top: calc(5px + 70px);
+    font-size: 9px;
+    padding: 6px 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+@media (max-width: 640px) {
+  .director-note[hidden] {
+    display: none !important;
+  }
+}
+/* separatori della fascia: in flex lo spazio attorno al punto si perde */
+.edge-bar__sep {
+  padding: 0 0.7em;
+  white-space: pre;
+}
+@media (max-width: 640px) {
+  /* a fine viaggio il testo è più alto dello schermo e scorre sotto la nav:
+     su telefono il fondo della nav è pieno, niente lettere a metà */
+  body.world-done .sitenav::before,
+  body:not(:has(#world)) .sitenav::before {
+    background: var(--rhyme);
+  }
+  .director-note:not(.director-note--context) {
+    line-height: 1.5;
+    max-height: calc(3 * 1.5em + 12px);
+  }
 }

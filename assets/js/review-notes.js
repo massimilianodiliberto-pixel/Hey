@@ -4,14 +4,18 @@
 // e si aggancia dall'esterno alla classe "is-active" che l'engine già mette
 // sui suoi route dot per sapere quale sezione è in scrub in un dato momento.
 //
-// INTERRUTTORE UNICO: world-manifest.json → "reviewNotes": false (o rimuovi
-// il campo) spegne tutto qui, senza toccare altri file.
+// DOPPIO INTERRUTTORE: le note compaiono solo se world-manifest.json ha
+// "reviewNotes": true E l'indirizzo contiene ?review (es. .../Hey/?review).
+// Il pubblico, senza ?review, non le vede mai e il manifest non viene
+// nemmeno letto da questo script.
 (function () {
   "use strict";
 
   var box = document.getElementById("director-note");
   var contextBox = document.getElementById("director-note-context");
   if (!box) return;
+  if (!/[?&]review(=|&|$)/.test(window.location.search)) return;
+  document.body.classList.add("is-review");
 
   fetch("assets/world/world-manifest.json")
     .then(function (r) {

@@ -64,7 +64,7 @@ abbiamo è **superato in parte**. Prima di costruire bisogna sapere quale raccon
 1. **Telefono, sezione finale:** "YOUR IDEA. LET'S MAKE IT REAL." e la riga sopra finiscono
    **sotto la navigazione** (testi sovrapposti).
 2. **Telefono:** le note di regia occupano il terzo superiore dello schermo e coprono la scena.
-3. **Scritta fantasma "HEY / THE IDEA"** semitrasparente in mezzo alle scene 03–04, su desktop e telefono.
+3. **Scritta fantasma "HEY / THE IDEA"** semitrasparente in mezzo alle scene 03–04, su desktop e telefono. *(Poi scoperto: è una filigrana dentro l'immagine di reference, non codice. Tolta nel blocco 1.)*
 4. **Fascia in basso su telefono:** il testo è tagliato a metà riga ("… · TEL").
 5. **Bottoni CTA incoerenti:** "Contact" a pillola nel viaggio, rettangolare nella sezione finale.
 6. **Font da Google Fonts** (Big Shoulders, Instrument Sans, JetBrains Mono): dipendenza esterna

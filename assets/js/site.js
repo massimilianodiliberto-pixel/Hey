@@ -3,6 +3,24 @@
 (function () {
   "use strict";
 
+  // ---------------------------------------------------------------------
+  // CONFIGURAZIONE — unico punto da cambiare quando arriva l'indirizzo vero.
+  // Finché resta il segnaposto, il sito lo mostra così com'è (ben visibile)
+  // e i moduli aprono la mail verso il segnaposto: nessun invio nascosto,
+  // nessun servizio esterno (decisione di Massimiliano, 07/11/2026).
+  // ---------------------------------------------------------------------
+  var HEY_CONFIG = {
+    email: "EMAIL-DA-CONFERMARE"
+  };
+  var EMAIL_PLACEHOLDER = HEY_CONFIG.email === "EMAIL-DA-CONFERMARE";
+
+  function fillEmailLinks() {
+    document.querySelectorAll("[data-hey-email]").forEach(function (a) {
+      a.textContent = HEY_CONFIG.email;
+      a.setAttribute("href", "mailto:" + HEY_CONFIG.email);
+    });
+  }
+
   function markActiveNav() {
     // Confronto su a.pathname (risolto dal browser, assoluto) e non sulla
     // stringa href grezza: gli href sono relativi (necessario per funzionare
@@ -94,10 +112,27 @@
         answers[field.getAttribute("data-key")] = field.value.trim();
       });
 
-      // Nessun endpoint di invio deciso (nessun indirizzo/collector nel Master
-      // Context) — nessun invio finto. Appena esiste un endpoint, sostituire
-      // questo blocco con un fetch() reale; il resto del form resta invariato.
-      var SEND_ENDPOINT = "";
+      // Invio = il programma di posta di chi scrive, con oggetto e testo già
+      // pronti. Indirizzo da HEY_CONFIG (in cima a questo file).
+      var FIELD_NAMES = { racconto: "Messaggio", email: "Email", portfolio: "Portfolio / reel" };
+      var lines = [];
+      steps.forEach(function (st) {
+        var key = st.getAttribute("data-key");
+        if (!key || !st.querySelector(".choice") || !answers[key]) return;
+        var q = st.querySelector(".mono");
+        var label = q ? q.textContent.replace(/^\s*\d+\s*\/\s*\d+\s*—\s*/, "").trim() : key;
+        lines.push(label + ": " + answers[key]);
+      });
+      form.querySelectorAll("textarea[data-key], input[data-key]").forEach(function (field) {
+        var k = field.getAttribute("data-key");
+        if (answers[k]) lines.push((FIELD_NAMES[k] || k) + ": " + answers[k]);
+      });
+      var subject = form.getAttribute("data-subject") || "HEY — Contatto dal sito";
+      var mailto =
+        "mailto:" + HEY_CONFIG.email +
+        "?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(lines.join("\n\n"));
+
       var doneBox = form.parentElement.querySelector(".formdone");
       form.style.display = "none";
       if (doneBox) {
@@ -106,20 +141,35 @@
           summary.textContent = steps
             .map(function (s) {
               var key = s.getAttribute("data-key");
-              return key ? answers[key] : null;
+              var choices = s.querySelectorAll(".choice");
+              return key && choices.length ? answers[key] : null;
             })
             .filter(Boolean)
             .join(" — ");
         }
         var note = doneBox.querySelector("[data-note]");
         if (note) {
-          note.textContent = SEND_ENDPOINT
-            ? "Ricevuto. Ti rispondiamo il prima possibile."
-            : form.getAttribute("data-pending-note") ||
-              "Il modulo non è ancora collegato a un sistema di invio automatico.";
+          note.textContent = EMAIL_PLACEHOLDER
+            ? "Indirizzo email in attesa di conferma: il messaggio si apre già pronto, ma va inviato quando l'indirizzo sarà attivo."
+            : "Si è aperto il tuo programma di posta con il messaggio pronto: manca solo Invia. Se non si apre, scrivici a " + HEY_CONFIG.email + ".";
         }
+        var again = doneBox.querySelector("[data-mailto]");
+        if (!again) {
+          again = document.createElement("a");
+          again.className = "btn";
+          again.setAttribute("data-mailto", "");
+          again.style.marginTop = "30px";
+          again.style.marginRight = "12px";
+          again.textContent = "Apri la mail";
+          var home = doneBox.querySelector("a.btn");
+          doneBox.insertBefore(again, home);
+        }
+        again.setAttribute("href", mailto);
         doneBox.classList.add("is-active");
       }
+      // apre subito il programma di posta; il bottone "Apri la mail" resta
+      // come seconda possibilità se il browser non lo apre da solo
+      window.location.href = mailto;
     });
 
     paint();
@@ -146,6 +196,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     markActiveNav();
+    fillEmailLinks();
     document.querySelectorAll("form.multistep").forEach(initMultistepForm);
     initGate();
   });
