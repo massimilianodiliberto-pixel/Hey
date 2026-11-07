@@ -1282,38 +1282,6 @@ body:not(:has(#world)) .sitenav::before {
   height: 1px;
   background: var(--lime);
 }
-.scrub__grab {
-  position: absolute;
-  z-index: 7;
-  left: 50%;
-  bottom: 16px;
-  transform: translateX(-50%);
-  margin: 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--light);
-  background: color-mix(in srgb, var(--rhyme) 70%, transparent);
-  padding: 6px 12px;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-}
-.scrub__grab.is-gone {
-  opacity: 0;
-}
-.scrub__grab-touch {
-  display: none;
-}
-@media (hover: none) and (pointer: coarse) {
-  .scrub__grab-pointer {
-    display: none;
-  }
-  .scrub__grab-touch {
-    display: inline;
-  }
-}
-
 .scrub__rail {
   position: relative;
   height: 54px;

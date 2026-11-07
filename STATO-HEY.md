@@ -187,7 +187,7 @@ Massimiliano. Qui sotto i conflitti sono solo **segnalati**: sul sito non ho cam
    Il "drift" di cui parla il §3 riguardava la v1 (Archivo Narrow); dalla v2 è corretto.
 3. **§6.4 nessun testo istruttivo:** **una violazione, mia:** l'etichetta "Trascina / Scorri col dito"
    sullo scrub di SYSTEM. In home nessun testo istruttivo (l'indicatore di scroll del motore è senza
-   testo). Da togliere: una riga.
+   testo). **Tolta** il 07/11 con l'ok della regia.
 4. **§6.6 nessun prima/dopo con linea o slider:** in home **rispettato** (la rivelazione è una zona
    morbida, nessuna linea). In SYSTEM non c'è una linea di confronto, ma c'è una timeline trascinabile:
    vedi C3.

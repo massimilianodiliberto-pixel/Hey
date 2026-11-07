@@ -9,6 +9,7 @@
 // trasformazione). Gli stati di lavoro stanno rientrati dietro un filo lime,
 // come uno shot sotto esame; IDEA e NUOVA IMMAGINE vanno a tutto quadro.
 //
+// Nessun testo istruttivo (master context §6.4): il gesto si scopre.
 // Gesti: trascinare in orizzontale sull'immagine (lo swipe su telefono),
 // cliccare sulla timeline, frecce / Home / Fine da tastiera. Se nessuno tocca
 // niente, il percorso parte da solo. Con prefers-reduced-motion: niente
@@ -33,7 +34,6 @@
   var ticks = [].slice.call(root.querySelectorAll("[data-scrub-ticks] li"));
   var nowEl = root.querySelector("[data-scrub-now]");
   var caption = root.querySelector("[data-scrub-caption]");
-  var grab = root.querySelector("[data-scrub-grab]");
   var layers = {};
   [].slice.call(root.querySelectorAll(".scrub__layer")).forEach(function (l) {
     layers[l.getAttribute("data-key")] = l;
@@ -149,7 +149,7 @@
   }
   function engage() {
     idle = 0;
-    if (!engaged) { engaged = true; grab.classList.add("is-gone"); }
+    if (!engaged) engaged = true;
   }
 
   // ---- ciclo: gira solo quando serve ----

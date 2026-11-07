@@ -2,6 +2,10 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — §6.4: tolto il testo istruttivo in SYSTEM
+- Rimossa l'etichetta "Trascina / Scorri col dito" dallo scrub (HTML, CSS e JS), con l'ok della regia.
+  Collaudo desktop, telefono e movimento ridotto: scrub, tastiera, trascinamento e autoplay invariati, console pulita.
+
 ## 07/11/2026 — Documenti di agosto letti
 - In `docs/` (commit fabeea6 della regia): master context 17/08, note di regia, spec clip, CLAUDE di agosto,
   storyboard. Letti tutti; aggiunto il §8 a STATO-HEY.md con 8 conflitti (C1–C8), le 6 verifiche chieste
