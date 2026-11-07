@@ -1487,3 +1487,100 @@ body:not(:has(#world)) .sitenav::before {
 .sitefooter__links a {
   white-space: nowrap;
 }
+
+/* =====================================================================
+   v4 — Blocco 6, modello di case study (work/modello/)
+   ===================================================================== */
+.cs__banner {
+  margin-top: calc(var(--nav-h) + 30px);
+  margin-bottom: 0;
+}
+.cs__banner + .pagehero {
+  padding-top: clamp(48px, 8vw, 90px);
+}
+.cs__tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 28px 0 0;
+  padding: 0;
+}
+.cs__tags li {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+  border: 1px solid var(--rule);
+  padding: 6px 10px;
+}
+.cs__media {
+  aspect-ratio: 16 / 9;
+  border: 1px dashed var(--rule);
+  display: grid;
+  place-items: center;
+}
+.cs__media span,
+.cs__slot {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+.cs {
+  border-top: 1px solid var(--rule);
+}
+.cs__block {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 22px;
+  padding: 30px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.cs__block .mono {
+  color: var(--gray);
+}
+.cs__block h2 {
+  margin: 0 0 10px;
+}
+.cs__hint {
+  max-width: 60ch;
+  margin: 0 0 14px;
+}
+.cs__credits dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 24px;
+  margin: 22px 0 0;
+}
+.cs__credits dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+.cs__credits dd {
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .cs__block {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .cs__credits dl {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .cs__credits dd {
+    margin-bottom: 12px;
+  }
+}
+@media (max-width: 1240px) {
+  .cs__banner {
+    margin-left: var(--pad);
+    margin-right: var(--pad);
+  }
+}

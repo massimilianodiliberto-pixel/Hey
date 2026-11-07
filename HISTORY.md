@@ -2,6 +2,12 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — Blocco 6: modello di case study
+- `work/modello/`: pagina vuota con la struttura Challenge · Idea · Approach · Making · Role of AI · Result,
+  slot per il film principale, etichette delle tecniche (solo qui, mai nel menu), crediti con la scelta
+  ancora aperta (§10). Non collegata dal menu, `noindex`, riquadro "Modello vuoto" ben visibile.
+  Istruzioni per duplicarla in un commento in testa al file.
+
 ## 07/11/2026 — Blocchi 2 e 3: scia lime e mobile della home
 Tutto in `assets/js/reveal-overlay.js`; `scroll-world.js` non toccato.
 - Scia lime (§6.2): la finestra che rivela ha un filo lime sottile sul bordo; dove si passa il livello 02
