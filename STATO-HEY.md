@@ -98,7 +98,7 @@ abbiamo è **superato in parte**. Prima di costruire bisogna sapere quale raccon
 
 | # | Blocco | Stato |
 |---|---|---|
-| 0 | Decisioni | Prese da Massimiliano (vedi HISTORY.md); aperta: nuotatore nello scrub di SYSTEM |
+| 0 | Decisioni | Prese da Massimiliano (vedi HISTORY.md); nuotatore nello scrub di SYSTEM tenuto in via provvisoria |
 | 1 | Pulizia | Fatto |
 | 2 | Scia lime nella rivelazione (fasce lime restano, scelta di Massimiliano) | Fatto |
 | 3 | Mobile: swipe tra le scene + percorso automatico | Fatto |

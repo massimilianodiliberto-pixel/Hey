@@ -3,6 +3,7 @@
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
 ## 07/11/2026 — Indirizzo email confermato
+- Nuotatore nello scrub di SYSTEM: confermato dalla regia in via provvisoria, si cambia solo se Massimiliano dice altro.
 - `hey@hey.it` (confermato da Massimiliano via regia) in `HEY_CONFIG` e come testo di riserva nell'HTML
   della fascia (per chi non ha JavaScript). Nessun `EMAIL-DA-CONFERMARE` rimasto nelle pagine.
 - In arrivo dalla regia, da mettere in `docs/`: master context del 17/08, note di regia, `files/CLAUDE.md`,
