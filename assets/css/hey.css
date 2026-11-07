@@ -1361,3 +1361,17 @@ body.world-done .sitenav::before {
     width: 96px;
   }
 }
+/* Solo email e diritti (07/11/2026): la fascia sta su una riga anche su
+   telefono, torna all'altezza originale con il testo centrato. */
+@media (max-width: 640px) {
+  :root {
+    --bar-bottom-h: 30px;
+  }
+  .edge-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    padding: 0 14px;
+  }
+}

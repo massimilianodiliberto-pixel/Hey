@@ -2,6 +2,11 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — Recapiti, nuotatore, §6.3bis, credito fondatori
+- Fascia: solo hey@hey.it e diritti; tolti indirizzo e telefono da tutte le pagine.
+- Nuotatore in Work: no. Credito fondatori in footer: niente per ora (aperto).
+- §6.3bis deciso: il cursore rivela lo stesso mondo; regola scritta nel manifest per chi produrrà gli hoverClip.
+
 ## 07/11/2026 — Decisioni E, A, B, C applicate
 - E: parole del viaggio in reverse nel manifest (RESULT. / COLOR. POST. / PRODUCTION. / DIRECTION. → IDEA. +
   YOUR IDEA.); finale con "WHAT'S YOUR IDEA?".

@@ -17,4 +17,6 @@ Controlli:
 6. Lessico vietato: AI agency, AI-powered, AI content, rivoluzionario, disruptive, next generation,
    future of video, limitless possibilities, create anything, basta un prompt, 10x faster, no camera needed.
 7. Niente clienti, premi, numeri o luoghi non confermati ("Verona" è stato tolto; "oltre quarant'anni" è confermato).
+8. Recapiti pubblici: solo hey@hey.it (niente indirizzo, niente telefono). Work resta "in preparazione": nessun progetto, nemmeno il nuotatore, senza ok.
+9. Rivelazione al cursore (§6.3bis, deciso 07/11): mostra lo stesso mondo della scena, mai mondi paralleli.
 Riporta ogni violazione con file e riga e una proposta di correzione in una riga.

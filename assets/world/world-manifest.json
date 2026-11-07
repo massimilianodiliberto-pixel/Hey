@@ -88,7 +88,7 @@
   ],
   "_connectors_readme": "Le clip di raccordo fra una scena e l'altra: vuoto = le scene si dissolvono direttamente l'una nell'altra. Erano segnaposto generici, tolti insieme alle clip.",
   "connectors": [],
-  "_hoverClip_readme": "hoverClip = Livello 02 della rivelazione a due livelli: il micro-loop che si vede sotto la maschera quando il puntatore passa sulla scena (assets/js/reveal-overlay.js). Oggi sono segnaposto generati dalla still della sezione stessa con un lento zoom/pan, quindi mostrano lo stesso soggetto che si muove, non ancora il backstage: appena esisteranno le clip 'set' con lo stesso framing, si sostituiscono qui i percorsi e non cambia altro.",
+  "_hoverClip_readme": "hoverClip = Livello 02 della rivelazione (assets/js/reveal-overlay.js). DECISO il 07/11/2026 (Massimiliano, master context §6.3bis): il cursore rivela lo STESSO mondo della scena — un istante prima o dopo nella stessa timeline, o un dettaglio più fitto della stessa inquadratura — mai mondi paralleli o scollegati. Ogni hoverClip va quindi prodotta dallo stesso shot della sua sezione, con lo stesso framing. Oggi sono segnaposto ricavati dalla still della sezione con un lento zoom/pan: già coerenti con questa regola.",
   "_label_readme": "label = etichetta pubblica del punto di navigazione a destra (usa il titolo della scena). _label_lavoro = vecchio nome di lavorazione, solo promemoria interno.",
   "_copy_readme": "Parole del viaggio in reverse (decisione di Massimiliano, 07/11/2026): il film corre dal risultato all'origine, quindi le coordinate del processo (concept v02 §15) si leggono al contrario: HEY. → RESULT. → COLOR. POST. → PRODUCTION. → DIRECTION. → IDEA. → YOUR IDEA. Copy non ancora definitivo (concept §15)."
 }

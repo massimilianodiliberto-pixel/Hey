@@ -302,6 +302,13 @@ di sezioni senza toccare il codice), ma mostra due punti stretti:
 | B | Telefono: **solo swipe** | Rivelazione automatica tolta; swipe avanti/indietro tra le scene resta |
 | C | Descrittore **"AI GENERATIVE MEDIA"** | Lockup vettoriale `assets/img/brand/hey-lockup.svg` (wordmark del sito + descrittore vettorializzato dal raster). **In navbar solo il wordmark**: alla misura della nav (42–58 px) il descrittore è alto circa 5 px e non si legge (prova visiva). **Lockup nel footer** di tutte le pagine con footer, home compresa (sezione finale). **Da confermare con Giangi prima del lancio** (lo chiede lo Stato di agosto) |
 
-Ancora aperti: §6.3bis (stesso mondo o mondi paralleli), credito fondatori in footer, crediti sui lavori,
-clip vere e shot list, indirizzo e telefono, dominio e immagine social, "THE IDEA" come eventuale
-chiusura del logo (storyboard).
+Altre decisioni dello stesso giorno:
+- **Nuotatore in Work: no.** Work resta "in preparazione", senza progetti.
+- **§6.3bis: deciso — il cursore rivela lo stesso mondo** (un istante prima o dopo, o un dettaglio più fitto
+  della stessa scena), mai mondi paralleli. Regola scritta nel manifest (`_hoverClip_readme`); i segnaposto
+  di oggi la rispettano già.
+- **Recapiti: solo email** (hey@hey.it). Tolti "Indirizzo da inserire" e "Tel da inserire".
+
+Ancora aperti: **credito fondatori in footer (per ora niente, decisione rinviata)**, crediti sui lavori,
+clip vere e shot list, dominio e immagine social, "THE IDEA" come eventuale chiusura del logo (storyboard),
+conferma di Giangi sul descrittore.
