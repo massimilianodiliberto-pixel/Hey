@@ -2,6 +2,18 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — Blocchi 2 e 3: scia lime e mobile della home
+Tutto in `assets/js/reveal-overlay.js`; `scroll-world.js` non toccato.
+- Scia lime (§6.2): la finestra che rivela ha un filo lime sottile sul bordo; dove si passa il livello 02
+  resta aperto per un attimo (0,9 s) e il filo si spegne. Punti nuovi solo con spostamento reale:
+  col movimento lento gli anelli si accatastavano come curve di livello. Niente scia con movimento ridotto.
+- Swipe orizzontale su telefono: scena successiva / precedente (usa i punti di navigazione del motore).
+  Lo scroll verticale resta la timeline. Nessun limite di tempo sul gesto: il primo tocco arrivava in ritardo.
+- Percorso automatico su telefono (§6.4): dopo 3,5 s senza tocchi né scroll la finestra si muove da sola
+  sulla scena; si ferma al primo tocco o scroll. Mai con movimento ridotto, mai a fine viaggio.
+- Collaudo: desktop scia ok, si spegne da ferma e allo scroll; telefono: autoplay a 6,5 s, swipe avanti
+  e indietro ok, autoplay fermo al tocco; movimento ridotto: niente autoplay né scia; console pulita.
+
 ## 07/11/2026 — Blocco 4: SYSTEM, scrub di processo, struttura del Lab
 - Nuova pagina `system/` e voce "System" nel menu e nel footer di tutte le pagine
   (Work / System / About / Network / Contact).

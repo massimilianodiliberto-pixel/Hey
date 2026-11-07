@@ -56,6 +56,13 @@
     var raf = 0, lastT = 0;
     var seeded = false;
 
+    // SCIA LIME (master context §6.2): dove passa il puntatore resta per un
+    // attimo una traccia; dentro la traccia il livello 02 resta visibile e il
+    // bordo è un filo lime che si spegne. Il lime rivela, non riempie.
+    var TRAIL_MS = 900;
+    var trail = [];      // {x, y, r, t} in pixel del canvas
+    var lastTrailT = 0;
+
     // un solo <video> riusato per tutte le sezioni: cambia solo la sorgente
     var vid = document.createElement("video");
     vid.muted = true;
@@ -141,6 +148,16 @@
       var x = cx * MASK_SCALE, y = cy * MASK_SCALE;
       if (typeof maskCtx.filter === "string") {
         maskCtx.filter = "blur(" + (r * 0.34).toFixed(1) + "px)";
+        // la traccia: il livello 02 resta aperto per un attimo dove si è passati
+        for (var k = 0; k < trail.length; k++) {
+          var q = trail[k], age = (t - q.t) / TRAIL_MS;
+          if (age >= 1) continue;
+          maskCtx.globalAlpha = (1 - age) * 0.55;
+          maskCtx.fillStyle = "#fff";
+          maskPath(maskCtx, q.x * MASK_SCALE, q.y * MASK_SCALE, q.r * MASK_SCALE * 0.82 * (1 - age * 0.5), q.t);
+          maskCtx.fill();
+        }
+        maskCtx.globalAlpha = 1;
         maskCtx.fillStyle = "#fff";
         maskPath(maskCtx, x, y, r * 0.82, t);
         maskCtx.fill();
@@ -176,6 +193,28 @@
       cutCtx.drawImage(maskCv, 0, 0, W, H);
       cutCtx.globalCompositeOperation = "source-over";
       ctx.drawImage(cutCv, 0, 0);
+      drawLime(t);
+    }
+
+    // il filo lime: sul bordo della finestra e, sempre più debole, sugli
+    // ultimi punti della traccia
+    function drawLime(t) {
+      if (reduce) return;
+      var frac = R_MIN + (R_MAX - R_MIN) * grow;
+      var r = Math.min(W, H) * frac * open;
+      ctx.lineWidth = Math.max(1, dpr);
+      ctx.strokeStyle = "#E5FD5D";
+      for (var k = 0; k < trail.length; k++) {
+        var q = trail[k], age = (t - q.t) / TRAIL_MS;
+        if (age >= 1) continue;
+        ctx.globalAlpha = (1 - age) * (1 - age) * 0.16 * open;
+        maskPath(ctx, q.x, q.y, q.r * 0.74 * (1 - age * 0.5), q.t);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 0.42 * open;
+      maskPath(ctx, cx, cy, r * 0.74, t);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
     }
 
     function tick(t) {
@@ -188,6 +227,18 @@
       // il movimento fa crescere la finestra, la quiete la fa tornare piccola
       grow += (moved ? 1 - grow : -grow) * 0.05 * (dt / 16);
       grow = Math.max(0, Math.min(1, grow));
+      if (!reduce && moved && open > 0.05 && t - lastTrailT > 45) {
+        // un punto nuovo solo se ci si è spostati davvero: col movimento lento
+        // gli anelli si accatastavano come curve di livello (effetto "tech")
+        var rNow = Math.min(W, H) * (R_MIN + (R_MAX - R_MIN) * grow) * open;
+        var lp = trail[trail.length - 1];
+        if (!lp || Math.hypot(cx - lp.x, cy - lp.y) > rNow * 0.45) {
+          lastTrailT = t;
+          trail.push({ x: cx, y: cy, r: rNow, t: t });
+        }
+      }
+      while (trail.length && t - trail[0].t > TRAIL_MS) trail.shift();
+      if (trail.length > 24) trail.shift();
       moved = false;
 
       draw(t);
@@ -196,7 +247,7 @@
         Math.abs(tx - cx) < 0.4 &&
         Math.abs(ty - cy) < 0.4 &&
         Math.abs(openTarget - open) < 0.002;
-      if (still && openTarget === 0) {
+      if (still && openTarget === 0 && !trail.length) {
         open = 0;
         grow = 0;
         draw(t);
@@ -256,6 +307,7 @@
       if (subito) {
         open = 0;
         grow = 0;
+        trail.length = 0;
         draw(performance.now());
       }
       wake();
@@ -311,6 +363,57 @@
     }, { passive: true });
     window.addEventListener("touchend", leave, { passive: true });
     window.addEventListener("touchcancel", leave, { passive: true });
+
+    // MOBILE (§6.4) — stesso viaggio, gesto naturale.
+    // 1) Swipe orizzontale: scena successiva / precedente. Lo scroll verticale
+    //    resta la timeline; lo swipe è una scorciatoia, non la sostituisce.
+    var sw = null;
+    window.addEventListener("touchstart", function (e) {
+      lastTouch = performance.now();
+      stopDrift();
+      if (e.touches.length !== 1 || document.body.classList.contains("world-done")) { sw = null; return; }
+      sw = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: e.timeStamp };
+    }, { passive: true });
+    window.addEventListener("touchend", function (e) {
+      lastTouch = performance.now();
+      if (!sw || !e.changedTouches.length) return;
+      var dx = e.changedTouches[0].clientX - sw.x, dy = e.changedTouches[0].clientY - sw.y;
+      // niente limite di tempo: conta solo la direzione (un gesto lento ma
+      // chiaramente orizzontale è comunque uno swipe)
+      sw = null;
+      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
+      var i = activeIndex();
+      var dots = document.querySelectorAll("#world .sw-route__dot");
+      var to = dx < 0 ? i + 1 : i - 1;
+      if (i >= 0 && to >= 0 && to < dots.length) dots[to].click();
+    }, { passive: true });
+
+    // 2) Se nessuno tocca, la rivelazione fa il suo percorso da sola: la
+    //    finestra si muove lenta sulla scena, come farebbe il dito. Si ferma
+    //    al primo tocco o scroll e riparte dopo qualche secondo di quiete.
+    //    Solo su touch, mai con movimento ridotto.
+    var lastTouch = performance.now();
+    var DRIFT_AFTER = 3500;
+    var drifting = false, driftRaf = 0;
+    function driftOK() {
+      return isCoarse() && !reduce && !scrolling && !document.hidden &&
+        !document.body.classList.contains("world-done") &&
+        performance.now() - lastTouch > DRIFT_AFTER && activeIndex() >= 0;
+    }
+    function stopDrift() {
+      if (drifting) { drifting = false; leave(); }
+    }
+    function driftLoop(t) {
+      driftRaf = requestAnimationFrame(driftLoop);
+      if (!driftOK()) { stopDrift(); return; }
+      drifting = true;
+      var w = window.innerWidth, h = window.innerHeight;
+      enter(w * (0.5 + 0.24 * Math.sin(t * 0.00031)), h * (0.42 + 0.15 * Math.sin(t * 0.00047 + 1.3)));
+    }
+    if (isCoarse() && !reduce) {
+      driftRaf = requestAnimationFrame(driftLoop);
+      window.addEventListener("scroll", function () { lastTouch = performance.now(); stopDrift(); }, { passive: true });
+    }
 
     // quando il viaggio finisce, il rig sparisce: anche questa deve sparire
     var mo = new MutationObserver(function () {
