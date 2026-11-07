@@ -1092,13 +1092,11 @@ body:not(:has(#world)) .sitenav::before {
     --bar-bottom-h: 42px;
   }
   .edge-bar {
+    display: block;
     white-space: normal;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-content: center;
     text-align: center;
-    row-gap: 2px;
-    line-height: 1.3;
+    line-height: 1.35;
+    padding: 7px 14px;
     overflow: hidden;
   }
 }
@@ -1140,4 +1138,352 @@ body:not(:has(#world)) .sitenav::before {
     line-height: 1.5;
     max-height: calc(3 * 1.5em + 12px);
   }
+}
+
+/* =====================================================================
+   v4 — Blocco 4, SYSTEM: metodo, scrub di processo, Transformation Lab
+   ===================================================================== */
+
+.method {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--rule);
+}
+.method__step {
+  padding: 28px 24px 34px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.method__step + .method__step {
+  padding-left: 24px;
+  border-left: 1px solid var(--rule);
+}
+.method__step .mono {
+  color: var(--gray);
+}
+.method__step h2 {
+  margin: 14px 0 10px;
+}
+@media (max-width: 900px) {
+  .method {
+    grid-template-columns: 1fr 1fr;
+  }
+  .method__step:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+@media (max-width: 560px) {
+  .method {
+    grid-template-columns: 1fr;
+  }
+  .method__step,
+  .method__step + .method__step {
+    padding: 22px 0 26px;
+    border-left: 0;
+  }
+}
+
+.scrub {
+  margin-top: clamp(36px, 6vw, 64px);
+}
+.scrub__stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.scrub__stage[data-dragging] {
+  cursor: grabbing;
+}
+.scrub__frame {
+  position: absolute;
+  inset: 0;
+}
+.scrub__layer,
+.scrub__layer img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.scrub__layer img {
+  object-fit: cover;
+  -webkit-user-drag: none;
+}
+.scrub__halo,
+.scrub__dark {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.scrub__dark {
+  background: var(--rhyme);
+  z-index: 4;
+}
+/* il filo lime: gli stati di lavoro stanno rientrati dietro una linea
+   sottile, come uno shot sotto esame. È l'unico lime fisso dello stage. */
+.scrub__rule {
+  position: absolute;
+  z-index: 6;
+  border: 1px solid var(--lime);
+  pointer-events: none;
+}
+.scrub__idea {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: var(--pad);
+  pointer-events: none;
+}
+.scrub__idea p {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(26px, 4.6vw, 58px);
+  line-height: 1;
+  color: var(--light);
+}
+.scrub__marks {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.mark {
+  position: absolute;
+  transform: translate(10px, -50%);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rhyme);
+  background: var(--lime);
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+.mark::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  width: 10px;
+  height: 1px;
+  background: var(--lime);
+}
+.scrub__grab {
+  position: absolute;
+  z-index: 7;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--light);
+  background: color-mix(in srgb, var(--rhyme) 70%, transparent);
+  padding: 6px 12px;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.scrub__grab.is-gone {
+  opacity: 0;
+}
+.scrub__grab-touch {
+  display: none;
+}
+@media (hover: none) and (pointer: coarse) {
+  .scrub__grab-pointer {
+    display: none;
+  }
+  .scrub__grab-touch {
+    display: inline;
+  }
+}
+
+.scrub__rail {
+  position: relative;
+  height: 54px;
+  margin-top: 18px;
+  cursor: pointer;
+  touch-action: none;
+}
+.scrub__rail::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 10px;
+  height: 1px;
+  background: var(--rule);
+}
+.scrub__fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 10px;
+  height: 1px;
+  background: var(--lime);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+.scrub__rail:focus-visible {
+  outline-offset: 8px;
+}
+.scrub__ticks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  inset: 0;
+}
+.scrub__ticks li {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+.scrub__ticks li:nth-child(1) { left: 0; transform: none; }
+.scrub__ticks li:nth-child(2) { left: 20%; }
+.scrub__ticks li:nth-child(3) { left: 40%; }
+.scrub__ticks li:nth-child(4) { left: 60%; }
+.scrub__ticks li:nth-child(5) { left: 80%; }
+.scrub__ticks li:nth-child(6) { left: 100%; transform: translateX(-100%); }
+.scrub__ticks button {
+  all: unset;
+  display: block;
+  padding-top: 22px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+}
+.scrub__ticks button::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 1px;
+  height: 9px;
+  background: var(--rule);
+}
+.scrub__ticks li:nth-child(1) button::before { left: 0; }
+.scrub__ticks li:nth-child(6) button::before { left: auto; right: 0; }
+.scrub__ticks li[data-on] button { color: var(--lime); }
+.scrub__ticks li[data-on] button::before { background: var(--lime); }
+.scrub__now {
+  display: none;
+  margin: 6px 0 0;
+  color: var(--lime);
+}
+.scrub__caption {
+  margin: 16px 0 0;
+  max-width: 62ch;
+  min-height: 4.8em;
+  color: var(--light);
+}
+.scrub__credit {
+  margin-top: 12px;
+  font-size: 10px;
+}
+@media (max-width: 760px) {
+  .scrub__stage {
+    aspect-ratio: 4 / 3;
+  }
+  .scrub__rail {
+    height: 30px;
+  }
+  .scrub__ticks button {
+    font-size: 0;
+    padding: 14px 10px 0;
+  }
+  .scrub__now {
+    display: block;
+  }
+}
+
+.lab {
+  list-style: none;
+  margin: clamp(30px, 5vw, 50px) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 28px 22px;
+}
+.lab__frame {
+  aspect-ratio: 4 / 5;
+  border: 1px dashed var(--rule);
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+}
+.lab__frame span {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+.lab__item h3 {
+  margin: 0 0 8px;
+}
+.lab__item p {
+  margin: 0;
+  font-size: 15px;
+}
+.claim {
+  margin: clamp(60px, 10vw, 120px) 0 0;
+  color: var(--light);
+}
+.claim span {
+  color: var(--gray);
+}
+
+/* nav a cinque voci: su telefono si stringe per restare su una riga */
+@media (max-width: 640px) {
+  .sitenav {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .sitenav__right {
+    gap: 10px;
+  }
+  .sitenav__links {
+    gap: 10px;
+  }
+  .sitenav__links a {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+  .sitenav__mark {
+    width: 42px;
+  }
+  .sitenav__private {
+    width: 30px;
+    height: 30px;
+  }
+}
+/* footer a sei voci: va a capo invece di allargare la pagina su telefono */
+.sitefooter__links {
+  flex-wrap: wrap;
+  row-gap: 12px;
+}
+.sitefooter__links a {
+  white-space: nowrap;
 }

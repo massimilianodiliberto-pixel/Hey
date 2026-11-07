@@ -2,6 +2,22 @@
 
 Da leggere per primo alla ripresa. Una voce per blocco, la più recente in alto.
 
+## 07/11/2026 — Blocco 4: SYSTEM, scrub di processo, struttura del Lab
+- Nuova pagina `system/` e voce "System" nel menu e nel footer di tutte le pagine
+  (Work / System / About / Network / Contact).
+- Metodo in 4 passaggi (Idea, Produzione, Tecnologia, Film): testi ripresi dalla v1.
+- Scrub di processo (§6.3), `assets/js/scrub.js`: 6 stati IDEA → NUOVA IMMAGINE sui tre frame veri
+  del nuotatore (portati dalla v1 in `assets/img/frames/`, avif + jpg, 824 KB). Il frame nuovo affiora
+  da una zona morbida con un filo lime sottile solo dove il mestiere interviene; niente tendina prima/dopo.
+  Trascinamento orizzontale (swipe su telefono, lo scroll verticale resta libero), clic sulla timeline,
+  frecce/Home/Fine. Parte da solo se nessuno tocca; con movimento ridotto niente autoplay né animazioni.
+- Transformation Lab: struttura con 5 interventi (luce, ambiente, materia, movimento, realtà, testi v1)
+  e riquadri "Frame in preparazione".
+- Telefono: menu a 5 voci su una riga; footer che va a capo (prima allargava la pagina a 423 px);
+  fascia in basso su due righe con testo continuo.
+- Da confermare con Massimiliano: uso del nuotatore nello scrub (unico materiale con backstage,
+  plate e finale dello stesso shot, diritti confermati dal master context §4).
+
 ## 07/11/2026 — Blocco 1: pulizia
 Decisioni arrivate dalla regia (Massimiliano): home = viaggio v3; menu Work/System/About/Network/Contact;
 fasce lime restano; moduli = mailto con `EMAIL-DA-CONFERMARE`; "Verona" via; "oltre quarant'anni" resta.
