@@ -32,7 +32,7 @@ export default function Journey(props: JourneyProps) {
 
   useEffect(() => {
     if (reduced !== false || !root.current) return;
-    return createEngine(root.current, { stations, hub: "gambe" });
+    return createEngine(root.current, { stations, hub: arrival.hub, arrivalId: arrival.id });
   }, [reduced, stations]);
 
   if (reduced) return <StaticJourney {...props} />;
@@ -50,9 +50,13 @@ export default function Journey(props: JourneyProps) {
         {stations.map((s, i) => {
           const look = looks[s.id];
           const links = (s.links ?? []).filter((id) => built.has(id));
+          // «prima» / «dopo» / «oggi»: solo dalla posizione relativa nel tempo, mai una data
+          const next = stations[i + 1];
+          const timeWord = !next ? ui.now : next.era < s.era ? ui.before : ui.after;
           return (
-            <section key={s.id} className="scene" data-scene={s.id} style={{ zIndex: 10 + i }} aria-label={s.title}>
+            <section key={s.id} className="scene" data-scene={s.id} style={{ zIndex: 10 + i }} aria-label={s.sense}>
               <div className="scene-entry">
+                <div className="scene-wash" />
                 <div className="scene-zoom">
                   <div className="scene-exit">
                     <div className="frame-box frame">
@@ -96,30 +100,38 @@ export default function Journey(props: JourneyProps) {
                     </a>
                   </div>
                 </div>
-                <div className="received-wrap">
-                  <p className="received">{s.received.text}</p>
+                <div className="world-wrap">
+                  <p className="world">{s.worlds.join(" · ")}</p>
                 </div>
+                {s.received && (
+                  <div className="received-wrap">
+                    <p className="received">{s.received.text}</p>
+                  </div>
+                )}
                 <h2 className="sense">{s.sense}</h2>
-                <p className="today">{s.today.text}</p>
+                {s.today && <p className="today">{s.today.text}</p>}
                 {links.length > 0 && (
                   <nav className="links" aria-label={ui.links}>
                     {links.map((id) => (
                       <button key={id} type="button" data-jump={id}>
-                        → {allStations.find((x) => x.id === id)?.title}
+                        → {allStations.find((x) => x.id === id)?.sense}
                       </button>
                     ))}
                   </nav>
                 )}
               </div>
+              <p className="timeword" aria-hidden="true">
+                {timeWord}
+              </p>
             </section>
           );
         })}
 
-        <section className="arrival" data-scene="lui" aria-label={ui.arrival}>
+        <section className="arrival" data-scene={arrival.id} aria-label={ui.arrival}>
           <div className="arrival-entry">
             <svg className="arrival-lines" aria-hidden="true">
               {stations
-                .filter((s) => s.id !== "gambe")
+                .filter((s) => s.id !== arrival.hub)
                 .map((s) => (
                   <line key={s.id} data-line={s.id} />
                 ))}
@@ -182,17 +194,18 @@ export default function Journey(props: JourneyProps) {
             <li key={s.id}>
               {built.has(s.id) ? (
                 <button type="button" data-jump={s.id} data-index={s.id} onClick={() => setIndexOpen(false)}>
-                  {s.title}
+                  {s.sense}
+                  <span className="index-world">{s.worlds.join(" · ")}</span>
                 </button>
               ) : (
                 <span className="is-soon" title={ui.soon}>
-                  {s.title}
+                  {s.sense}
                 </span>
               )}
             </li>
           ))}
           <li>
-            <button type="button" data-jump="lui" data-index="lui" onClick={() => setIndexOpen(false)}>
+            <button type="button" data-jump={arrival.id} data-index={arrival.id} onClick={() => setIndexOpen(false)}>
               {ui.arrival}
             </button>
           </li>
@@ -211,7 +224,7 @@ export default function Journey(props: JourneyProps) {
         {stations.map((s) => (
           <div key={s.id} className="track track-station" data-track={s.id} />
         ))}
-        <div className="track track-arrival" data-track="lui" />
+        <div className="track track-arrival" data-track={arrival.id} />
       </div>
     </div>
   );

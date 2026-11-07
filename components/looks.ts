@@ -22,7 +22,7 @@ const bands = (n: number, a: string, b: string): Shape[] =>
   Array.from({ length: n }, (_, i) => ({ kind: "rect", x: 0, y: (100 / n) * i, w: 100, h: 100 / n + 0.2, color: i % 2 ? a : b }));
 
 export const looks: Record<string, Look> = {
-  occhi: {
+  immagine: {
     planes: {
       bg: [
         { kind: "rect", x: 0, y: 0, w: 100, h: 62, color: "#d8d3c8" },
@@ -37,7 +37,7 @@ export const looks: Record<string, Look> = {
     clipTints: ["#6d5a3c", "#3b4a56"],
     trace: { x: "3vw", y: "30vh", slot: 0 },
   },
-  orecchie: {
+  ritmo: {
     planes: {
       bg: bands(9, "#cbd0cc", "#bcc3be"),
       mid: [
@@ -49,7 +49,7 @@ export const looks: Record<string, Look> = {
     clipTints: ["#4c3a5e", "#2f5a4f", "#7a3b2e"],
     trace: { x: "84vw", y: "58vh", slot: 3 },
   },
-  fegato: {
+  rischio: {
     planes: {
       bg: [
         { kind: "rect", x: 0, y: 0, w: 100, h: 100, color: "#d9d2c4" },
@@ -64,7 +64,7 @@ export const looks: Record<string, Look> = {
     clipTints: ["#5a3a2a", "#2e3b4a"],
     trace: { x: "4vw", y: "72vh", slot: 5 },
   },
-  mani: {
+  spazio: {
     planes: {
       bg: [{ kind: "rect", x: 0, y: 0, w: 100, h: 100, color: "#e2ddd3" }],
       mid: [
@@ -79,7 +79,7 @@ export const looks: Record<string, Look> = {
     clipTints: ["#3d4c3a", "#5b4636"],
     trace: { x: "85vw", y: "26vh", slot: 1 },
   },
-  gambe: {
+  orientamento: {
     planes: {
       bg: Array.from({ length: 7 }, (_, i) => ({ kind: "rect" as const, x: (100 / 7) * i, y: 0, w: 100 / 7 + 0.2, h: 100, color: i % 2 ? "#cfd2cf" : "#c3c7c3" })),
       mid: [
@@ -91,7 +91,7 @@ export const looks: Record<string, Look> = {
     clipTints: ["#40384f"],
     trace: { x: "6vw", y: "88vh", slot: 4 },
   },
-  cuore: {
+  misura: {
     planes: {
       bg: [
         { kind: "rect", x: 0, y: 0, w: 100, h: 100, color: "#c9c1b4" },

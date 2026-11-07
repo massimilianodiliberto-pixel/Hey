@@ -37,9 +37,14 @@ Fase 1: motore di scroll e prototipo. I contenuti sono segnaposto e verranno sos
 Il sito personale di un regista che "non è mai stato un regista classico". Non è un portfolio e
 non è una timeline. È un viaggio che parte da qualcosa di astratto e arriva a una persona reale.
 
-L'utente attraversa un corpo, una parte alla volta. Ogni parte è un mondo della sua vita
-professionale: non cosa ha fatto, ma cosa gli ha lasciato. Alla fine le parti si collegano e
-compare lui.
+> **Aggiornamento (decisione di Massimiliano, 07/11/2026).** Niente più metafora del corpo. Le
+> stazioni sono i **sensi**. Il viaggio **va avanti e indietro, saltando nel tempo** tra
+> esperienze diverse. Nel sito restano **solo le frasi di Giangi**.
+
+L'utente attraversa i sensi che il lavoro gli ha aperto, uno alla volta. Ogni senso nasce da
+un'esperienza della sua vita professionale: non cosa ha fatto, ma cosa gli ha lasciato. Il
+viaggio salta avanti e indietro nel tempo tra queste esperienze, senza mai diventare una
+cronologia. Alla fine i sensi si collegano e compare lui.
 
 Sensazione da ottenere: "sto attraversando un film", non "sto scrollando un sito".
 
@@ -84,13 +89,27 @@ Regole di interazione:
 Niente Opening / Intro / Projects / Closing. La struttura è:
 
 - **Apertura:** forma astratta, nessun volto, una frase.
-- **Stazioni** (le parti del corpo): numero e ordine arrivano da un file dati.
+- **Stazioni** (i sensi, ognuno legato a un'esperienza): numero e ordine arrivano da un file dati.
+  L'ordine alterna esperienze lontane e recenti.
 - **Arrivo:** le stazioni si collegano con linee o richiami visivi e la forma astratta diventa
   una persona.
 
 Ogni stazione è una scena pinnata costruita su piani (background, midground, foreground, testo).
 La scena successiva emerge dalla trasformazione della precedente, non la sostituisce con uno
 stacco.
+
+### Il salto nel tempo
+
+Ogni esperienza ha nel file dati una posizione relativa nel tempo (`era`), che **non si vede mai**:
+niente date, niente numeri. Serve solo a scegliere il movimento di camera tra due stazioni:
+
+- **dopo** (esperienza più recente): la camera spinge oltre la scena e la successiva emerge da una
+  finestra aperta in un elemento della precedente;
+- **prima** (esperienza più lontana): la camera arretra, il presente si ritira in un cerchio e
+  l'esperienza precedente si chiude attorno, velata come un ricordo, fino a tornare nitida.
+
+Durante la transizione compare una parola sola, piccola: «prima», «dopo» oppure «oggi» (verso
+l'arrivo).
 
 ### Navigazione non lineare (obbligatoria)
 
@@ -118,14 +137,16 @@ type Clip = {
   fullWorkUrl?: string; // link Vimeo "watch full work"
 };
 
+type Line = { text: string; origin: Origin };
+
 type Station = {
-  id: string;           // "occhi"
-  title: string;        // "Occhi", parte del corpo
-  sense: string;        // "Senso dell'immagine": titolo che compare nel freeze
+  id: string;           // "ritmo"
+  sense: string;        // "Senso del ritmo": titolo che compare nel freeze
   senseOrigin: Origin;
-  received: { text: string; origin: Origin }; // riga al passato: cosa ha ricevuto
-  today: { text: string; origin: Origin };    // riga al presente: come ha ampliato istinto e visione
-  worlds: string[];     // i mondi professionali da cui viene la stazione
+  worlds: string[];     // l'esperienza: titolo grande durante la clip
+  era: number;          // posizione relativa nel tempo, mai mostrata
+  received: Line | null; // sua frase su quell'esperienza; null se non ce n'è una sua
+  today: Line | null;    // sua frase al presente; null se non ce n'è una sua
   scene: {
     type: "sequence" | "video" | "image" | "placeholder";
     src?: string;       // cartella frame o file
@@ -139,15 +160,17 @@ type Station = {
 ```
 
 Il file esporta anche `opening` (la frase di apertura) e `arrival` (scena di arrivo: senso
-"Istinto", frase, chiusura, nome, ritratto e contatti).
+"Istinto", stazione da cui partono le linee, frase, chiusura, nome, ritratto e contatti).
 
 Aggiungere, togliere o riordinare stazioni deve richiedere solo la modifica di questo file.
 
 ### Contenuti di prova
 
-Il file `content/stations.ts` è già fornito: sei stazioni (Occhi, Orecchie, Fegato, Mani, Gambe,
-Cuore), più apertura e arrivo. Usalo così com'è. Ogni riga ha un campo `origin`: `"sua"` è una
-frase del cliente e non va riscritta, `"inventata"` è un segnaposto.
+Sei sensi, ognuno legato a un'esperienza: immagine (origini, Asenawer, il primo spot), ritmo
+(Match Music, DJ Television, video musicali), rischio (pubblicità), spazio (grandi eventi,
+design), orientamento (le società), misura (i picchi). Più apertura e arrivo. I sensi, «Istinto» e
+gli `era` sono PLACEHOLDER. `"sua"` è una frase del cliente e non va riscritta. **Nel sito non
+compaiono righe scritte da noi**: dove non c'è una sua frase, il campo è `null`.
 
 Le clip hanno due modalità:
 
@@ -158,23 +181,23 @@ Le clip hanno due modalità:
 **Principio:** ogni esperienza gli ha aperto un senso. Ogni stazione ha tre battute, legate ai
 tre tempi della regia:
 
-1. **Ricevuto** (`received`): cosa ha preso da quel mondo. Lo mostrano le clip; una riga al
-   passato lo dice.
+1. **Esperienza** (`worlds`, più la sua frase in `received` se c'è): cosa ha preso da quel mondo.
+   Lo mostrano le clip; il nome del mondo è il titolo grande durante la clip.
 2. **Senso** (`sense`): il senso che gli si è aperto, ad esempio "Senso del ritmo". È il titolo
    che compare nel freeze.
 3. **Oggi** (`today`): come quel senso ha ampliato istinto e visione. Una riga al presente, che
    compare per ultima.
 
-Sequenza in ogni stazione: clip con riga "ricevuto" → freeze con il senso → riga "oggi" →
-transizione. Massimo 25 parole di testo per stazione (`sense` escluso).
+Sequenza in ogni stazione: clip con il mondo (e la sua frase, se c'è) → freeze con il senso →
+riga "oggi" se c'è → transizione «prima» o «dopo». Massimo 25 parole di testo per stazione (`sense` escluso).
 
 **Accumulo.** Ogni senso aperto resta visibile come traccia discreta ai margini del viewport per
 tutto il resto del viaggio. Stazione dopo stazione i sensi si sommano. Nella scena di arrivo
 convergono attorno alla persona e compare la parola "Istinto". Se l'utente salta con l'indice, i
 sensi delle stazioni non visitate restano spenti.
 
-La stazione Gambe richiama tutte le altre: nella scena di arrivo, le linee che collegano le
-stazioni partono da lì.
+La stazione dell'orientamento richiama tutte le altre: spostarsi è ciò che collega le esperienze.
+Nella scena di arrivo le linee che collegano i sensi partono da lì.
 
 Ogni segnaposto deve essere marcato PLACEHOLDER nel file dati.
 

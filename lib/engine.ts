@@ -34,10 +34,14 @@ type St = {
   clipUi: HTMLElement;
   clipUiWrap: HTMLElement;
   clipTitle: HTMLElement;
-  received: HTMLElement;
-  receivedWrap: HTMLElement;
+  world: HTMLElement;
+  worldWrap: HTMLElement;
+  received: HTMLElement | null; // solo se la stazione ha una sua frase
+  receivedWrap: HTMLElement | null;
   sense: HTMLElement;
-  today: HTMLElement;
+  today: HTMLElement | null;
+  timeword: HTMLElement;
+  wash: HTMLElement;
   links: HTMLElement | null;
   trace: HTMLElement | null;
   indexBtn: HTMLElement | null;
@@ -60,11 +64,25 @@ const sineInOut = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
 const power2Out = (t: number) => 1 - (1 - t) * (1 - t);
 const pad = (n: number) => String(Math.floor(n)).padStart(2, "0");
 const circ = (r: number, c: { x: number; y: number }) => `circle(${r.toFixed(1)}px at ${c.x.toFixed(1)}px ${c.y.toFixed(1)}px)`;
+// Tutto lo schermo meno un foro circolare: la scena precedente nel tempo entra dai bordi.
+const hole = (r: number, c: { x: number; y: number }) => {
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  const f = (n: number) => n.toFixed(1);
+  return `path(evenodd, "M0 0H${W}V${H}H0Z M${f(c.x - r)} ${f(c.y)}a${f(r)} ${f(r)} 0 1 0 ${f(2 * r)} 0a${f(r)} ${f(r)} 0 1 0 ${f(-2 * r)} 0Z")`;
+};
 
 // Ciò che emerge alla fine di una stazione: la stazione successiva o la scena di arrivo.
-type Next = { entry: HTMLElement; zoom: HTMLElement | null; text: HTMLElement | null; center: () => { x: number; y: number } };
+type Next = {
+  entry: HTMLElement;
+  zoom: HTMLElement | null;
+  text: HTMLElement | null;
+  wash: HTMLElement | null;
+  center: () => { x: number; y: number };
+  back: boolean; // true = si torna a un'esperienza precedente nel tempo
+};
 
-export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub: string }) {
+export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub: string; arrivalId: string }) {
   const q = <T extends HTMLElement = HTMLElement>(el: ParentNode, sel: string) => el.querySelector(sel) as T;
 
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -100,10 +118,14 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
       clipUi: q(scene, ".clipui"),
       clipUiWrap: q(scene, ".clipui-wrap"),
       clipTitle: q(scene, ".clip-title"),
-      received: q(scene, ".received"),
-      receivedWrap: q(scene, ".received-wrap"),
+      world: q(scene, ".world"),
+      worldWrap: q(scene, ".world-wrap"),
+      received: scene.querySelector<HTMLElement>(".received"),
+      receivedWrap: scene.querySelector<HTMLElement>(".received-wrap"),
       sense: q(scene, ".sense"),
-      today: q(scene, ".today"),
+      today: scene.querySelector<HTMLElement>(".today"),
+      timeword: q(scene, ".timeword"),
+      wash: q(scene, ".scene-wash"),
       links: scene.querySelector<HTMLElement>(".links"),
       trace: root.querySelector<HTMLElement>(`[data-trace="${data.id}"]`),
       indexBtn: root.querySelector<HTMLElement>(`[data-index="${data.id}"]`),
@@ -125,7 +147,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
   const stage = q(root, ".stage");
   const arr = {
     entry: q(root, ".arrival-entry"),
-    track: q(root, '[data-track="lui"]'),
+    track: q(root, `[data-track="${opts.arrivalId}"]`),
     portrait: q(root, ".portrait"),
     instinct: q(root, ".instinct"),
     line: q(root, ".arrival-line"),
@@ -134,7 +156,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     contacts: q(root, ".arrival-contacts"),
     rings: S.map((s) => ({ s, el: q(root, `[data-ring="${s.data.id}"]`) })),
     lines: [...root.querySelectorAll<SVGLineElement>("[data-line]")],
-    indexBtn: root.querySelector<HTMLElement>('[data-index="lui"]'),
+    indexBtn: root.querySelector<HTMLElement>(`[data-index="${opts.arrivalId}"]`),
     st: null as ScrollTrigger | null,
     p: 0,
   };
@@ -142,7 +164,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
   const invite = q(root, ".invite");
 
   // Prima della clip, riga "ricevuto" e comandi della clip sono spenti.
-  S.forEach((s) => gsap.set([s.received, s.clipUi], { autoAlpha: 0 }));
+  S.forEach((s) => gsap.set([s.world, s.received, s.clipUi].filter(Boolean), { autoAlpha: 0 }));
 
   // ---------- Scroll programmato (avanzamento automatico, aggancio, salti) ----------
 
@@ -241,7 +263,9 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     gsap.set(s.clipLayer, { autoAlpha: 1 });
     gsap.set(s.clipCaption, { opacity: 0 });
     gsap.set(s.clipCam, { autoAlpha: 1 });
-    gsap.fromTo(s.received, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" });
+    // Il mondo è il titolo grande della clip: l'esperienza, il passato.
+    gsap.fromTo(s.world, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" });
+    if (s.received) gsap.fromTo(s.received, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.6, delay: 0.4, ease: "power2.out" });
     gsap.fromTo(s.clipUi, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 });
 
     const D = config.clipSeconds;
@@ -304,6 +328,15 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     lastInput = performance.now();
   }
 
+  // Si è entrati oltre p = 0 senza fermarsi: niente clip, ma mondo, frase e comandi visibili.
+  function showFrozen(s: St) {
+    s.phase = "frozen";
+    gsap.set(s.clipLayer, { autoAlpha: 0 });
+    gsap.set([s.world, s.received, s.clipUi].filter(Boolean), { autoAlpha: 1, y: 0 });
+    s.clipTitle.textContent = lastClip(s)?.title ?? "";
+    s.clipUi.classList.add("is-frozen");
+  }
+
   function skip(s: St) {
     const tl = s.clipTl;
     if (s.phase !== "playing" || !tl) return;
@@ -324,6 +357,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     const y = scrollY();
     const px = y - st.start;
     if (s.phase === "waiting" && inRange(st, y) && px <= 4) playClips(s);
+    else if (s.phase === "waiting" && inRange(st, y)) showFrozen(s); // entrati a stazione avviata
     else if (s.phase === "playing" && (px > 12 || !inRange(st, y))) finishClip(s, "fade");
   }
 
@@ -352,11 +386,11 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     });
     let id = (cur as St | null)?.data.id ?? "";
     const last = S[S.length - 1]?.st;
-    if (arr.st && last && y >= arr.st.start - (1 - P.indexSwap) * (last.end - last.start)) id = "lui";
+    if (arr.st && last && y >= arr.st.start - (1 - P.indexSwap) * (last.end - last.start)) id = opts.arrivalId;
     if (id === currentId) return;
     currentId = id;
     S.forEach((s) => s.indexBtn?.classList.toggle("is-current", s.data.id === id));
-    arr.indexBtn?.classList.toggle("is-current", id === "lui");
+    arr.indexBtn?.classList.toggle("is-current", id === opts.arrivalId);
   }
 
   // ---------- Timeline in scrub ----------
@@ -367,7 +401,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     tl.to(opening.line, { autoAlpha: 0, y: -16, duration: 0.25, ease: "power1.in" }, 0.25);
     tl.fromTo(opening.shape, { clipPath: "circle(14% at 50% 50%)" }, { clipPath: "circle(42% at 50% 50%)", duration: 0.5, ease: "power2.inOut" }, 0.3);
     if (first) {
-      // La forma astratta diventa la prima scena: il quadro di Occhi si apre da dentro il disco.
+      // La forma astratta diventa la prima scena: il quadro della prima stazione si apre da dentro il disco.
       tl.fromTo(
         first.entry,
         { clipPath: () => circ(0, frameCenter(first)) },
@@ -381,11 +415,20 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     return tl;
   }
 
-  const asNext = (n: St): Next => ({ entry: n.entry, zoom: n.zoom, text: n.text, center: () => frameCenter(n) });
+  const asNext = (from: St, n: St): Next => ({
+    entry: n.entry,
+    zoom: n.zoom,
+    text: n.text,
+    wash: n.wash,
+    center: () => frameCenter(n),
+    back: n.data.era < from.data.era,
+  });
   const arrivalNext: Next = {
     entry: arr.entry,
     zoom: null,
     text: null,
+    wash: null,
+    back: false,
     center: () => ({ x: arr.portrait.offsetLeft + arr.portrait.offsetWidth / 2, y: arr.portrait.offsetTop + arr.portrait.offsetHeight / 2 }),
   };
 
@@ -406,7 +449,10 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
       );
     });
 
-    tl.fromTo(s.receivedWrap, { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -12, duration: span(P.receivedOut), ease: "power1.in" }, P.receivedOut[0]);
+    // Il mondo esce quando si apre il senso. La sua frase, se c'è, resta più a lungo: è l'unico testo.
+    tl.fromTo(s.worldWrap, { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -12, duration: span(P.worldOut), ease: "power1.in" }, P.worldOut[0]);
+    if (s.receivedWrap)
+      tl.fromTo(s.receivedWrap, { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -12, duration: span(P.quoteOut), ease: "power1.in" }, P.quoteOut[0]);
     tl.fromTo(s.clipUiWrap, { autoAlpha: 1 }, { autoAlpha: 0, duration: span(P.receivedOut), ease: "power1.in" }, P.receivedOut[0]);
 
     gsap.set(s.sense, { xPercent: -50, yPercent: -50 });
@@ -425,15 +471,46 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     tl.to(s.sense, { opacity: 0.7, duration: 0.03 }, P.traceOn - 0.034);
     tl.to(s.sense, { autoAlpha: 0, duration: 0.004 }, P.traceOn - 0.004);
 
-    tl.fromTo(s.today, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: span(P.todayIn), ease: "power2.out" }, P.todayIn[0]);
-    tl.to(s.today, { autoAlpha: 0, duration: span(P.todayOut), ease: "power1.in" }, P.todayOut[0]);
+    if (s.today) {
+      tl.fromTo(s.today, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: span(P.todayIn), ease: "power2.out" }, P.todayIn[0]);
+      tl.to(s.today, { autoAlpha: 0, duration: span(P.todayOut), ease: "power1.in" }, P.todayOut[0]);
+    }
     if (s.links) {
       tl.fromTo(s.links, { autoAlpha: 0 }, { autoAlpha: 1, duration: span(P.linksIn) }, P.linksIn[0]);
       tl.to(s.links, { autoAlpha: 0, duration: 0.03 }, 0.84);
     }
 
-    // Transizione: la camera spinge oltre A, B emerge dalla finestra aperta in A.
+    // La parola del tempo: «dopo», «prima» o «oggi». Mai una data.
+    tl.fromTo(s.timeword, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: span(P.timeIn), ease: "power2.out" }, P.timeIn[0]);
+    tl.to(s.timeword, { autoAlpha: 0, duration: span(P.timeOut), ease: "power1.in" }, P.timeOut[0]);
     tl.to(s.text, { autoAlpha: 0, duration: 0.03 }, 0.9);
+
+    if (next.back) {
+      // Indietro nel tempo: la camera arretra, il presente si rimpicciolisce in un foro e
+      // l'esperienza precedente entra dai bordi, velata come un ricordo che torna nitido.
+      tl.to(s.exit, { scale: 0.55, duration: span(P.pushA), ease: "power2.inOut" }, P.pushA[0]);
+      tl.to(s.exit, { autoAlpha: 0, duration: span(P.fadeA), ease: "power1.in" }, P.fadeA[0]);
+      // GSAP non interpola path(): si anima il raggio e il foro si ricalcola a ogni fotogramma.
+      const h = { r: 0 };
+      const entry = next.entry;
+      tl.fromTo(
+        h,
+        { r: () => maxR() },
+        {
+          r: 0,
+          duration: 1 - P.windowOpen[0],
+          ease: "power2.inOut",
+          onUpdate: () => void (entry.style.clipPath = hole(h.r, frameCenter(s))),
+        },
+        P.windowOpen[0],
+      );
+      if (next.zoom) tl.fromTo(next.zoom, { scale: mobile ? 1.5 : 1.75 }, { scale: 1, duration: 1 - P.windowOpen[0], ease: "power2.inOut" }, P.windowOpen[0]);
+      if (next.wash) tl.fromTo(next.wash, { opacity: 0.55 }, { opacity: 0, duration: 1 - P.windowOpen[0], ease: "power1.in" }, P.windowOpen[0]);
+      if (next.text) tl.fromTo(next.text, { autoAlpha: 0 }, { autoAlpha: 1, duration: span(P.textB) }, P.textB[0]);
+      return tl;
+    }
+
+    // Avanti nel tempo: la camera spinge oltre A, B emerge dalla finestra aperta in A.
     tl.to(s.exit, { scale: mobile ? 1.3 : 1.45, duration: span(P.pushA), ease: "power2.in" }, P.pushA[0]);
     tl.to(s.exit, { autoAlpha: 0, duration: span(P.fadeA), ease: "power1.in" }, P.fadeA[0]);
     {
@@ -451,7 +528,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     return tl;
   }
 
-  // ---------- Arrivo: i sensi convergono attorno alla persona, le linee partono da Gambe ----------
+  // ---------- Arrivo: i sensi convergono attorno alla persona, le linee partono dall'orientamento ----------
 
   const center = (el: HTMLElement) => ({ x: el.offsetLeft + el.offsetWidth / 2, y: el.offsetTop + el.offsetHeight / 2 });
 
@@ -540,7 +617,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
 
     S.forEach((s, i) => {
       const n = S[i + 1];
-      s.tl = buildStation(s, n ? asNext(n) : arrivalNext, mobile);
+      s.tl = buildStation(s, n ? asNext(s, n) : arrivalNext, mobile);
       s.st = ScrollTrigger.create({
         trigger: s.track,
         start: "top top",
@@ -615,7 +692,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
 
   function jumpTo(id: string) {
     const s = S.find((x) => x.data.id === id);
-    const targetSt = id === "lui" ? arr.st : s?.st;
+    const targetSt = id === opts.arrivalId ? arr.st : s?.st;
     if (!targetSt || jumping) return;
     jumping = true;
     cancelAuto();

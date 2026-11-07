@@ -22,12 +22,12 @@
 @media (max-width: 768px) {
   :root {
     --frame-w: 88vw;
-    --frame-h: calc(var(--frame-w) * 5 / 4);
-    --frame-top: 12vh;
+    --frame-h: var(--frame-w);
+    --frame-top: 15vh;
     --below: calc(var(--frame-top) + var(--frame-h) + 18px);
     --pin: 180vh;
     --opening: 140vh;
-    --sense-size: clamp(26px, 8vw, 38px);
+    --sense-size: clamp(22px, 6.4vw, 32px);
     --pw: 34vw;
     --pc: 30vh;
   }
@@ -221,11 +221,61 @@ html.lenis body {
   opacity: 0.55;
 }
 
-.received-wrap {
+/* L'esperienza: titolo grande durante la clip, in maiuscoletto */
+.world-wrap {
   position: absolute;
   left: var(--frame-left);
   top: var(--below);
-  width: calc(var(--frame-w) * 0.55);
+  width: var(--frame-w);
+}
+.world {
+  margin: 0;
+  font-size: clamp(15px, 1.4vw, 22px);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1.25;
+}
+/* La sua frase, quando c'è: sotto il mondo, resta fino a metà del senso */
+.received-wrap {
+  position: absolute;
+  left: var(--frame-left);
+  top: calc(var(--below) + clamp(15px, 1.4vw, 22px) * 1.25 + 14px);
+  width: calc(var(--frame-w) * 0.62);
+}
+.scene-wash {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+}
+/* «prima» / «dopo» / «oggi» durante la transizione */
+.timeword {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--frame-top) - 38px);
+  z-index: 3;
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+  visibility: hidden;
+}
+.index-world {
+  display: block;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+.index li + li {
+  margin-top: 4px;
 }
 .received,
 .today {
@@ -518,6 +568,15 @@ html.lenis body {
   .received-wrap {
     width: var(--frame-w);
   }
+  .world {
+    font-size: 14px;
+  }
+  .received-wrap {
+    top: calc(var(--below) + 32px);
+  }
+  .index-world {
+    display: none;
+  }
   .today {
     left: var(--frame-left);
     right: auto;
@@ -589,11 +648,14 @@ html.lenis body {
 .static-page.is-in {
   opacity: 1;
 }
-.static-page > .received {
+.static-below {
   position: absolute;
   left: var(--frame-left);
   top: var(--below);
-  width: calc(var(--frame-w) * 0.55);
+  width: calc(var(--frame-w) * 0.62);
+}
+.static-below .received {
+  margin-top: 12px;
 }
 .static-shape {
   clip-path: circle(14% at 50% 50%);
@@ -633,7 +695,4 @@ html.lenis body {
 .static-text p {
   opacity: 1;
   visibility: visible;
-}
-.static-page > .today {
-  top: calc(var(--below) + 72px);
 }

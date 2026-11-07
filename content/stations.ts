@@ -2,12 +2,21 @@
 // CONTENUTI DI PROVA. Da sostituire con materiale confermato dal cliente.
 // origin: "sua" = frase detta da lui in call | "inventata" = PLACEHOLDER scritto da noi
 //
-// Ogni stazione ha tre battute:
-//   received = cosa ha ricevuto da quel mondo (passato)   -> lo mostrano le clip, lo dice una riga al passato
-//   sense    = il senso che gli si è aperto               -> è il titolo che compare nel freeze
-//   today    = come ha ampliato istinto e visione (presente)
-// Budget testo: massimo 25 parole per stazione, sense escluso.
+// Struttura (decisione di Massimiliano, 07/11/2026): le stazioni sono i SENSI, non parti del corpo.
+// Ogni senso nasce da un'esperienza (worlds). Il viaggio salta avanti e indietro nel tempo.
 //
+// Ogni stazione segue i tre tempi della regia:
+//   worlds   = l'esperienza: titolo grande durante la clip (il passato)
+//   sense    = il senso che gli si è aperto: compare nel freeze
+//   received = una sua frase su quell'esperienza, SOLO se è sua. Altrimenti null: nessuna riga.
+//   today    = una sua frase al presente, SOLO se è sua. Altrimenti null.
+// Nel sito ci sono solo le sue frasi: nessuna riga scritta da noi.
+//
+// era = posizione relativa dell'esperienza nel tempo. Non si vede MAI nel sito (niente date, niente
+// numeri): serve al motore per scegliere il movimento di camera («prima» o «dopo»).
+// Gli era attuali sono PLACEHOLDER, ordine provvisorio da confermare con Giangi.
+//
+// L'ordine delle stazioni in questo array è l'ordine del viaggio: alternato, lontano / recente.
 // Le frasi con origin "sua" vanno riportate parola per parola: non riscriverle.
 
 type Origin = "sua" | "inventata";
@@ -21,14 +30,16 @@ export type Clip = {
   fullWorkUrl?: string;
 };
 
+export type Line = { text: string; origin: Origin };
+
 export type Station = {
   id: string;
-  title: string; // parte del corpo
-  sense: string; // "Senso del ritmo"
+  sense: string; // "Senso del ritmo": titolo che compare nel freeze
   senseOrigin: Origin;
-  received: { text: string; origin: Origin };
-  today: { text: string; origin: Origin };
-  worlds: string[];
+  worlds: string[]; // l'esperienza da cui nasce il senso
+  era: number; // ordine relativo nel tempo, mai mostrato
+  received: Line | null;
+  today: Line | null;
   scene: { type: "sequence" | "video" | "image" | "placeholder"; src?: string; frames?: number };
   clips: Clip[]; // l'ultima clip è quella che porta al freeze
   freeze?: { src: string; frames: number }; // sequenza congelata: parte dal fotogramma finale dell'ultima clip
@@ -43,29 +54,47 @@ export const opening = {
 
 export const stations: Station[] = [
   {
-    id: "occhi",
-    title: "Occhi",
-    sense: "Senso dell'immagine",
+    id: "immagine",
+    sense: "Senso dell'immagine", // PLACEHOLDER
     senseOrigin: "inventata",
-    received: { text: "Una macchina da presa, prima ancora di un mestiere.", origin: "inventata" },
-    today: { text: "Vedo l'inquadratura prima dell'idea.", origin: "inventata" },
-    worlds: ["origini", "Asenawer (ORTOGRAFIA DA VERIFICARE)", "il primo spot"],
+    worlds: ["origini", "Asenawer", "il primo spot"], // Asenawer: ORTOGRAFIA DA VERIFICARE
+    era: 1, // PLACEHOLDER
+    received: null,
+    today: null,
     scene: { type: "placeholder" },
     clips: [
       { title: "PLACEHOLDER — Prima di tutto", src: "/clips/ph-01.mp4", poster: "/clips/ph-01.jpg", mode: "single" },
       { title: "PLACEHOLDER — Il primo spot", src: "/clips/ph-02.mp4", poster: "/clips/ph-02.jpg", mode: "single" },
     ],
     fragments: [{ type: "note", text: "PLACEHOLDER — foto di set, anno non indicato" }],
-    links: ["fegato"],
+    links: ["rischio"],
   },
   {
-    id: "orecchie",
-    title: "Orecchie",
-    sense: "Senso del ritmo",
+    id: "orientamento",
+    sense: "Senso dell'orientamento", // PLACEHOLDER
     senseOrigin: "inventata",
-    received: { text: "Televisione musicale tutti i giorni, senza rete.", origin: "inventata" },
-    today: { text: "Monto a orecchio. Anche quando la musica non c'è.", origin: "inventata" },
+    worlds: ["le società"], // NOMI E NUMERO DA CHIEDERE
+    era: 5, // PLACEHOLDER
+    received: {
+      text: "Sono eclettico. Ho spostato il culo dove mi conveniva, o dove mi riusciva meglio in quel momento.",
+      origin: "sua",
+    },
+    today: null,
+    scene: { type: "placeholder" },
+    clips: [
+      { title: "PLACEHOLDER — Una società", src: "/clips/ph-10.mp4", poster: "/clips/ph-10.jpg", mode: "single" },
+    ],
+    // L'orientamento richiama tutti gli altri: lo spostarsi è ciò che collega le esperienze
+    links: ["immagine", "ritmo", "rischio", "spazio", "misura"],
+  },
+  {
+    id: "ritmo",
+    sense: "Senso del ritmo", // PLACEHOLDER
+    senseOrigin: "inventata",
     worlds: ["Match Music", "DJ Television", "video musicali"],
+    era: 2, // PLACEHOLDER
+    received: null,
+    today: null,
     scene: { type: "placeholder" },
     clips: [
       { title: "PLACEHOLDER — Match Music", src: "/clips/ph-03.mp4", poster: "/clips/ph-03.jpg", mode: "single" },
@@ -78,80 +107,63 @@ export const stations: Station[] = [
         caption: "Centinaia.",
       },
     ],
-    links: ["occhi", "mani"],
+    links: ["immagine", "spazio"],
   },
   {
-    id: "fegato",
-    title: "Fegato",
-    sense: "Senso del rischio",
+    id: "misura",
+    sense: "Senso della misura", // PLACEHOLDER
     senseOrigin: "inventata",
-    received: { text: "Trenta secondi, soldi di altri, nessuna seconda occasione.", origin: "inventata" },
-    today: { text: "So quando un'idea vale il rischio di proporla.", origin: "inventata" },
+    worlds: ["i picchi"],
+    era: 6, // PLACEHOLDER
+    received: {
+      text: "Ci sono stati dei picchi alti che non ci sono più oggi, e che non ci saranno più domani così.",
+      origin: "sua",
+    },
+    today: null,
+    scene: { type: "placeholder" },
+    clips: [
+      { title: "PLACEHOLDER — Il punto più alto", src: "/clips/ph-11.mp4", poster: "/clips/ph-11.jpg", mode: "single" },
+    ],
+    links: ["orientamento"],
+  },
+  {
+    id: "rischio",
+    sense: "Senso del rischio", // PLACEHOLDER
+    senseOrigin: "inventata",
     worlds: ["pubblicità"],
+    era: 3, // PLACEHOLDER
+    received: null,
+    today: null,
     scene: { type: "placeholder" },
     clips: [
       { title: "PLACEHOLDER — Spot A", src: "/clips/ph-06.mp4", poster: "/clips/ph-06.jpg", mode: "single" },
       { title: "PLACEHOLDER — Spot B", src: "/clips/ph-07.mp4", poster: "/clips/ph-07.jpg", mode: "single" },
     ],
-    links: ["occhi", "gambe"],
+    links: ["immagine", "orientamento"],
   },
   {
-    id: "mani",
-    title: "Mani",
-    sense: "Senso dello spazio",
+    id: "spazio",
+    sense: "Senso dello spazio", // PLACEHOLDER
     senseOrigin: "inventata",
-    received: { text: "Cose che si toccano. Sale che si riempiono una sera sola.", origin: "inventata" },
-    today: { text: "Penso un'immagine come un luogo in cui stare.", origin: "inventata" },
     worlds: ["grandi eventi", "design"],
+    era: 4, // PLACEHOLDER
+    received: null,
+    today: null,
     scene: { type: "placeholder" },
     clips: [
       { title: "PLACEHOLDER — Un evento", src: "/clips/ph-08.mp4", poster: "/clips/ph-08.jpg", mode: "single" },
       { title: "PLACEHOLDER — Un oggetto", src: "/clips/ph-09.mp4", poster: "/clips/ph-09.jpg", mode: "single" },
     ],
     fragments: [{ type: "note", text: "PLACEHOLDER — backstage, montaggio palco" }],
-    links: ["orecchie", "gambe"],
-  },
-  {
-    id: "gambe",
-    title: "Gambe",
-    sense: "Senso dell'orientamento",
-    senseOrigin: "inventata",
-    received: {
-      text: "Sono eclettico. Ho spostato il culo dove mi conveniva, o dove mi riusciva meglio in quel momento.",
-      origin: "sua",
-    },
-    today: { text: "Quando cambia il terreno, non mi perdo.", origin: "inventata" },
-    worlds: ["le società (NOMI E NUMERO DA CHIEDERE)"],
-    scene: { type: "placeholder" },
-    clips: [
-      { title: "PLACEHOLDER — Una società", src: "/clips/ph-10.mp4", poster: "/clips/ph-10.jpg", mode: "single" },
-    ],
-    // Gambe richiama tutte le altre: lo spostarsi è ciò che collega i mondi
-    links: ["occhi", "orecchie", "fegato", "mani", "cuore"],
-  },
-  {
-    id: "cuore",
-    title: "Cuore",
-    sense: "Senso della misura",
-    senseOrigin: "inventata",
-    received: {
-      text: "Ci sono stati dei picchi alti che non ci sono più oggi, e che non ci saranno più domani così.",
-      origin: "sua",
-    },
-    today: { text: "So cosa non torna. Lavoro con quello che c'è.", origin: "inventata" },
-    worlds: ["i picchi"],
-    scene: { type: "placeholder" },
-    clips: [
-      { title: "PLACEHOLDER — Il punto più alto", src: "/clips/ph-11.mp4", poster: "/clips/ph-11.jpg", mode: "single" },
-    ],
-    links: ["gambe"],
+    links: ["ritmo", "orientamento"],
   },
 ];
 
 export const arrival = {
-  id: "lui",
-  sense: "Istinto", // la somma dei sensi aperti
+  id: "istinto",
+  sense: "Istinto", // la somma dei sensi aperti — PLACEHOLDER
   senseOrigin: "inventata" as Origin,
+  hub: "orientamento", // le linee dell'arrivo partono da qui
   line: "Quello che sono ora non può tornare a essere quello che è stato.",
   origin: "sua" as Origin,
   closing: "Anche oggi mi muovo da diverse situazioni.",
@@ -172,6 +184,9 @@ export const ui = {
   links: "Richiami",
   placeholderClip: "PLACEHOLDER — clip simulata",
   playClip: "Avvia clip",
-  arrival: "Lui",
+  arrival: "Istinto",
   preview: "Anteprima — contenuti PLACEHOLDER",
+  before: "prima",
+  after: "dopo",
+  now: "oggi",
 };

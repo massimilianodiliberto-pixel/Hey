@@ -175,6 +175,34 @@ il nuovo quadro si apre (0,5 s) e la clip parte. I sensi delle stazioni saltate 
 
 ---
 
+## H. Struttura dei sensi (dal 07/11/2026)
+
+Le stazioni sono i sensi, non più parti del corpo. Cambiano tre cose della stazione tipo:
+
+| p | Elemento | Cosa succede | Proprietà |
+|---|---|---|---|
+| clip | mondo (es. «MATCH MUSIC · DJ TELEVISION · VIDEO MUSICALI») | Titolo grande sotto il quadro, entra con la clip | opacity 0→1, y 12px→0 |
+| clip | sua frase, solo se c'è | Entra sotto il mondo, 0,4 s dopo | opacity 0→1 |
+| 0.08 → 0.14 | mondo | Esce: si apre il senso | opacity 1→0, y →−12px |
+| 0.42 → 0.50 | sua frase | Esce. Resta più a lungo perché è l'unico testo | opacity 1→0 |
+| 0.87 → 0.91 | «prima» / «dopo» / «oggi» | Entra sopra il quadro | opacity 0→1, y 8px→0 |
+| 0.96 → 1.00 | parola del tempo | Esce | opacity 1→0 |
+
+Le righe "ricevuto" e "oggi" esistono solo se sono sue: dove mancano, la fase passa vuota.
+
+**Transizione «prima»** (la stazione successiva è più lontana nel tempo), al posto della §C:
+
+| p di A | Elemento | Cosa succede | Proprietà |
+|---|---|---|---|
+| 0.86 → 1.00 | B | Entra dai bordi: un foro circolare centrato sul quadro di A si stringe fino a zero | clip-path: schermo meno cerchio, raggio max→0 |
+| 0.86 → 1.00 | piani di B | Arrivano da lontano | scale 1.75→1 (mobile 1.5→1) |
+| 0.86 → 1.00 | velo su B | Il ricordo torna nitido | opacity 0.55→0 |
+| 0.88 → 1.00 | scena A | La camera arretra, il presente si ritira nel foro | scale 1→0.55 |
+| 0.94 → 1.00 | scena A | Esce | opacity 1→0 |
+
+Se si entra in una stazione già oltre `p = 0` senza fermarsi, la clip non parte ma mondo, frase e
+comandi compaiono comunque.
+
 ## G. Arrivo (traccia di 250vh su desktop, 170vh su mobile)
 
 L'ultima stazione si chiude come tutte le altre: la sua finestra si apre e da lì emerge la scena
@@ -185,7 +213,7 @@ di arrivo. `p` qui va da 0 a 1 sulla traccia dell'arrivo.
 | 0.02 → 0.22 | ritratto | La forma astratta dell'apertura torna come disco e si apre fino a diventare la persona | clip-path circle(22%)→circle(75%) |
 | 0.08 | tracce al margine | Si spengono: i sensi passano alla scena | opacity →0 |
 | 0.08 → 0.34 | sensi | Partono dal loro posto al margine e convergono attorno al ritratto. Quelli delle stazioni non visitate restano spenti (opacity 0.18) | translate verso il cerchio, scale 0.85→1 |
-| 0.30 → 0.52 | linee | Partono da Gambe verso tutti gli altri sensi | stroke-dashoffset 1→0 |
+| 0.30 → 0.52 | linee | Partono dall'orientamento verso tutti gli altri sensi | stroke-dashoffset 1→0 |
 | 0.48 → 0.58 | «Istinto» | Entra sotto il ritratto | opacity 0→1, y 10px→0 |
 | 0.60 → 0.70 | frase dell'arrivo | Entra | opacity, y |
 | 0.72 → 0.80 | chiusura | Entra | opacity, y |

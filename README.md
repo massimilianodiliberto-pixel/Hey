@@ -20,13 +20,14 @@ npm run build && npm start
 
 ## Cosa contiene
 
-Tutto il viaggio: apertura, le sei stazioni dal file dati e l'arrivo. Il Passo 1 (apertura, Occhi,
-Orecchie) è la parte rifinita. Le altre quattro stazioni usano lo stesso motore con forme segnaposto.
-L'arrivo è semplificato: ritratto PLACEHOLDER, i sensi che convergono, le linee da Gambe, «Istinto».
+Apertura, sei sensi e arrivo. Ogni senso nasce da un'esperienza di Giangi (Match Music, pubblicità,
+grandi eventi…), il cui nome è il titolo grande durante la clip. Il viaggio salta avanti e indietro
+nel tempo: transizione «dopo» (la camera spinge in avanti) e «prima» (la camera arretra e torna
+un ricordo), con la parola corrispondente. Nel sito ci sono solo le sue cinque frasi.
 
-Clip simulate (campi di colore con timer), skip e "watch full work", passaggio clip → freeze in
-parallax, senso che va al margine e resta acceso, riga "oggi", avanzamento automatico, invito a
-proseguire, aggancio, indice, richiami, versione mobile, versione `prefers-reduced-motion`.
+Clip simulate (campi di colore con timer), skip e "watch full work", freeze in parallax, senso che
+va al margine e resta acceso, avanzamento automatico, invito a proseguire, aggancio, indice con i
+mondi, richiami, arrivo con «Istinto», versione mobile, versione `prefers-reduced-motion`.
 
 ## Pubblicazione
 

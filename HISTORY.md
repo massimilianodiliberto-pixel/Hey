@@ -21,3 +21,17 @@ tsc e build verdi, scroll avanti e indietro.
 
 Aperto: Cuore supera il budget di 25 parole (29); manca il materiale di riferimento; clip, scene e
 ritratto sono segnaposto.
+
+## 2026-11-07 — Sensi e salti nel tempo
+Decisione di Massimiliano: niente parti del corpo; restano i sensi; il viaggio va avanti e indietro
+nel tempo tra le esperienze; nel sito solo le sue frasi. Applicato:
+- stazioni = sensi, ognuno legato a un'esperienza (`worlds`), in ordine alternato lontano/recente;
+  campo `era` (PLACEHOLDER, mai mostrato) per il verso del salto;
+- transizione «prima» nuova (la camera arretra, il ricordo entra dai bordi) accanto a «dopo», con
+  la parola «prima» / «dopo» / «oggi»;
+- il mondo è il titolo grande durante la clip, il senso compare nel freeze; tolte tutte le righe
+  scritte da noi: restano le 5 frasi di Giangi;
+- indice con i sensi e i mondi; le linee dell'arrivo partono dall'orientamento;
+- corretto: entrando in una stazione oltre l'inizio, mondo e frase compaiono comunque;
+- BRIEF §1, §3 e §4 e TIMELINE (§H) aggiornati.
+La trascrizione della telefonata non arriverà: si lavora con i dati che ci sono.

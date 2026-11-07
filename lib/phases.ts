@@ -2,7 +2,11 @@
 
 export const P = {
   freezeEnd: 0.86,
-  receivedOut: [0, 0.08],
+  receivedOut: [0, 0.08], // comandi della clip
+  worldOut: [0.08, 0.14],
+  quoteOut: [0.42, 0.5],
+  timeIn: [0.87, 0.91],
+  timeOut: [0.96, 1],
   senseIn: [0.14, 0.28],
   senseTravel: [0.48, 0.6],
   traceOn: 0.6,

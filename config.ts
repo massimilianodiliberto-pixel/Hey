@@ -2,7 +2,7 @@
 
 export const config = {
   // Stazioni costruite. null = tutte quelle in content/stations.ts, nell'ordine del file.
-  // Il Passo 1 rifinito è su apertura, Occhi e Orecchie; le altre usano lo stesso motore e i segnaposto.
+  // Il Passo 1 rifinito è su apertura e prime due stazioni; le altre usano lo stesso motore e i segnaposto.
   stations: null as readonly string[] | null,
 
   // Aggancio morbido alle stazioni (BRIEF §2). Disattivabile.

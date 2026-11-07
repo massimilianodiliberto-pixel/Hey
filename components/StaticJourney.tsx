@@ -47,11 +47,11 @@ export function StaticJourney({ opening, stations, allStations, arrival, ui }: J
         <ul>
           {allStations.map((s) => (
             <li key={s.id}>
-              {stations.some((x) => x.id === s.id) ? <a href={`#${s.id}`}>{s.title}</a> : <span className="is-soon">{s.title}</span>}
+              {stations.some((x) => x.id === s.id) ? <a href={`#${s.id}`}>{s.sense}</a> : <span className="is-soon">{s.sense}</span>}
             </li>
           ))}
           <li>
-            <a href="#lui">{ui.arrival}</a>
+            <a href={`#${arrival.id}`}>{ui.arrival}</a>
           </li>
         </ul>
       </nav>
@@ -61,19 +61,22 @@ export function StaticJourney({ opening, stations, allStations, arrival, ui }: J
         <p className="opening-line">{opening.line}</p>
       </section>
       {stations.map((s) => (
-        <section key={s.id} id={s.id} className="static-page" aria-label={s.title}>
+        <section key={s.id} id={s.id} className="static-page" aria-label={s.sense}>
           <div className="frame-box frame">
             <div className="live">
               <Planes look={looks[s.id]} />
             </div>
           </div>
           <ManualClip label={ui.playClip} title={s.clips[s.clips.length - 1]?.title} />
-          <p className="received">{s.received.text}</p>
+          <div className="static-below">
+            <p className="world">{s.worlds.join(" · ")}</p>
+            {s.received && <p className="received">{s.received.text}</p>}
+            {s.today && <p className="received">{s.today.text}</p>}
+          </div>
           <h2 className="sense static-sense">{s.sense}</h2>
-          <p className="today">{s.today.text}</p>
         </section>
       ))}
-      <section id="lui" className="static-page static-arrival" aria-label={ui.arrival}>
+      <section id={arrival.id} className="static-page static-arrival" aria-label={ui.arrival}>
         <div className="portrait static-portrait" role="img" aria-label={arrival.portrait.alt}>
           <span className="portrait-head" />
           <span className="portrait-body" />
