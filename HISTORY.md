@@ -56,3 +56,19 @@ salto con torsione, scatto e inversione, Three.js. Costruito:
 - teatro di posa al buio, luce al tungsteno, Anybody + Familjen Grotesk self-hosted;
 - arrivo con la colonna intera, titoli di coda e «Continua»;
 - skill di design installate (impeccable, emilkowalski, design-motion-principles).
+
+## 2026-11-08 — MATERIA VIVA
+Massimiliano porta un nuovo concept con moodboard e brief: MATERIA VIVA, «Everything is in motion».
+Una materia granulare 3D che si aggrega, si disperde e si trasforma con lo scroll, mentre lo sfondo
+evolve dal nero alla luce. Prima, proposta 5 (rete neuronale) in `docs/proposta-5/`, superata.
+Fasi A-C costruite su `/materia` (il sito su `/` non è toccato):
+- `lib/materia.ts`: 190.000 particelle su GPU (60.000 su telefono), sette forme, transizioni per
+  particella con turbolenza; densità variabile come una superficie granulare; un granulo su 170 è
+  un sasso sferico illuminato; profondità di campo su desktop;
+- sfondo shader: nero, ambra, rosso, petrolio, argento, tramonto con orizzonte e sole, luce;
+  luce volumetrica dietro la materia, grana e vignettatura; nel finale i grani diventano polvere
+  controluce;
+- camera per fase con inerzia dallo scrub; indice dell'evoluzione narrativa numerato come nel
+  moodboard; Playfair Display e Inter self-hosted.
+Decisioni: più materia (fatto); l'anno solo dentro la scheda del progetto, mai nel percorso;
+numerazione delle fasi come nel moodboard.

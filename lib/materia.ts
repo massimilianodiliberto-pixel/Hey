@@ -50,6 +50,7 @@ const PARTICLE_VERT = /* glsl */ `
   uniform vec3 uColA0; uniform vec3 uColA1; uniform vec3 uColB0; uniform vec3 uColB1;
   varying vec3 vColor;
   varying float vAlpha;
+  varying float vPebble;
   ${NOISE}
   #define PI 3.14159265
 
@@ -128,27 +129,43 @@ const PARTICLE_VERT = /* glsl */ `
     float coc = abs(depth - uFocus) * uAperture;
     // Nella nascita i pochi granuli sono più grandi e più luminosi: devono vedersi nel buio.
     float born = k == 0 ? mix(2.4, 1.0, ff) : 1.0;
-    gl_PointSize = (uSize * (0.45 + aSeed.z * 1.1) * born + coc * 5.0) * (26.0 / depth);
+    // Un granulo su trenta è un sasso: più grande, sferico, illuminato. Dà corpo alla materia.
+    vPebble = step(fract(aSeed.w * 37.0), 0.006);
+    float pebble = 1.0 + vPebble * (1.8 + aSeed.z * 3.5);
+    gl_PointSize = (uSize * (0.45 + aSeed.z * 1.1) * born * pebble + coc * (5.0 + vPebble * 12.0)) * (26.0 / depth);
     gl_Position = projectionMatrix * mv;
 
     vec3 c0 = mix(uColA0, uColA1, pow(aSeed.y, 3.0));
     vec3 c1 = mix(uColB0, uColB1, pow(aSeed.y, 3.0));
-    vColor = mix(c0, c1, ff) * (0.6 + 0.8 * pow(aSeed.x, 6.0));
+    // Densità come una superficie vera: zone più piene e più luminose, zone rade.
+    float dens = 0.45 + 0.8 * smoothstep(-0.25, 0.45, noise(pos * 0.55 + 4.0));
+    vColor = mix(c0, c1, ff) * (0.6 + 0.8 * pow(aSeed.x, 6.0)) * dens;
     // Pochi grani molto luminosi, la maggior parte appena percettibile: la luce nasce dalla densità.
-    float lift = (k == 0 ? mix(5.0, 1.0, ff) : 1.0) * (k == 1 || k == 2 ? 1.6 : 1.0);
-    vAlpha = mix(a0, a1, ff) * (0.12 + 0.55 * pow(aSeed.x, 8.0)) * lift / (1.0 + coc * 2.5);
+    float lift = (k == 0 ? mix(5.0, 1.0, ff) : 1.0) * (k == 1 || k == 2 ? 1.25 : 1.0);
+    vAlpha = mix(a0, a1, ff) * (0.1 + 0.55 * pow(aSeed.x, 8.0)) * lift * dens / (1.0 + coc * 2.5);
+    vAlpha = mix(vAlpha, mix(a0, a1, ff) * 0.55 / (1.0 + coc * 1.2), vPebble);
   }
 `;
 
 const PARTICLE_FRAG = /* glsl */ `
   varying vec3 vColor;
   varying float vAlpha;
+  varying float vPebble;
   void main() {
     vec2 c = gl_PointCoord - 0.5;
     float r = length(c);
     float disc = smoothstep(0.5, 0.18, r);
+    vec3 col = vColor;
+    if (vPebble > 0.5) {
+      // Sasso: una piccola sfera illuminata da una luce calda in alto a sinistra.
+      disc = smoothstep(0.5, 0.44, r);
+      vec3 n = vec3(c * 2.0, sqrt(max(0.0, 1.0 - 4.0 * r * r)));
+      float dif = max(0.0, dot(n, normalize(vec3(-0.5, 0.6, 0.65))));
+      float spec = pow(max(0.0, dot(n, normalize(vec3(-0.3, 0.4, 1.0)))), 24.0);
+      col = vColor * (0.12 + 0.95 * dif) + vec3(1.0, 0.85, 0.6) * spec * 0.6;
+    }
     if (disc * vAlpha < 0.01) discard;
-    gl_FragColor = vec4(vColor, disc * vAlpha);
+    gl_FragColor = vec4(col, disc * vAlpha);
   }
 `;
 
@@ -178,6 +195,10 @@ const BG_FRAG = /* glsl */ `
     // nebbia volumetrica che scorre lentamente
     float fog = noise(vec3(uv * vec2(2.0 * uAspect, 3.0), uTime * 0.02)) * 0.5 + 0.5;
     col += uHorizon * fog * 0.18 * smoothstep(0.6, 2.0, uPhase);
+    // luce volumetrica: un alone caldo dietro la materia, più forte nel ricordo e nell'espansione
+    float vol = smoothstep(0.4, 1.2, uPhase) * (1.0 - smoothstep(4.6, 5.4, uPhase) * 0.6);
+    float dv = length((uv - vec2(0.62, 0.55)) * vec2(uAspect * 0.7, 1.0));
+    col += uHorizon * 1.6 * vol * smoothstep(0.75, 0.0, dv) * (0.75 + 0.25 * noise(vec3(uv * 4.0, uTime * 0.05)));
     // un sole basso solo nella sintesi
     float sun = smoothstep(4.8, 5.4, uPhase) * (1.0 - smoothstep(5.8, 6.0, uPhase));
     float d = length((uv - vec2(0.72, hz + 0.03)) * vec2(uAspect, 1.0));
@@ -226,7 +247,7 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
   scene.add(bg);
 
   // Materia
-  const COUNT = opts.mobile ? 45000 : 130000;
+  const COUNT = opts.mobile ? 60000 : 190000;
   const geo = new THREE.BufferGeometry();
   const seeds = new Float32Array(COUNT * 4);
   for (let i = 0; i < COUNT * 4; i++) seeds[i] = Math.random();
