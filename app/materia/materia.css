@@ -1,0 +1,300 @@
+/* MATERIA VIVA — tipografia e palette dal moodboard di Massimiliano */
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fonts/playfair-var.woff2") format("woff2");
+  font-weight: 400 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fonts/playfair-var-italic.woff2") format("woff2");
+  font-weight: 400 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+.mv {
+  --mv-ink: #efe8dc;
+  --mv-dim: rgba(239, 232, 220, 0.56);
+  --mv-amber: #e3a35a;
+  --mv-serif: "Playfair Display", Georgia, serif;
+  --mv-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  position: relative;
+  color: var(--mv-ink);
+  font-family: var(--mv-sans);
+  background: #050404;
+}
+.mv ::selection {
+  background: var(--mv-amber);
+  color: #050404;
+}
+
+.mv-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* Senza WebGL: lo stesso viaggio di colori, solo lo sfondo */
+.mv-fallback .mv-canvas {
+  display: none;
+}
+.mv-fallback {
+  background: linear-gradient(180deg, #050404 0%, #2a1709 22%, #3a0d08 38%, #0f3236 54%, #4a4d50 70%, #e88a4a 84%, #f2eee6 100%) fixed;
+}
+
+.mv-head {
+  position: fixed;
+  top: 28px;
+  left: 4vw;
+  right: 4vw;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--mv-dim);
+  pointer-events: none;
+}
+.mv-brand {
+  color: var(--mv-ink);
+}
+
+/* Un velo d'ombra sotto il testo, solo dove serve a leggerlo */
+.mv::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 70vw;
+  height: 60vh;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 0% 100%, rgba(5, 4, 4, 0.62), rgba(5, 4, 4, 0) 70%);
+  transition: opacity 1s;
+}
+.mv-light::after {
+  opacity: 0;
+}
+/* Nel finale la luce è quasi bianca: il testo passa all'inchiostro */
+.mv-light {
+  --mv-ink: #1f1a15;
+  --mv-dim: rgba(31, 26, 21, 0.62);
+  --mv-amber: #9a5a22;
+}
+.mv-head,
+.mv-copy,
+.mv-index button {
+  transition: color 1s;
+}
+
+/* Testo editoriale: in basso a sinistra, molto spazio, la materia resta protagonista */
+.mv-copy {
+  position: fixed;
+  left: 4vw;
+  bottom: 12vh;
+  z-index: 2;
+  width: min(560px, 80vw);
+  pointer-events: none;
+}
+.mv-phase {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(6px);
+  transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.1, 1), transform 0.9s cubic-bezier(0.2, 0.7, 0.1, 1), filter 0.9s;
+}
+.mv-phase.is-on {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  pointer-events: auto;
+}
+.mv-hero {
+  margin: 0;
+  font-family: var(--mv-serif);
+  font-weight: 400;
+  font-size: clamp(56px, 8.2vw, 132px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.mv-sub {
+  margin: 26px 0 0;
+  max-width: 26em;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  line-height: 2;
+  text-transform: uppercase;
+  color: var(--mv-dim);
+}
+.mv-kick {
+  margin: 0 0 14px;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--mv-amber);
+}
+.mv-title {
+  margin: 0;
+  font-family: var(--mv-serif);
+  font-weight: 400;
+  font-size: clamp(44px, 5.6vw, 92px);
+  line-height: 1;
+  letter-spacing: -0.015em;
+}
+.mv-line {
+  margin: 22px 0 0;
+  max-width: 30em;
+  font-family: var(--mv-serif);
+  font-style: italic;
+  font-size: clamp(17px, 1.4vw, 22px);
+  line-height: 1.45;
+}
+.mv-note {
+  margin: 18px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--mv-dim);
+}
+
+/* Indice: evoluzione narrativa, a destra */
+.mv-index {
+  position: fixed;
+  right: 4vw;
+  top: 50%;
+  z-index: 3;
+  transform: translateY(-50%);
+}
+.mv-index ol {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 18px;
+  border-left: 1px solid rgba(239, 232, 220, 0.16);
+  display: grid;
+  gap: 18px;
+}
+.mv-index button {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--mv-dim);
+  font: 400 11px var(--mv-sans);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.4s;
+  position: relative;
+}
+.mv-index button::before {
+  content: "";
+  position: absolute;
+  left: -22px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(239, 232, 220, 0.35);
+  background: #050404;
+  transition: background 0.4s, border-color 0.4s;
+}
+.mv-index .is-past button::before {
+  background: rgba(239, 232, 220, 0.35);
+}
+.mv-index .is-on button {
+  color: var(--mv-ink);
+}
+.mv-index .is-on button::before {
+  background: var(--mv-amber);
+  border-color: var(--mv-amber);
+}
+.mv-index button:hover {
+  color: var(--mv-ink);
+}
+.mv-index button:focus-visible {
+  outline: 1px solid var(--mv-amber);
+  outline-offset: 6px;
+}
+.mv-num {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+
+.mv-progress {
+  position: fixed;
+  left: 4vw;
+  top: 72px;
+  bottom: 72px;
+  width: 1px;
+  z-index: 2;
+  background: rgba(239, 232, 220, 0.08);
+  display: none;
+}
+
+.mv-track .mv-step {
+  height: 150vh;
+}
+.mv-track .mv-step:last-child {
+  height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .mv-index {
+    top: auto;
+    bottom: 22px;
+    right: 18px;
+    transform: none;
+  }
+  .mv-index ol {
+    display: flex;
+    gap: 10px;
+    border: 0;
+    padding: 0;
+  }
+  .mv-index .mv-name,
+  .mv-index .mv-num {
+    display: none;
+  }
+  .mv-index button {
+    width: 10px;
+    height: 20px;
+  }
+  .mv-index button::before {
+    left: 1px;
+  }
+  .mv-copy {
+    left: 6vw;
+    bottom: 64px;
+    width: 88vw;
+  }
+  .mv-head {
+    top: 18px;
+    letter-spacing: 0.22em;
+  }
+  .mv-track .mv-step {
+    height: 120vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mv-phase {
+    transition: opacity 0.3s;
+    transform: none;
+    filter: none;
+  }
+}
