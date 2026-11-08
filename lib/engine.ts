@@ -69,7 +69,7 @@ const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
 const smooth = (t: number) => t * t * (3 - 2 * t);
 
 // Vertebra di ogni epoca: la colonna è il tempo. Prima vertebra in alto = epoca più lontana.
-const vertebraOf = (era: number) => 6 + (era - 1) * 9;
+const vertebraOf = (era: number) => 12 + (era - 1) * 18;
 
 // Ciò che emerge alla fine di una stazione: la stazione successiva o la scena di arrivo.
 type Next = {
@@ -621,7 +621,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     if (ap > 0) {
       const t = smooth(clamp01(ap / 0.3));
       spine.set({
-        u: lerp(V[last] + 0.9, 30, t),
+        u: lerp(V[last] + 1.8, 60, t),
         dist: lerp(24, 58, t),
         height: lerp(3, 10, t),
         orbit: -0.7 + ap * 0.9,
@@ -635,7 +635,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
       const op = opening.st?.animation?.progress() ?? 0;
       const t = smooth(op);
       spine.set({
-        u: lerp(V[0] - 9, V[0], t),
+        u: lerp(V[0] - 18, V[0], t),
         height: lerp(24, 3, t),
         dist: lerp(12, 24, t),
         orbit: -0.7,
@@ -650,16 +650,16 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     if (p < fe) {
       const f = p / fe;
       // Freeze: la camera gira attorno alla colonna nel tempo fermo.
-      spine.set({ u: Vi + f * 0.9, orbit: -0.7 + f * 0.55, dist: 24, height: 3, twist: 0, streak: 0, reveal: spineMax });
+      spine.set({ u: Vi + f * 1.8, orbit: -0.7 + f * 0.55, dist: 24, height: 3, twist: 0, streak: 0, reveal: spineMax });
       return;
     }
     const t = smooth(clamp01((p - fe) / (1 - fe)));
-    const Vn = idx < last ? V[idx + 1] : V[last] + 0.9;
-    const jump = Math.min(1, Math.abs(Vn - Vi) / 9);
+    const Vn = idx < last ? V[idx + 1] : V[last] + 1.8;
+    const jump = Math.min(1, Math.abs(Vn - Vi) / 18);
     // Salto nel tempo: la camera scatta lungo la colonna, la torsione si stringe, resta una scia di luce.
     // Risalendo verso un'epoca lontana la colonna si svita: la rotazione dipende dalla posizione.
     spine.set({
-      u: lerp(Vi + 0.9, Vn, t),
+      u: lerp(Vi + 1.8, Vn, t),
       orbit: lerp(-0.15, -0.7, t),
       dist: 24 + 7 * Math.sin(Math.PI * t) * jump,
       height: 3,
