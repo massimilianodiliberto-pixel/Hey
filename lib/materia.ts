@@ -7,6 +7,8 @@ import * as THREE from "three";
 
 export type Materia = {
   setPhase: (p: number) => void; // 0..6, continua
+  // Grandi nomi delle esperienze, fatti di particelle: quale (−1 = nessuno), quanto è formato (0..1), rotazione.
+  setName: (index: number, form: number, rot: number) => void;
   destroy: () => void;
 };
 
@@ -214,16 +216,74 @@ const BG_FRAG = /* glsl */ `
 
 // Le inquadrature delle sette fasi: posizione camera, punto guardato, apertura del fuoco.
 const CAM: { pos: [number, number, number]; look: [number, number, number]; focus: number }[] = [
-  { pos: [0, 0.5, 26], look: [0, 0, 0], focus: 14 }, // nascita: lontano, nel buio; la camera si avvicina
-  { pos: [2.5, 1.2, 9.5], look: [0, 0.2, 0], focus: 9.5 }, // ricordo: vicino alla massa
-  { pos: [-6, 2.5, 13], look: [2, 0, 0], focus: 12 }, // salto: pan laterale nella dispersione
-  { pos: [-9, 4.5, 11], look: [3, -0.5, -1], focus: 13 }, // espansione: tilt e carrello sopra l'onda
-  { pos: [8, 1.5, 12], look: [-1, 0, -1], focus: 12 }, // composizione: carrello laterale lungo gli strati
-  { pos: [0, 5, 14], look: [0, 0, 0], focus: 14 }, // sintesi: dall'alto, la forma intera
-  { pos: [0, 1.2, 22], look: [0, 0, -4], focus: 30 }, // continua: si arretra, i granuli escono dai bordi
+  { pos: [0, 0.5, 26], look: [0, 0, 0], focus: 14 }, // nascita: lontano, nel buio
+  { pos: [1.2, 0.8, 9], look: [0, 0.2, 0], focus: 9 }, // ricordo: zoom in sulla massa
+  { pos: [0.5, -2.2, 11], look: [0.5, -1.6, 0], focus: 11 }, // salto: la camera scende verso il suolo
+  { pos: [-3.5, -1.2, 12], look: [1, -0.8, -1], focus: 12 }, // espansione: leggero pan sull'onda
+  { pos: [1.5, 0, 18], look: [0, -0.2, -1], focus: 17 }, // composizione: zoom out, gli strati interi
+  { pos: [0, 2.2, 15], look: [0, 0, 0], focus: 15 }, // sintesi: la forma intera, appena dall'alto
+  { pos: [0, 1, 24], look: [0, 0, -4], focus: 30 }, // continua: si arretra, i granuli escono dai bordi
 ];
 
-export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean }): Materia {
+// Il suolo: una base di particelle sotto la materia, per sentire che la camera avanza nello spazio.
+const GROUND_VERT = /* glsl */ `
+  uniform float uTime;
+  uniform float uSize;
+  varying float vAlpha;
+  void main() {
+    vec3 p = position;
+    p.y += sin(p.x * 0.35 + uTime * 0.25) * 0.08 + cos(p.z * 0.3 + uTime * 0.2) * 0.08;
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    float depth = -mv.z;
+    gl_PointSize = uSize * (24.0 / depth);
+    gl_Position = projectionMatrix * mv;
+    // si spegne in lontananza e sotto i piedi della camera
+    vAlpha = smoothstep(70.0, 18.0, depth) * smoothstep(1.5, 6.0, depth);
+  }
+`;
+const GROUND_FRAG = /* glsl */ `
+  uniform vec3 uColor;
+  uniform float uOpacity;
+  varying float vAlpha;
+  void main() {
+    float r = length(gl_PointCoord - 0.5);
+    if (r > 0.5) discard;
+    gl_FragColor = vec4(uColor, vAlpha * uOpacity * smoothstep(0.5, 0.1, r));
+  }
+`;
+
+// I nomi: un secondo sistema di particelle. Da polvere sparsa si compongono nel titolo e si disfano.
+const NAME_VERT = /* glsl */ `
+  attribute vec3 aTarget;
+  attribute vec4 aRand;
+  uniform float uForm;
+  uniform float uTime;
+  uniform float uSize;
+  varying float vAlpha;
+  ${NOISE}
+  void main() {
+    vec3 dir = normalize(aRand.xyz - 0.5 + 0.0001);
+    vec3 scatter = aTarget + dir * (5.0 + aRand.w * 9.0);
+    float f = smoothstep(0.0, 1.0, clamp(uForm * 1.45 - aRand.w * 0.45, 0.0, 1.0));
+    vec3 p = mix(scatter, aTarget, f);
+    p += flow(p * 0.4 + uTime * 0.08) * (0.06 + (1.0 - f) * 0.9);
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    gl_PointSize = uSize * (0.7 + aRand.z * 0.8) * (22.0 / -mv.z);
+    gl_Position = projectionMatrix * mv;
+    vAlpha = (0.25 + 0.75 * f) * smoothstep(0.0, 0.25, uForm);
+  }
+`;
+const NAME_FRAG = /* glsl */ `
+  uniform vec3 uColor;
+  varying float vAlpha;
+  void main() {
+    float r = length(gl_PointCoord - 0.5);
+    if (r > 0.5) discard;
+    gl_FragColor = vec4(uColor, vAlpha * smoothstep(0.5, 0.1, r) * 0.95);
+  }
+`;
+
+export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean; names?: string[] }): Materia {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, opts.mobile ? 1.5 : 2));
   const scene = new THREE.Scene();
@@ -276,6 +336,67 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
   points.frustumCulled = false;
   scene.add(points);
 
+  // Suolo
+  const gStep = opts.mobile ? 0.75 : 0.42;
+  const gPts: number[] = [];
+  for (let x = -40; x <= 40; x += gStep) for (let z = -60; z <= 30; z += gStep) gPts.push(x + (Math.random() - 0.5) * gStep * 0.6, -3.7, z + (Math.random() - 0.5) * gStep * 0.6);
+  const gGeo = new THREE.BufferGeometry();
+  gGeo.setAttribute("position", new THREE.Float32BufferAttribute(gPts, 3));
+  const gUniforms = { uTime: { value: 0 }, uSize: { value: opts.mobile ? 1.9 : 1.6 }, uColor: { value: new THREE.Color() }, uOpacity: { value: 0 } };
+  const gMat = new THREE.ShaderMaterial({ vertexShader: GROUND_VERT, fragmentShader: GROUND_FRAG, uniforms: gUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+  const ground = new THREE.Points(gGeo, gMat);
+  ground.frustumCulled = false;
+  scene.add(ground);
+
+  // Nomi: agganciati alla camera, ruotano nello spazio davanti a chi guarda.
+  scene.add(camera);
+  const namesGroup = new THREE.Group();
+  namesGroup.position.set(opts.mobile ? 0 : 1.4, opts.mobile ? 2.2 : 0.7, -14);
+  camera.add(namesGroup);
+  const nUniforms = { uForm: { value: 0 }, uTime: { value: 0 }, uSize: { value: opts.mobile ? 1.3 : 1.0 }, uColor: { value: new THREE.Color(0xffd6a0) } };
+  const nMat = new THREE.ShaderMaterial({ vertexShader: NAME_VERT, fragmentShader: NAME_FRAG, uniforms: nUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+  const nameMeshes: (THREE.Points | null)[] = (opts.names ?? []).map(() => null);
+  const cap = opts.mobile ? 2600 : 6500;
+  function buildName(i: number) {
+    const text = opts.names![i];
+    const c = document.createElement("canvas");
+    c.width = 1400;
+    c.height = 260;
+    const x = c.getContext("2d")!;
+    x.fillStyle = "#fff";
+    x.font = '400 170px "Playfair Display", Georgia, serif';
+    x.textBaseline = "middle";
+    const w = Math.min(c.width - 20, x.measureText(text).width);
+    x.fillText(text, (c.width - w) / 2, c.height / 2, c.width - 20);
+    const data = x.getImageData(0, 0, c.width, c.height).data;
+    const px: number[] = [];
+    for (let yy = 0; yy < c.height; yy += 2) for (let xx = 0; xx < c.width; xx += 2) if (data[(yy * c.width + xx) * 4 + 3] > 120) px.push(xx, yy);
+    const n = Math.min(cap, px.length / 2);
+    const worldW = opts.mobile ? 5.2 : 8.2;
+    const k = worldW / Math.max(w, 400);
+    const tgt = new Float32Array(n * 3);
+    const rnd = new Float32Array(n * 4);
+    for (let j = 0; j < n; j++) {
+      const q = Math.floor(Math.random() * (px.length / 2));
+      tgt[j * 3] = (px[q * 2] - c.width / 2) * k;
+      tgt[j * 3 + 1] = -(px[q * 2 + 1] - c.height / 2) * k;
+      tgt[j * 3 + 2] = (Math.random() - 0.5) * 0.25;
+      for (let r = 0; r < 4; r++) rnd[j * 4 + r] = Math.random();
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+    g.setAttribute("aTarget", new THREE.BufferAttribute(tgt, 3));
+    g.setAttribute("aRand", new THREE.BufferAttribute(rnd, 4));
+    const mesh = new THREE.Points(g, nMat);
+    mesh.frustumCulled = false;
+    mesh.visible = false;
+    namesGroup.add(mesh);
+    nameMeshes[i] = mesh;
+  }
+  let fontsReady = false;
+  (document.fonts?.load('400 170px "Playfair Display"') ?? Promise.resolve()).finally(() => void (fontsReady = true));
+  const nameState = { i: -1, form: 0, rot: 0 };
+
   let phase = 0;
   let shown = -1;
   const tmp = new THREE.Color();
@@ -307,11 +428,16 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     v1.fromArray(ca.look).lerp(v2.fromArray(cb.look), e);
     camera.lookAt(v1);
     pUniforms.uFocus.value = ca.focus + (cb.focus - ca.focus) * e;
+    gUniforms.uColor.value.set(A[1]).lerp(tmp.set(B[1]), e).multiplyScalar(0.55);
+    gUniforms.uOpacity.value = Math.min(1, p * 1.2) * (p > 5.55 ? 0.55 : 0.95);
+    nUniforms.uColor.value.set(A[1]).lerp(tmp.set(B[1]), e).lerp(tmp.set(0xffffff), 0.35);
     // Verso la luce quasi bianca la materia smette di emettere luce e diventa polvere controluce.
     const normal = p > 5.55;
     if (normal !== (mat.blending === THREE.NormalBlending)) {
       mat.blending = normal ? THREE.NormalBlending : THREE.AdditiveBlending;
       mat.needsUpdate = true;
+      gMat.blending = mat.blending;
+      gMat.needsUpdate = true;
     }
   }
 
@@ -333,6 +459,16 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     const time = (performance.now() - t0) / 1000;
     pUniforms.uTime.value = time;
     bgUniforms.uTime.value = time;
+    gUniforms.uTime.value = time;
+    nUniforms.uTime.value = time;
+    // un solo nome alla volta
+    const ni = nameState.i;
+    if (ni >= 0 && fontsReady && !nameMeshes[ni]) buildName(ni);
+    nameMeshes.forEach((mesh, j) => {
+      if (mesh) mesh.visible = j === ni && nameState.form > 0.01;
+    });
+    nUniforms.uForm.value = nameState.form;
+    namesGroup.rotation.set(Math.sin(nameState.rot * 0.7) * 0.18, nameState.rot, 0);
     if (phase !== shown) {
       apply(phase);
       shown = phase;
@@ -350,11 +486,18 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     setPhase(p) {
       phase = p;
     },
+    setName(i, form, rot) {
+      nameState.i = i;
+      nameState.form = form;
+      nameState.rot = rot;
+    },
     destroy() {
       cancelAnimationFrame(raf);
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("resize", resize);
       geo.dispose();
+      gGeo.dispose();
+      nameMeshes.forEach((m) => m?.geometry.dispose());
       renderer.dispose();
     },
   };

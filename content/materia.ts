@@ -3,6 +3,9 @@
 // (origin "sua" in content/stations.ts): non riscriverle.
 
 export const materia = {
+  mark: "G",
+  person: "Gianluca Magnoni",
+  nickname: "Giangi",
   title: "Materia Viva",
   subtitle: "Un viaggio attraverso esperienze, progetti e trasformazioni.",
   opening: "Non sono mai stato un regista classico.",
@@ -14,7 +17,7 @@ export const materia = {
 export type Phase = { id: string; name: string; title: string; line?: string; note?: string };
 
 export const phases: Phase[] = [
-  { id: "nascita", name: "Nascita", title: "L'idea" },
+  { id: "nascita", name: "Nascita", title: "L'idea", note: "Materia Viva · Everything is in motion" },
   {
     id: "ricordo",
     name: "Ricordo",
@@ -49,8 +52,26 @@ export const phases: Phase[] = [
   {
     id: "continua",
     name: "Continua",
-    title: "Il futuro",
-    line: "Anche oggi mi muovo da diverse situazioni.",
-    note: "PLACEHOLDER — contatti",
+    title: "To be continued.",
+    line: "La prossima la scriviamo insieme.",
   },
 ];
+
+// Chiusura: contatto diretto con Giangi. Demo: indirizzo e showreel arrivano da lui.
+export const contact = {
+  email: "", // PLACEHOLDER — indirizzo email di Giangi
+  showreel: "", // PLACEHOLDER — link alla showreel
+  hello: "Mandami un saluto",
+  need: "Hai bisogno di me?",
+  more: "Approfondisci Giangi",
+  form: {
+    title: "Hai bisogno di me?",
+    name: "Nome",
+    mail: "La tua email",
+    message: "Raccontami il progetto",
+    send: "Invia",
+    close: "Chiudi",
+    demo: "Demo: l'indirizzo email di Giangi è in arrivo. Il messaggio non è stato inviato.",
+  },
+  placeholder: "PLACEHOLDER",
+};

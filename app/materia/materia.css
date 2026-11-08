@@ -82,7 +82,7 @@
   transition: opacity 1s;
 }
 .mv-light::after {
-  opacity: 0;
+  background: radial-gradient(ellipse at 0% 100%, rgba(242, 238, 230, 0.92), rgba(242, 238, 230, 0) 72%);
 }
 /* Nel finale la luce è quasi bianca: il testo passa all'inchiostro */
 .mv-light {
@@ -490,18 +490,18 @@
 @media (max-width: 768px) {
   .mv-work {
     left: 6vw !important;
-    width: 70vw !important;
-    top: 10vh !important;
+    width: 56vw !important;
+    top: 9vh !important;
   }
   .mv-work[data-k="1"] {
-    top: 27vh !important;
-    left: 26vw !important;
-    width: 64vw !important;
+    top: 25vh !important;
+    left: 38vw !important;
+    width: 54vw !important;
   }
   .mv-work[data-k="2"] {
-    top: 43vh !important;
-    left: 10vw !important;
-    width: 50vw !important;
+    top: 41vh !important;
+    left: 8vw !important;
+    width: 44vw !important;
   }
   .mv-sheet {
     padding: 64px 22px 40px;
@@ -511,5 +511,147 @@
   .mv-sheet-wrap,
   .mv-sheet {
     animation: none;
+  }
+}
+
+/* ---------- Apertura: la frase che arretra e ruota al contrario delle particelle ---------- */
+.mv-open {
+  position: fixed;
+  left: 50%;
+  top: 46%;
+  z-index: 3;
+  width: min(1100px, 86vw);
+  margin: 0;
+  text-align: center;
+  font-family: var(--mv-serif);
+  font-weight: 400;
+  font-size: clamp(36px, 5.4vw, 92px);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  transform: translate(-50%, -50%);
+  transform-origin: 50% 50%;
+  pointer-events: none;
+  will-change: transform, opacity, filter;
+}
+.mv-copy {
+  transition: opacity 0.8s;
+}
+.mv-opening .mv-copy {
+  opacity: 0;
+}
+.mv-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 10px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font: 400 12px var(--mv-serif);
+  letter-spacing: 0;
+  vertical-align: middle;
+}
+
+/* ---------- Lavori nel 3D, composti dai granuli ---------- */
+.mv-works {
+  perspective: 1400px;
+}
+.mv-work {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  --a: 0;
+}
+.mv-work-img {
+  -webkit-mask-image: var(--dust), linear-gradient(rgba(0, 0, 0, var(--a)), rgba(0, 0, 0, var(--a)));
+  mask-image: var(--dust), linear-gradient(rgba(0, 0, 0, var(--a)), rgba(0, 0, 0, var(--a)));
+  -webkit-mask-size: 96px 96px, 100% 100%;
+  mask-size: 96px 96px, 100% 100%;
+}
+.mv-work-cap {
+  opacity: var(--a);
+}
+
+/* ---------- Chiusura ---------- */
+.mv-sign {
+  margin: 26px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--mv-dim);
+}
+.mv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 22px;
+  margin-top: 22px;
+}
+.mv-cta {
+  display: inline-block;
+  padding: 0 0 4px;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  color: var(--mv-ink);
+  font: 400 12px var(--mv-sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+.mv-cta-main {
+  color: var(--mv-amber);
+}
+.mv-cta[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: default;
+}
+.mv-cta:focus-visible {
+  outline: 1px solid var(--mv-amber);
+  outline-offset: 6px;
+}
+.mv-form {
+  display: grid;
+  gap: 18px;
+}
+.mv-form label {
+  display: grid;
+  gap: 6px;
+}
+.mv-form label span {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(239, 232, 220, 0.55);
+}
+.mv-form input,
+.mv-form textarea {
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(239, 232, 220, 0.25);
+  color: #efe8dc;
+  font: 400 15px var(--mv-sans);
+  resize: vertical;
+}
+.mv-form input:focus,
+.mv-form textarea:focus {
+  outline: none;
+  border-bottom-color: #e3a35a;
+}
+.mv-form .mv-cta {
+  justify-self: start;
+  margin-top: 8px;
+  color: #e3a35a;
+}
+.mv-form-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(239, 232, 220, 0.75);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mv-copy {
+    transition: none;
   }
 }

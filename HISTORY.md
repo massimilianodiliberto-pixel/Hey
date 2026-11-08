@@ -82,3 +82,17 @@ numerazione delle fasi come nel moodboard.
   aprono in una scheda laterale accessibile (focus, Esc, clic fuori), mai a tutto schermo.
 - MATERIA VIVA diventa la home; la versione con la colonna passa a `/colonna`.
 - Pubblicata su richiesta di Massimiliano («Chiudilo e pubblicalo»).
+
+## 2026-11-08 — MATERIA VIVA, indicazioni di Massimiliano
+- Apertura: «Non sono mai stato un regista classico.» grande al centro; quando la camera avanza,
+  la frase arretra, ruota e sfuma al contrario delle particelle.
+- Lavori nel 3D vero: arrivano dal fondo ruotando, si compongono dai granuli (maschera di polvere),
+  poi ruotano lenti con la prospettiva.
+- Suolo di particelle sotto la materia, per sentire lo spostamento della camera.
+- Grandi nomi delle esperienze fatti da un secondo sistema di particelle: uno alla volta, si
+  compongono e si disfano, ruotano insieme ai lavori.
+- Camera: zoom in, discesa verso il suolo, leggero pan, zoom out (scelta di Massimiliano).
+- Chiusura: «To be continued.» → «La prossima la scriviamo insieme.»; G · Gianluca Magnoni · Giangi;
+  tre azioni: «Mandami un saluto» (mail), «Hai bisogno di me?» (modulo che parte via email),
+  «Approfondisci Giangi» (showreel). Email e showreel PLACEHOLDER: in demo il modulo lo dice.
+- Crediti dei progetti: Gianluca Magnoni.
