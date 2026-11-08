@@ -96,3 +96,13 @@ numerazione delle fasi come nel moodboard.
   tre azioni: «Mandami un saluto» (mail), «Hai bisogno di me?» (modulo che parte via email),
   «Approfondisci Giangi» (showreel). Email e showreel PLACEHOLDER: in demo il modulo lo dice.
 - Crediti dei progetti: Gianluca Magnoni.
+
+## MATERIA VIVA — evoluzione dai 7 riferimenti (incrementale)
+- Ricordo: impronta concentrica di granuli (prima identità) al posto della massa sferica.
+- Salto: l'impronta esplode a ventaglio asimmetrico dal suolo, con detriti a terra.
+- Espansione: tre fasce fluide irregolari, granuli concentrati sulle creste.
+- Composizione: lamine ondulate sovrapposte.
+- Continua: il nastro della sintesi si dissolve in oro sull'avorio; testo finale centrato.
+- Micro-sfere di vetro (bordo luminoso, riflesso) al posto dei sassi opachi; più piccole e rade.
+- Suolo: dune granulari con creste che prendono la luce.
+- Invariati: camera, scroll, contenuti, tipografia, schede, form.

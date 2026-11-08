@@ -665,3 +665,22 @@
     transition: none;
   }
 }
+
+/* Finale centrato: il nastro si dissolve sopra, il testo resta al centro della luce */
+.mv-light .mv-copy {
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(720px, 88vw);
+  text-align: center;
+  transition: left 1.2s cubic-bezier(0.2, 0.7, 0.1, 1), transform 1.2s cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+.mv-light .mv-line {
+  margin-left: auto;
+  margin-right: auto;
+}
+.mv-light .mv-actions {
+  justify-content: center;
+}
+.mv-light::after {
+  background: radial-gradient(ellipse at 50% 100%, rgba(244, 239, 230, 0.9), rgba(244, 239, 230, 0) 70%);
+}
