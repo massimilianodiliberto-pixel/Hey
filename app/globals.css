@@ -1,13 +1,37 @@
-:root {
-  --bg: #ebe9e4;
-  --ink: #1b1b19;
-  --muted: #77736c;
-  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-face {
+  font-family: "Anybody";
+  src: url("/fonts/anybody-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 50% 150%;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Familjen Grotesk";
+  src: url("/fonts/familjen-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Familjen Grotesk";
+  src: url("/fonts/familjen-500.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
 
-  --frame-w: min(62vw, 104vh);
+/* Teatro di posa al buio: una sola luce al tungsteno, usata come luce e mai come colore d'interfaccia */
+:root {
+  --bg: #0d0c0b;
+  --ink: #ebe5da;
+  --muted: #8d867b;
+  --glow: #f0b25e;
+  --font: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --display: "Anybody", "Familjen Grotesk", sans-serif;
+
+  /* Il ricordo sta a sinistra; il terzo destro è della colonna */
+  --frame-w: min(42vw, 72vh);
   --frame-h: calc(var(--frame-w) * 9 / 16);
-  --frame-top: 15vh;
-  --frame-left: calc(50% - var(--frame-w) / 2);
+  --frame-top: 22vh;
+  --frame-left: 7vw;
   --below: calc(var(--frame-top) + var(--frame-h) + 24px);
 
   --pin: 300vh;
@@ -24,6 +48,7 @@
     --frame-w: 88vw;
     --frame-h: var(--frame-w);
     --frame-top: 15vh;
+    --frame-left: 6vw;
     --below: calc(var(--frame-top) + var(--frame-h) + 18px);
     --pin: 180vh;
     --opening: 140vh;
@@ -58,6 +83,21 @@ button {
   cursor: pointer;
 }
 
+::selection {
+  background: var(--glow);
+  color: var(--bg);
+}
+
+canvas.spine {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
 button:focus-visible,
 a:focus-visible {
   outline: 1px solid var(--ink);
@@ -85,6 +125,7 @@ html.lenis body {
 .stage {
   position: fixed;
   inset: 0;
+  z-index: 1;
   overflow: hidden;
 }
 
@@ -99,6 +140,7 @@ html.lenis body {
 .frame {
   overflow: hidden;
   background: #d9d6cf;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(235, 229, 218, 0.08);
 }
 
 .live,
@@ -166,7 +208,7 @@ html.lenis body {
   pointer-events: none; /* le scene sono impilate: solo i comandi ricevono il puntatore */
 }
 .scene-entry {
-  clip-path: circle(0px at 50% 50%);
+  will-change: transform, opacity;
 }
 
 .scene-text {
@@ -230,18 +272,20 @@ html.lenis body {
 }
 .world {
   margin: 0;
-  font-size: clamp(15px, 1.4vw, 22px);
-  font-weight: 500;
+  font-family: var(--display);
+  font-size: clamp(20px, 2vw, 34px);
+  font-weight: 800;
+  font-stretch: 150%;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  line-height: 1.25;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
 }
 /* La sua frase, quando c'è: sotto il mondo, resta fino a metà del senso */
 .received-wrap {
   position: absolute;
   left: var(--frame-left);
-  top: calc(var(--below) + clamp(15px, 1.4vw, 22px) * 1.25 + 14px);
-  width: calc(var(--frame-w) * 0.62);
+  top: calc(var(--below) + clamp(20px, 2vw, 34px) * 2.1 + 20px);
+  width: calc(var(--frame-w) * 0.9);
 }
 .scene-wash {
   position: absolute;
@@ -254,8 +298,8 @@ html.lenis body {
 /* «prima» / «dopo» / «oggi» durante la transizione */
 .timeword {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: var(--frame-left);
+  width: var(--frame-w);
   top: calc(var(--frame-top) - 38px);
   z-index: 3;
   margin: 0;
@@ -263,7 +307,7 @@ html.lenis body {
   font-size: 13px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--glow);
   opacity: 0;
   visibility: hidden;
 }
@@ -285,16 +329,15 @@ html.lenis body {
 }
 .today {
   position: absolute;
-  right: var(--frame-left);
-  top: var(--below);
-  width: calc(var(--frame-w) * 0.5);
-  text-align: right;
+  left: var(--frame-left);
+  top: calc(var(--below) + clamp(22px, 2.4vw, 40px) + 18px);
+  width: calc(var(--frame-w) * 0.8);
 }
 
 /* Il senso: bianco in differenza, leggibile sul quadro e scuro sul fondo quando va al margine */
 .sense {
   position: absolute;
-  left: 50%;
+  left: calc(var(--frame-left) + var(--frame-w) / 2);
   top: calc(var(--frame-top) + var(--frame-h) / 2);
   margin: 0;
   font-size: var(--sense-size);
@@ -307,7 +350,7 @@ html.lenis body {
 
 .links {
   position: absolute;
-  right: var(--frame-left);
+  left: var(--frame-left);
   top: calc(var(--below) + 64px);
   display: flex;
   gap: 16px;
@@ -323,18 +366,26 @@ html.lenis body {
   inset: 0;
   z-index: 5;
 }
+/* Il disco dell'apertura è la sommità della colonna, là dove la colonna emergerà */
 .opening-shape {
-  background: var(--ink);
-  clip-path: circle(14% at 50% 50%);
+  left: calc(67vw - 9vw);
+  top: calc(44vh - 9vw);
+  width: 18vw;
+  height: 18vw;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #f3ede2, #cfc7b8 55%, #8f8676);
+  box-shadow: 0 0 120px -10px rgba(240, 178, 94, 0.35);
 }
 .opening-line {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: var(--below);
+  left: var(--frame-left);
+  width: var(--frame-w);
+  top: 46vh;
   margin: 0;
   text-align: center;
-  font-size: clamp(18px, 1.8vw, 26px);
+  font-size: clamp(22px, 2.4vw, 38px);
+  line-height: 1.2;
+  text-align: left;
 }
 
 /* Arrivo: la forma astratta diventa una persona, i sensi le si stringono attorno */
@@ -347,8 +398,6 @@ html.lenis body {
 .arrival-entry {
   position: absolute;
   inset: 0;
-  background: var(--bg);
-  clip-path: circle(0px at 50% 50%);
 }
 .arrival-lines {
   position: absolute;
@@ -369,9 +418,10 @@ html.lenis body {
   top: calc(var(--pc) - var(--ph) / 2);
   width: var(--pw);
   height: var(--ph);
-  background: #d4cfc6;
+  background: #1d1b18;
   overflow: hidden;
   clip-path: circle(22% at 50% 50%);
+  box-shadow: inset 0 0 0 1px rgba(235, 229, 218, 0.12);
 }
 .portrait-head {
   position: absolute;
@@ -397,7 +447,7 @@ html.lenis body {
   bottom: 6px;
   font-size: 9px;
   letter-spacing: 0.08em;
-  color: #f4f1ea;
+  color: var(--bg);
 }
 .ring-sense {
   position: absolute;
@@ -416,10 +466,78 @@ html.lenis body {
   top: calc(var(--pc) + var(--ph) / 2 + 2.5vh);
   margin: 0;
   text-align: center;
+  font-family: var(--display);
   font-size: var(--sense-size);
-  font-weight: 500;
+  font-weight: 800;
+  font-stretch: 150%;
+  text-transform: uppercase;
+  color: var(--glow);
   opacity: 0;
   visibility: hidden;
+}
+
+/* Titoli di coda e «Continua» */
+.credits {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--pc) + var(--ph) * 0.54 + 16vh);
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  opacity: 0;
+  visibility: hidden;
+}
+.credit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.4vw;
+  font-size: 13px;
+}
+.credit dt {
+  text-align: right;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 2px;
+}
+.credit dd {
+  margin: 0;
+}
+.finale {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 34vh;
+  text-align: center;
+  pointer-events: auto;
+}
+.continua {
+  margin: 0 0 22px;
+  font-family: var(--display);
+  font-weight: 300;
+  font-stretch: 150%;
+  font-size: clamp(54px, 9vw, 150px);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  visibility: hidden;
+}
+.finale p:not(.continua) {
+  margin: 0 auto 10px;
+  max-width: 30em;
+  padding: 0 16px;
+  font-size: clamp(15px, 1.25vw, 19px);
+  opacity: 0;
+  visibility: hidden;
+}
+.finale .arrival-name,
+.finale .arrival-contacts {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
 }
 .arrival-text {
   position: absolute;
@@ -559,7 +677,7 @@ html.lenis body {
   height: var(--pin);
 }
 .track-arrival {
-  height: 250vh;
+  height: 360vh;
 }
 
 /* ---------- Mobile: meno piani, tracce in riga in alto, indice a scomparsa ---------- */
@@ -572,7 +690,7 @@ html.lenis body {
     font-size: 14px;
   }
   .received-wrap {
-    top: calc(var(--below) + 32px);
+    top: calc(var(--below) + 54px);
   }
   .index-world {
     display: none;
@@ -613,12 +731,30 @@ html.lenis body {
     line-height: 1.2;
   }
   .track-arrival {
-    height: 170vh;
+    height: 240vh;
   }
   .preview-tag {
     left: 18px;
     top: auto;
     bottom: 20px;
+  }
+  .opening-shape {
+    left: calc(50vw - 20vw);
+    top: 18vh;
+    width: 40vw;
+    height: 40vw;
+  }
+  .opening-line {
+    top: 58vh;
+  }
+  .credit {
+    font-size: 12px;
+  }
+  .credits {
+    top: calc(var(--pc) + var(--ph) / 2 + 28vh);
+  }
+  .continua {
+    font-size: 12.5vw;
   }
   .index-toggle {
     display: block;

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import type { Station, arrival as Arrival } from "@/content/stations";
+import type { Station, arrival as Arrival, credits as Credits } from "@/content/stations";
 import { createEngine } from "@/lib/engine";
 import { looks } from "./looks";
 import { Planes } from "./Planes";
@@ -13,11 +13,12 @@ export type JourneyProps = {
   stations: Station[]; // quelle costruite in questo passo
   allStations: Station[]; // tutte, per indice e tracce
   arrival: typeof Arrival;
+  credits: typeof Credits;
   ui: Record<string, string>;
 };
 
 export default function Journey(props: JourneyProps) {
-  const { opening, stations, allStations, arrival, ui } = props;
+  const { opening, stations, allStations, arrival, credits, ui } = props;
   const root = useRef<HTMLDivElement>(null);
   const [reduced, setReduced] = useState<boolean | null>(null);
   const [indexOpen, setIndexOpen] = useState(false);
@@ -41,6 +42,7 @@ export default function Journey(props: JourneyProps) {
 
   return (
     <div ref={root} className="journey">
+      <canvas className="spine" aria-hidden="true" />
       <div className="stage">
         <div className="opening">
           <div className="frame-box opening-shape" />
@@ -151,6 +153,17 @@ export default function Journey(props: JourneyProps) {
             <p className="instinct">{arrival.sense}</p>
             <div className="arrival-text">
               <p className="arrival-line">{arrival.line}</p>
+            </div>
+            <dl className="credits">
+              {credits.map((c) => (
+                <div key={c.role} className="credit">
+                  <dt>{c.role}</dt>
+                  <dd>{c.text}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="finale">
+              <p className="continua">{ui.continua}</p>
               <p className="arrival-closing">{arrival.closing}</p>
               <p className="arrival-name">{arrival.name}</p>
               <p className="arrival-contacts">

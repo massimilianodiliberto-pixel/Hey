@@ -203,6 +203,23 @@ Le righe "ricevuto" e "oggi" esistono solo se sono sue: dove mancano, la fase pa
 Se si entra in una stazione già oltre `p = 0` senza fermarsi, la clip non parte ma mondo, frase e
 comandi compaiono comunque.
 
+## I. La colonna (dal 08/11/2026)
+
+Sullo sfondo, a tutto schermo, una colonna di vertebre astratte (Three.js). Su desktop la colonna
+sta nel terzo destro, il ricordo a sinistra; su telefono la colonna è dietro, attenuata.
+Vertebra di ogni esperienza: `6 + (era − 1) × 9`. La colonna ruota con la posizione.
+
+| Momento | Camera e colonna | Ricordo (DOM) |
+|---|---|---|
+| Apertura | Dall'alto (quota 24) scende fino alla prima vertebra; la colonna emerge dal buio | Il disco si stringe e svanisce; il primo ricordo esce dalla sua vertebra (0.66 → 0.96) |
+| Sosta (`p` 0 → 0.86) | La camera gira attorno alla colonna (orbita +0.55 rad) e scende di poco | Freeze in parallax, mondo, senso, sua frase come §B e §H |
+| Salto (`p` 0.86 → 1) | Scatto lungo la colonna fino all'epoca successiva; la torsione si stringe, la camera arretra, scia di luce lungo la spirale. Indietro nel tempo la colonna si svita | Il ricordo rientra (sale se si va avanti, scende se si torna indietro); il prossimo esce dalla sua vertebra (0.92 → 1) |
+| Arrivo (0 → 0.3) | La camera si allontana fino a vedere la colonna intera | I sensi convergono attorno alla persona, linee dall'orientamento, «Istinto», sua frase |
+| Arrivo (0.54 → 0.94) | La colonna si attenua | Titoli di coda, poi tutto lascia il posto a «Continua», la sua chiusura, nome e contatti |
+
+La colonna si ridisegna solo quando lo stato cambia: da ferma l'immagine è immobile. Senza WebGL il
+canvas si nasconde e il viaggio funziona lo stesso. Con movimento ridotto la colonna non c'è.
+
 ## G. Arrivo (traccia di 250vh su desktop, 170vh su mobile)
 
 L'ultima stazione si chiude come tutte le altre: la sua finestra si apre e da lì emerge la scena

@@ -2,8 +2,15 @@
 // CONTENUTI DI PROVA. Da sostituire con materiale confermato dal cliente.
 // origin: "sua" = frase detta da lui in call | "inventata" = PLACEHOLDER scritto da noi
 //
-// Struttura (decisione di Massimiliano, 07/11/2026): le stazioni sono i SENSI, non parti del corpo.
-// Ogni senso nasce da un'esperienza (worlds). Il viaggio salta avanti e indietro nel tempo.
+// Struttura (decisioni di Massimiliano, 07-08/11/2026): le stazioni sono i SENSI, non parti del corpo.
+// Ogni senso nasce da un'esperienza (worlds). Il viaggio salta avanti e indietro nel tempo lungo una
+// colonna astratta: la colonna è il tempo, ogni esperienza sta alla vertebra della sua epoca (era).
+//
+// Fatti confermati da Massimiliano: Giangi ha creato le case di produzione Crash Test e K+ Imaginary
+// Studio (direzione generale artistica: spot, video musicali, VFX all'avanguardia ai tempi); ha fatto
+// interior design per grandi strutture; ha firmato copertine di dischi di artisti italiani (nomi da
+// confermare: non citarli); è stato art director di Wella al Cosmoprof per molti anni; ha creato
+// Match Music, tra i primi programmi TV in Italia su musica e video (non scrivere «prima di MTV»).
 //
 // Ogni stazione segue i tre tempi della regia:
 //   worlds   = l'esperienza: titolo grande durante la clip (il passato)
@@ -57,14 +64,14 @@ export const stations: Station[] = [
     id: "immagine",
     sense: "Senso dell'immagine", // PLACEHOLDER
     senseOrigin: "inventata",
-    worlds: ["origini", "Asenawer", "il primo spot"], // Asenawer: ORTOGRAFIA DA VERIFICARE
+    worlds: ["il primo spot", "copertine di dischi"], // artisti delle copertine: da confermare, non citarli
     era: 1, // PLACEHOLDER
     received: null,
     today: null,
     scene: { type: "placeholder" },
     clips: [
-      { title: "PLACEHOLDER — Prima di tutto", src: "/clips/ph-01.mp4", poster: "/clips/ph-01.jpg", mode: "single" },
-      { title: "PLACEHOLDER — Il primo spot", src: "/clips/ph-02.mp4", poster: "/clips/ph-02.jpg", mode: "single" },
+      { title: "PLACEHOLDER — Il primo spot", src: "/clips/ph-01.mp4", poster: "/clips/ph-01.jpg", mode: "single" },
+      { title: "PLACEHOLDER — Una copertina", src: "/clips/ph-02.mp4", poster: "/clips/ph-02.jpg", mode: "single" },
     ],
     fragments: [{ type: "note", text: "PLACEHOLDER — foto di set, anno non indicato" }],
     links: ["rischio"],
@@ -73,7 +80,7 @@ export const stations: Station[] = [
     id: "orientamento",
     sense: "Senso dell'orientamento", // PLACEHOLDER
     senseOrigin: "inventata",
-    worlds: ["le società"], // NOMI E NUMERO DA CHIEDERE
+    worlds: ["Crash Test", "K+ Imaginary Studio"], // direzione generale artistica
     era: 5, // PLACEHOLDER
     received: {
       text: "Sono eclettico. Ho spostato il culo dove mi conveniva, o dove mi riusciva meglio in quel momento.",
@@ -82,7 +89,8 @@ export const stations: Station[] = [
     today: null,
     scene: { type: "placeholder" },
     clips: [
-      { title: "PLACEHOLDER — Una società", src: "/clips/ph-10.mp4", poster: "/clips/ph-10.jpg", mode: "single" },
+      { title: "PLACEHOLDER — Crash Test", src: "/clips/ph-10.mp4", poster: "/clips/ph-10.jpg", mode: "single" },
+      { title: "PLACEHOLDER — K+ Imaginary Studio", src: "/clips/ph-04.mp4", poster: "/clips/ph-04.jpg", mode: "single" },
     ],
     // L'orientamento richiama tutti gli altri: lo spostarsi è ciò che collega le esperienze
     links: ["immagine", "ritmo", "rischio", "spazio", "misura"],
@@ -91,14 +99,13 @@ export const stations: Station[] = [
     id: "ritmo",
     sense: "Senso del ritmo", // PLACEHOLDER
     senseOrigin: "inventata",
-    worlds: ["Match Music", "DJ Television", "video musicali"],
+    worlds: ["Match Music", "video musicali"], // Match Music: creato da lui, tra i primi in Italia
     era: 2, // PLACEHOLDER
     received: null,
     today: null,
     scene: { type: "placeholder" },
     clips: [
       { title: "PLACEHOLDER — Match Music", src: "/clips/ph-03.mp4", poster: "/clips/ph-03.jpg", mode: "single" },
-      { title: "PLACEHOLDER — DJ Television", src: "/clips/ph-04.mp4", poster: "/clips/ph-04.jpg", mode: "single" },
       {
         title: "Video musicali",
         src: "/clips/ph-05.mp4",
@@ -130,7 +137,7 @@ export const stations: Station[] = [
     id: "rischio",
     sense: "Senso del rischio", // PLACEHOLDER
     senseOrigin: "inventata",
-    worlds: ["pubblicità"],
+    worlds: ["spot", "VFX"], // all'avanguardia ai tempi, con Crash Test e K+
     era: 3, // PLACEHOLDER
     received: null,
     today: null,
@@ -145,18 +152,27 @@ export const stations: Station[] = [
     id: "spazio",
     sense: "Senso dello spazio", // PLACEHOLDER
     senseOrigin: "inventata",
-    worlds: ["grandi eventi", "design"],
+    worlds: ["interior design", "Wella al Cosmoprof"], // interior per grandi strutture; art director Wella per molti anni
     era: 4, // PLACEHOLDER
     received: null,
     today: null,
     scene: { type: "placeholder" },
     clips: [
-      { title: "PLACEHOLDER — Un evento", src: "/clips/ph-08.mp4", poster: "/clips/ph-08.jpg", mode: "single" },
-      { title: "PLACEHOLDER — Un oggetto", src: "/clips/ph-09.mp4", poster: "/clips/ph-09.jpg", mode: "single" },
+      { title: "PLACEHOLDER — Un interno", src: "/clips/ph-08.mp4", poster: "/clips/ph-08.jpg", mode: "single" },
+      { title: "PLACEHOLDER — Wella al Cosmoprof", src: "/clips/ph-09.mp4", poster: "/clips/ph-09.jpg", mode: "single" },
     ],
-    fragments: [{ type: "note", text: "PLACEHOLDER — backstage, montaggio palco" }],
+    fragments: [{ type: "note", text: "PLACEHOLDER — backstage di uno stand" }],
     links: ["ritmo", "orientamento"],
   },
+];
+
+// Titoli di coda del finale: solo fatti confermati, niente nomi non autorizzati.
+export const credits: { role: string; text: string }[] = [
+  { role: "Regia", text: "PLACEHOLDER — Nome" },
+  { role: "Case di produzione", text: "Crash Test · K+ Imaginary Studio" },
+  { role: "Televisione", text: "Match Music" },
+  { role: "Copertine", text: "PLACEHOLDER — artisti da confermare" },
+  { role: "Spazi", text: "Interior design · Wella al Cosmoprof" },
 ];
 
 export const arrival = {
@@ -186,6 +202,7 @@ export const ui = {
   playClip: "Avvia clip",
   arrival: "Istinto",
   preview: "Anteprima — contenuti PLACEHOLDER",
+  continua: "Continua",
   before: "prima",
   after: "dopo",
   now: "oggi",

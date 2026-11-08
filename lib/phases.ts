@@ -25,11 +25,14 @@ export const span = (r: readonly [number, number]) => r[1] - r[0];
 
 // Scena di arrivo: p dentro la sua traccia (TIMELINE §G).
 export const A = {
-  portrait: [0.02, 0.22],
-  converge: [0.08, 0.34],
-  lines: [0.3, 0.52],
-  instinct: [0.48, 0.58],
-  line: [0.6, 0.7],
-  closing: [0.72, 0.8],
-  name: [0.82, 0.9],
+  portrait: [0.02, 0.18],
+  converge: [0.06, 0.26],
+  lines: [0.22, 0.38],
+  instinct: [0.36, 0.44],
+  line: [0.44, 0.52],
+  credits: [0.54, 0.64],
+  clear: [0.68, 0.74],
+  continua: [0.74, 0.84],
+  closing: [0.82, 0.88],
+  name: [0.88, 0.94],
 } as const;

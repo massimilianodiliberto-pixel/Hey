@@ -16,18 +16,18 @@ npm run build && npm start
 - `config.ts`: flag (stazioni costruite, aggancio, audio, durata clip, avanzamento automatico).
 - `lib/phases.ts`: i valori di `p` della stazione tipo, specchio di `TIMELINE.md`.
 - `lib/engine.ts`: motore di scroll (GSAP + ScrollTrigger, Lenis su desktop).
+- `lib/spine.ts`: la colonna in Three.js, caricata a parte.
 - `components/looks.ts`: forme segnaposto delle scene, da sostituire con i fotogrammi veri.
 
 ## Cosa contiene
 
-Apertura, sei sensi e arrivo. Ogni senso nasce da un'esperienza di Giangi (Match Music, pubblicità,
-grandi eventi…), il cui nome è il titolo grande durante la clip. Il viaggio salta avanti e indietro
-nel tempo: transizione «dopo» (la camera spinge in avanti) e «prima» (la camera arretra e torna
-un ricordo), con la parola corrispondente. Nel sito ci sono solo le sue cinque frasi.
+Apertura, sei sensi e arrivo lungo una colonna astratta in 3D (Three.js, `lib/spine.ts`): la colonna
+è il tempo, ogni esperienza di Giangi sta alla vertebra della sua epoca, i salti nel tempo sono la
+camera che scatta lungo la colonna. I ricordi (clip e fotogrammi segnaposto) escono dalle vertebre.
+Finale con titoli di coda e «Continua». Solo le sue cinque frasi.
 
-Clip simulate (campi di colore con timer), skip e "watch full work", freeze in parallax, senso che
-va al margine e resta acceso, avanzamento automatico, invito a proseguire, aggancio, indice con i
-mondi, richiami, arrivo con «Istinto», versione mobile, versione `prefers-reduced-motion`.
+Clip simulate con timer, skip, "watch full work", Rivedi, freeze in parallax, senso al margine,
+avanzamento automatico, aggancio, indice con i mondi, richiami, mobile, `prefers-reduced-motion`.
 
 ## Pubblicazione
 

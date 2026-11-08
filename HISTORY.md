@@ -42,3 +42,17 @@ si riallineava in circa mezzo secondo (smorzamento dello scrub). Corretto comunq
 grandi (barra trascinata, ancora, scrollTo) la scena va subito al punto giusto. Trovato e corretto
 un difetto più vecchio: i salti dall'indice accendevano i sensi delle stazioni saltate. Ora un senso
 si accende solo se la sua stazione è sullo schermo quando il senso si apre.
+
+## 2026-11-08 — La colonna
+Osservazioni di Massimiliano: solo zoom, manca il concetto, finale «to be continued», pezzi di lavoro,
+3D, design non premium. Fatti nuovi su Giangi (Crash Test, K+ Imaginary Studio, Match Music creato
+da lui, copertine, interior design, Wella al Cosmoprof; Asenawer tolto). Proposte 2 (set), 3
+(spirale di DNA) e 4 (colonna vertebrale) in `docs/`. Scelte di Massimiliano: colonna più astratta,
+salto con torsione, scatto e inversione, Three.js. Costruito:
+- `lib/spine.ts`: colonna di vertebre astratte instanziate, spirale che respira, scia di luce;
+  disegnata solo quando cambia, caricata a parte, fallback senza WebGL;
+- la colonna è il tempo: la camera scatta lungo la colonna tra le epoche, si svita tornando indietro;
+- i ricordi escono e rientrano nelle vertebre al posto delle transizioni a finestra;
+- teatro di posa al buio, luce al tungsteno, Anybody + Familjen Grotesk self-hosted;
+- arrivo con la colonna intera, titoli di coda e «Continua»;
+- skill di design installate (impeccable, emilkowalski, design-motion-principles).

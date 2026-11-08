@@ -11,6 +11,7 @@ import type { Station } from "@/content/stations";
 import { config } from "@/config";
 import { looks } from "@/components/looks";
 import { A, P, span } from "./phases";
+import type { Spine } from "./spine";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -63,22 +64,17 @@ const CAMERA: Record<PlaneKey, { scale: number; x: number; y: number }> = {
 const sineInOut = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
 const power2Out = (t: number) => 1 - (1 - t) * (1 - t);
 const pad = (n: number) => String(Math.floor(n)).padStart(2, "0");
-const circ = (r: number, c: { x: number; y: number }) => `circle(${r.toFixed(1)}px at ${c.x.toFixed(1)}px ${c.y.toFixed(1)}px)`;
-// Tutto lo schermo meno un foro circolare: la scena precedente nel tempo entra dai bordi.
-const hole = (r: number, c: { x: number; y: number }) => {
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-  const f = (n: number) => n.toFixed(1);
-  return `path(evenodd, "M0 0H${W}V${H}H0Z M${f(c.x - r)} ${f(c.y)}a${f(r)} ${f(r)} 0 1 0 ${f(2 * r)} 0a${f(r)} ${f(r)} 0 1 0 ${f(-2 * r)} 0Z")`;
-};
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
+const smooth = (t: number) => t * t * (3 - 2 * t);
+
+// Vertebra di ogni epoca: la colonna è il tempo. Prima vertebra in alto = epoca più lontana.
+const vertebraOf = (era: number) => 6 + (era - 1) * 9;
 
 // Ciò che emerge alla fine di una stazione: la stazione successiva o la scena di arrivo.
 type Next = {
   entry: HTMLElement;
-  zoom: HTMLElement | null;
   text: HTMLElement | null;
-  wash: HTMLElement | null;
-  center: () => { x: number; y: number };
   back: boolean; // true = si torna a un'esperienza precedente nel tempo
 };
 
@@ -152,6 +148,10 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     instinct: q(root, ".instinct"),
     line: q(root, ".arrival-line"),
     closing: q(root, ".arrival-closing"),
+    credits: q(root, ".credits"),
+    continua: q(root, ".continua"),
+    ringWrap: q(root, ".ring"),
+    linesSvg: q<HTMLElement>(root, ".arrival-lines"),
     name: q(root, ".arrival-name"),
     contacts: q(root, ".arrival-contacts"),
     rings: S.map((s) => ({ s, el: q(root, `[data-ring="${s.data.id}"]`) })),
@@ -165,9 +165,12 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
 
   // Prima della clip, riga "ricevuto" e comandi della clip sono spenti.
   S.forEach((s) => gsap.set([s.world, s.received, s.clipUi].filter(Boolean), { autoAlpha: 0 }));
+  gsap.set([...S.map((s) => s.entry), arr.entry], { autoAlpha: 0 });
 
   // ---------- Scroll programmato (avanzamento automatico, aggancio, salti) ----------
 
+  let spine: Spine | null = null;
+  let spineMax = 1;
   let jumping = false;
   let lastInput = performance.now();
   let auto: { cancel: () => void } | null = null;
@@ -225,22 +228,6 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     const f = frameBox(s);
     return { x: f.x + f.w / 2, y: f.y + f.h / 2 };
   };
-  const maxR = () => Math.hypot(window.innerWidth, window.innerHeight);
-
-  // Centro dell'elemento in primo piano di A a fine sosta: da lì si apre la finestra su B.
-  function windowOrigin(s: St, amp: number) {
-    const f = frameBox(s);
-    const shape = looks[s.data.id]?.planes.fg[0];
-    if (!shape) return frameCenter(s);
-    const cx = (shape.x + shape.w / 2) / 100;
-    const cy = (shape.y + (shape.h ?? (shape.w * f.w) / f.h) / 2) / 100;
-    const k = 1 + CAMERA.fg.scale * amp;
-    return {
-      x: f.x + f.w * (0.5 + (cx - 0.5) * k + (CAMERA.fg.x * amp) / 100),
-      y: f.y + f.h * (0.5 + (cy - 0.5) * k + (CAMERA.fg.y * amp) / 100),
-    };
-  }
-
   // Dove va il senso: il suo posto al margine.
   function travel(s: St) {
     if (!s.trace) return { x: 0, y: 0 };
@@ -401,38 +388,18 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     const first = S[0];
     const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
     tl.to(opening.line, { autoAlpha: 0, y: -16, duration: 0.25, ease: "power1.in" }, 0.25);
-    tl.fromTo(opening.shape, { clipPath: "circle(14% at 50% 50%)" }, { clipPath: "circle(42% at 50% 50%)", duration: 0.5, ease: "power2.inOut" }, 0.3);
+    // Il disco dell'apertura è la sommità della colonna: si stringe mentre la colonna emerge dal buio.
+    tl.fromTo(opening.shape, { scale: 1, autoAlpha: 1 }, { scale: 0.35, autoAlpha: 0, duration: 0.45, ease: "power2.in" }, 0.25);
     if (first) {
-      // La forma astratta diventa la prima scena: il quadro della prima stazione si apre da dentro il disco.
-      tl.fromTo(
-        first.entry,
-        { clipPath: () => circ(0, frameCenter(first)) },
-        { clipPath: () => circ(maxR(), frameCenter(first)), duration: 0.5, ease: "power3.in" },
-        0.5,
-      );
-      tl.fromTo(first.zoom, { scale: 1.2 }, { scale: 1, duration: 0.5, ease: "power2.out" }, 0.5);
+      // Il primo ricordo esce dalla sua vertebra.
+      tl.fromTo(first.entry, { autoAlpha: 0, y: "18vh", scale: 0.82 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.3, ease: "power2.out" }, 0.66);
       tl.fromTo(first.text, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.06 }, 0.94);
     }
-    tl.to(opening.shape, { autoAlpha: 0, duration: 0.15 }, 0.85);
     return tl;
   }
 
-  const asNext = (from: St, n: St): Next => ({
-    entry: n.entry,
-    zoom: n.zoom,
-    text: n.text,
-    wash: n.wash,
-    center: () => frameCenter(n),
-    back: n.data.era < from.data.era,
-  });
-  const arrivalNext: Next = {
-    entry: arr.entry,
-    zoom: null,
-    text: null,
-    wash: null,
-    back: false,
-    center: () => ({ x: arr.portrait.offsetLeft + arr.portrait.offsetWidth / 2, y: arr.portrait.offsetTop + arr.portrait.offsetHeight / 2 }),
-  };
+  const asNext = (from: St, n: St): Next => ({ entry: n.entry, text: n.text, back: n.data.era < from.data.era });
+  const arrivalNext: Next = { entry: arr.entry, text: null, back: false };
 
   function buildStation(s: St, next: Next, mobile: boolean) {
     const amp = mobile ? 0.5 : 1;
@@ -487,46 +454,13 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     tl.to(s.timeword, { autoAlpha: 0, duration: span(P.timeOut), ease: "power1.in" }, P.timeOut[0]);
     tl.to(s.text, { autoAlpha: 0, duration: 0.03 }, 0.9);
 
-    if (next.back) {
-      // Indietro nel tempo: la camera arretra, il presente si rimpicciolisce in un foro e
-      // l'esperienza precedente entra dai bordi, velata come un ricordo che torna nitido.
-      tl.to(s.exit, { scale: 0.55, duration: span(P.pushA), ease: "power2.inOut" }, P.pushA[0]);
-      tl.to(s.exit, { autoAlpha: 0, duration: span(P.fadeA), ease: "power1.in" }, P.fadeA[0]);
-      // GSAP non interpola path(): si anima il raggio e il foro si ricalcola a ogni fotogramma.
-      const h = { r: 0 };
-      const entry = next.entry;
-      tl.fromTo(
-        h,
-        { r: () => maxR() },
-        {
-          r: 0,
-          duration: 1 - P.windowOpen[0],
-          ease: "power2.inOut",
-          onUpdate: () => void (entry.style.clipPath = hole(h.r, frameCenter(s))),
-        },
-        P.windowOpen[0],
-      );
-      if (next.zoom) tl.fromTo(next.zoom, { scale: mobile ? 1.5 : 1.75 }, { scale: 1, duration: 1 - P.windowOpen[0], ease: "power2.inOut" }, P.windowOpen[0]);
-      if (next.wash) tl.fromTo(next.wash, { opacity: 0.55 }, { opacity: 0, duration: 1 - P.windowOpen[0], ease: "power1.in" }, P.windowOpen[0]);
-      if (next.text) tl.fromTo(next.text, { autoAlpha: 0 }, { autoAlpha: 1, duration: span(P.textB) }, P.textB[0]);
-      return tl;
-    }
-
-    // Avanti nel tempo: la camera spinge oltre A, B emerge dalla finestra aperta in A.
-    tl.to(s.exit, { scale: mobile ? 1.3 : 1.45, duration: span(P.pushA), ease: "power2.in" }, P.pushA[0]);
-    tl.to(s.exit, { autoAlpha: 0, duration: span(P.fadeA), ease: "power1.in" }, P.fadeA[0]);
-    {
-      const r0 = () => 0.06 * maxR();
-      tl.fromTo(
-        next.entry,
-        { clipPath: () => circ(0, windowOrigin(s, amp)) },
-        { clipPath: () => circ(r0(), windowOrigin(s, amp)), duration: span(P.windowOpen), ease: "power2.in" },
-        P.windowOpen[0],
-      );
-      tl.to(next.entry, { clipPath: () => circ(maxR(), next.center()), duration: span(P.windowGrow), ease: "power3.inOut" }, P.windowGrow[0]);
-      if (!mobile && next.zoom) tl.fromTo(next.zoom, { scale: 1.25 }, { scale: 1, duration: span(P.windowGrow), ease: "power2.out" }, P.windowGrow[0]);
-      if (next.text) tl.fromTo(next.text, { autoAlpha: 0 }, { autoAlpha: 1, duration: span(P.textB) }, P.textB[0]);
-    }
+    // Il ricordo rientra nella sua vertebra mentre la camera scorre lungo la colonna: avanti nel tempo
+    // la camera scende e il ricordo sale; indietro risale e il ricordo scende. Il prossimo esce dalla sua.
+    const dir = next.back ? 1 : -1;
+    tl.to(s.exit, { y: `${dir * 34}vh`, scale: 0.72, duration: 0.09, ease: "power2.in" }, 0.875);
+    tl.to(s.exit, { autoAlpha: 0, duration: 0.05, ease: "power1.in" }, 0.915);
+    tl.fromTo(next.entry, { autoAlpha: 0, y: `${-dir * 30}vh`, scale: 0.8 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.08, ease: "power2.out" }, 0.92);
+    if (next.text) tl.fromTo(next.text, { autoAlpha: 0 }, { autoAlpha: 1, duration: span(P.textB) }, P.textB[0]);
     return tl;
   }
 
@@ -578,7 +512,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
   function onArrivalUpdate(tl: gsap.core.Timeline) {
     arr.p = tl.progress();
     const on = arr.p >= A.converge[0];
-    arr.rings.forEach(({ s, el }) => gsap.set(el, { autoAlpha: on ? (s.visited ? 0.9 : 0.18) : 0 }));
+    arr.rings.forEach(({ s, el }) => gsap.set(el, { opacity: on ? (s.visited ? 0.9 : 0.18) : 0, visibility: on ? "visible" : "hidden" }));
     arr.lines.forEach((ln) => {
       const s = S.find((x) => x.data.id === ln.dataset.line);
       ln.style.strokeOpacity = s?.visited ? "0.55" : "0.15";
@@ -590,6 +524,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     const tl = gsap.timeline({ paused: true, defaults: { ease: "none" } });
     tl.eventCallback("onUpdate", () => onArrivalUpdate(tl));
     layoutArrival(mobile);
+    tl.fromTo(arr.entry, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.02 }, 0);
     // La forma astratta dell'apertura torna e diventa la persona.
     tl.fromTo(arr.portrait, { clipPath: "circle(22% at 50% 50%)" }, { clipPath: "circle(75% at 50% 50%)", duration: span(A.portrait), ease: "power2.inOut" }, A.portrait[0]);
     arr.rings.forEach(({ s, el }) => {
@@ -603,6 +538,10 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     tl.fromTo(arr.lines, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: span(A.lines), ease: "power1.inOut", stagger: 0.02 }, A.lines[0]);
     tl.fromTo(arr.instinct, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: span(A.instinct), ease: "power2.out" }, A.instinct[0]);
     tl.fromTo(arr.line, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: span(A.line), ease: "power2.out" }, A.line[0]);
+    // Titoli di coda: salgono, poi tutto lascia il posto a «Continua». Il film non finisce.
+    tl.fromTo(arr.credits, { autoAlpha: 0, y: "12vh" }, { autoAlpha: 1, y: 0, duration: span(A.credits), ease: "power2.out" }, A.credits[0]);
+    tl.to([arr.portrait, arr.ringWrap, arr.linesSvg, arr.instinct, arr.line, arr.credits], { autoAlpha: 0, y: "-6vh", duration: span(A.clear), ease: "power1.in" }, A.clear[0]);
+    tl.fromTo(arr.continua, { autoAlpha: 0, letterSpacing: "0.3em" }, { autoAlpha: 1, letterSpacing: "0.04em", duration: span(A.continua), ease: "power2.out" }, A.continua[0]);
     tl.fromTo(arr.closing, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: span(A.closing), ease: "power2.out" }, A.closing[0]);
     tl.fromTo([arr.name, arr.contacts], { autoAlpha: 0 }, { autoAlpha: 1, duration: span(A.name) }, A.name[0]);
     tl.set({}, {}, 1);
@@ -640,7 +579,96 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
       onRefresh: () => layoutArrival(mobile),
     });
     updateCurrent();
+
+    // La colonna: caricata a parte (Three.js), ricreata al cambio desktop/mobile.
+    let alive = true;
+    const canvas = root.querySelector<HTMLCanvasElement>("canvas.spine");
+    if (canvas)
+      import("./spine")
+        .then(({ createSpine }) => {
+          if (!alive) return;
+          try {
+            spine = createSpine(canvas, { mobile });
+            spineMax = mobile ? 0.55 : 1;
+            driveSpine();
+          } catch {
+            canvas.style.display = "none"; // senza WebGL il viaggio funziona lo stesso
+          }
+        })
+        .catch(() => void (canvas.style.display = "none"));
+    return () => {
+      alive = false;
+      spine?.destroy();
+      spine = null;
+    };
   });
+
+  // ---------- La colonna segue il viaggio ----------
+  // Legge le timeline (già smorzate dallo scrub), così colonna e quadri restano allineati al fotogramma.
+  function driveSpine() {
+    if (!spine || S.length === 0) return;
+    const V = S.map((s) => vertebraOf(s.data.era));
+    const last = V.length - 1;
+    const fe = P.freezeEnd;
+    const ap = arr.st?.animation?.progress() ?? 0;
+    let idx = -1;
+    for (let i = S.length - 1; i >= 0; i--) {
+      if ((S[i].tl?.progress() ?? 0) > 0) {
+        idx = i;
+        break;
+      }
+    }
+    if (ap > 0) {
+      const t = smooth(clamp01(ap / 0.3));
+      spine.set({
+        u: lerp(V[last] + 0.9, 30, t),
+        dist: lerp(24, 58, t),
+        height: lerp(3, 10, t),
+        orbit: -0.7 + ap * 0.9,
+        twist: 0,
+        streak: 0,
+        reveal: spineMax * (1 - 0.55 * smooth(clamp01((ap - A.clear[0]) / 0.1))),
+      });
+      return;
+    }
+    if (idx < 0) {
+      const op = opening.st?.animation?.progress() ?? 0;
+      const t = smooth(op);
+      spine.set({
+        u: lerp(V[0] - 9, V[0], t),
+        height: lerp(24, 3, t),
+        dist: lerp(12, 24, t),
+        orbit: -0.7,
+        twist: 0,
+        streak: 0,
+        reveal: spineMax * smooth(clamp01((op - 0.12) / 0.5)),
+      });
+      return;
+    }
+    const p = S[idx].tl?.progress() ?? 0;
+    const Vi = V[idx];
+    if (p < fe) {
+      const f = p / fe;
+      // Freeze: la camera gira attorno alla colonna nel tempo fermo.
+      spine.set({ u: Vi + f * 0.9, orbit: -0.7 + f * 0.55, dist: 24, height: 3, twist: 0, streak: 0, reveal: spineMax });
+      return;
+    }
+    const t = smooth(clamp01((p - fe) / (1 - fe)));
+    const Vn = idx < last ? V[idx + 1] : V[last] + 0.9;
+    const jump = Math.min(1, Math.abs(Vn - Vi) / 9);
+    // Salto nel tempo: la camera scatta lungo la colonna, la torsione si stringe, resta una scia di luce.
+    // Risalendo verso un'epoca lontana la colonna si svita: la rotazione dipende dalla posizione.
+    spine.set({
+      u: lerp(Vi + 0.9, Vn, t),
+      orbit: lerp(-0.15, -0.7, t),
+      dist: 24 + 7 * Math.sin(Math.PI * t) * jump,
+      height: 3,
+      twist: 0.1 * Math.sin(Math.PI * t) * jump,
+      streak: Math.sin(Math.PI * t) * jump,
+      reveal: spineMax,
+    });
+  }
+  gsap.ticker.add(driveSpine);
 
   // ---------- Avanzamento automatico, invito, aggancio ----------
 
@@ -757,6 +785,7 @@ export function createEngine(root: HTMLElement, opts: { stations: Station[]; hub
     window.removeEventListener("scroll", onScroll);
     inputEvents.forEach((ev) => window.removeEventListener(ev, onInput, { capture: true }));
     S.forEach((s) => s.clipTl?.kill());
+    gsap.ticker.remove(driveSpine);
     mm.revert();
     if (lenis) {
       gsap.ticker.remove(lenisRaf);

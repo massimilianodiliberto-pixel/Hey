@@ -27,7 +27,7 @@ function ManualClip({ label, title }: { label: string; title?: string }) {
   );
 }
 
-export function StaticJourney({ opening, stations, allStations, arrival, ui }: JourneyProps) {
+export function StaticJourney({ opening, stations, allStations, arrival, credits, ui }: JourneyProps) {
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -90,6 +90,15 @@ export function StaticJourney({ opening, stations, allStations, arrival, ui }: J
         <p className="instinct static-visible">{arrival.sense}</p>
         <div className="arrival-text static-text">
           <p>{arrival.line}</p>
+          <dl className="credits static-credits">
+            {credits.map((c) => (
+              <div key={c.role} className="credit">
+                <dt>{c.role}</dt>
+                <dd>{c.text}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="continua static-continua">{ui.continua}</p>
           <p>{arrival.closing}</p>
           <p className="arrival-name">{arrival.name}</p>
           <p className="arrival-contacts">

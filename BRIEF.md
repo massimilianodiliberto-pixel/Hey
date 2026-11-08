@@ -40,6 +40,12 @@ non è una timeline. È un viaggio che parte da qualcosa di astratto e arriva a 
 > **Aggiornamento (decisione di Massimiliano, 07/11/2026).** Niente più metafora del corpo. Le
 > stazioni sono i **sensi**. Il viaggio **va avanti e indietro, saltando nel tempo** tra
 > esperienze diverse. Nel sito restano **solo le frasi di Giangi**.
+>
+> **Aggiornamento (08/11/2026).** Il viaggio si svolge lungo una **colonna astratta in 3D**: una
+> spirale di vertebre scolpite che gira, si stringe e si allarga con lo scroll. La colonna è il
+> tempo: ogni esperienza sta alla vertebra della sua epoca, il salto nel tempo è la camera che
+> scatta lungo la colonna (che si svita tornando indietro). I ricordi escono dalle vertebre. Si
+> chiude con i titoli di coda e «Continua». Teatro di posa al buio, luce al tungsteno. Three.js.
 
 L'utente attraversa i sensi che il lavoro gli ha aperto, uno alla volta. Ogni senso nasce da
 un'esperienza della sua vita professionale: non cosa ha fatto, ma cosa gli ha lasciato. Il
