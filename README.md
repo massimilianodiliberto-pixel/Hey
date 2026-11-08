@@ -21,13 +21,16 @@ npm run build && npm start
 
 ## Cosa contiene
 
-Apertura, sei sensi e arrivo lungo una colonna astratta in 3D (Three.js, `lib/spine.ts`): la colonna
-è il tempo, ogni esperienza di Giangi sta alla vertebra della sua epoca, i salti nel tempo sono la
-camera che scatta lungo la colonna. I ricordi (clip e fotogrammi segnaposto) escono dalle vertebre.
-Finale con titoli di coda e «Continua». Solo le sue cinque frasi.
+**Home: MATERIA VIVA** («Everything is in motion»), concept e brief di Massimiliano. Una materia
+granulare 3D (Three.js, shader GLSL, `lib/materia.ts`) attraversa sette fasi con lo scroll:
+Nascita, Ricordo, Salto, Espansione, Composizione, Sintesi (Istinto), Continua. Lo sfondo evolve dal
+nero alla luce insieme alla materia. Nelle fasi Ricordo, Salto, Espansione e Composizione i progetti
+emergono dalla materia e si aprono in una scheda (video, anno, ruolo, descrizione, crediti).
 
-Clip simulate con timer, skip, "watch full work", Rivedi, freeze in parallax, senso al margine,
-avanzamento automatico, aggancio, indice con i mondi, richiami, mobile, `prefers-reduced-motion`.
+- `content/materia.ts`: testi delle fasi. `content/projects.ts`: i progetti, aggiornabili senza
+  toccare il sistema particellare.
+- `components/MateriaViva.tsx`, `app/materia/materia.css`: esperienza e stile (Playfair Display, Inter).
+- `/colonna`: la versione precedente (colonna come scultura), conservata per confronto.
 
 ## Pubblicazione
 

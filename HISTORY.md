@@ -72,3 +72,13 @@ Fasi A-C costruite su `/materia` (il sito su `/` non è toccato):
   moodboard; Playfair Display e Inter self-hosted.
 Decisioni: più materia (fatto); l'anno solo dentro la scheda del progetto, mai nel percorso;
 numerazione delle fasi come nel moodboard.
+
+## 2026-11-08 — MATERIA VIVA, fase D e home
+- `content/projects.ts`: 11 progetti nelle fasi Ricordo (il primo spot, copertine, Match Music),
+  Salto (Crash Test, K+ Imaginary Studio), Espansione (video musicali, interior design, Wella al
+  Cosmoprof), Composizione (spot, VFX, regia). Fatti confermati, il resto PLACEHOLDER; anno solo
+  nella scheda.
+- I lavori emergono dalla materia (dalla sfocatura alla nitidezza, tre profondità in parallax) e si
+  aprono in una scheda laterale accessibile (focus, Esc, clic fuori), mai a tutto schermo.
+- MATERIA VIVA diventa la home; la versione con la colonna passa a `/colonna`.
+- Pubblicata su richiesta di Massimiliano («Chiudilo e pubblicalo»).
