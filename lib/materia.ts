@@ -306,13 +306,22 @@ const FACE_VERT = /* glsl */ `
   attribute float aLight;
   uniform float uSize;
   uniform float uOpacity;
+  uniform float uDis;
+  uniform float uTime;
   varying float vAlpha;
+  float h(vec3 p) { return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
   void main() {
-    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    // si dissolve in particelle e si ricompone: ogni punto parte in una direzione sua
+    float r = h(position);
+    vec3 dir = normalize(vec3(h(position + 1.3), h(position + 2.7), h(position + 4.1)) - 0.5 + 0.0001);
+    float d = smoothstep(r * 0.4, r * 0.4 + 0.6, uDis);
+    vec3 p = position + dir * d * (0.8 + r * 1.6) + vec3(0.0, d * 0.3, 0.0);
+    p += vec3(sin(uTime * 0.6 + r * 30.0), cos(uTime * 0.5 + r * 20.0), 0.0) * 0.004;
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
     float depth = -mv.z;
     gl_PointSize = uSize * (0.6 + aLight) * (30.0 / depth);
     gl_Position = projectionMatrix * mv;
-    vAlpha = uOpacity * (0.15 + 0.85 * aLight * aLight) * smoothstep(95.0, 35.0, depth);
+    vAlpha = uOpacity * (0.12 + 0.88 * aLight * aLight) * smoothstep(95.0, 35.0, depth) * (1.0 - d * 0.85);
   }
 `;
 const FACE_FRAG = /* glsl */ `
@@ -459,10 +468,10 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
 
   // Volto: caricato a parte, se il file manca il resto funziona lo stesso.
   const face = new THREE.Group();
-  face.position.set(0.5, -0.2, -26);
-  face.scale.setScalar(9.5);
+  face.position.set(0.5, 0.3, -26);
+  face.scale.setScalar(7.2);
   scene.add(face);
-  const fUniforms = { uSize: { value: opts.mobile ? 1.6 : 1.25 }, uOpacity: { value: 0 }, uColor: { value: new THREE.Color() } };
+  const fUniforms = { uSize: { value: opts.mobile ? 1.6 : 1.25 }, uOpacity: { value: 0 }, uDis: { value: 0 }, uTime: { value: 0 }, uColor: { value: new THREE.Color() } };
   const lUniforms = { uOpacity: { value: 0 }, uColor: { value: new THREE.Color() } };
   const fMat = new THREE.ShaderMaterial({ vertexShader: FACE_VERT, fragmentShader: FACE_FRAG, uniforms: fUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
   const lMat = new THREE.ShaderMaterial({ vertexShader: LINE_VERT, fragmentShader: LINE_FRAG, uniforms: lUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
@@ -471,23 +480,24 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject()))
     .then((buf) => {
       const [n, m] = new Uint32Array(buf, 0, 2);
+      const Q = 2.4; // scala di quantizzazione di scripts/volto.py
       const P = new Int16Array(buf, 8, n * 4);
       const L = new Int16Array(buf, 8 + n * 8, m * 6);
-      const np = opts.mobile ? Math.min(n, 6000) : n; // i punti sono già mescolati: su telefono bastano i primi
+      const np = opts.mobile ? Math.min(n, 7000) : n; // i punti sono già mescolati: su telefono bastano i primi
       const pos = new Float32Array(np * 3);
       const light = new Float32Array(np);
       for (let i = 0; i < np; i++) {
-        pos[i * 3] = P[i * 4] / 32767;
-        pos[i * 3 + 1] = P[i * 4 + 1] / 32767;
-        pos[i * 3 + 2] = P[i * 4 + 2] / 32767;
+        pos[i * 3] = (P[i * 4] / 32767) * Q;
+        pos[i * 3 + 1] = (P[i * 4 + 1] / 32767) * Q;
+        pos[i * 3 + 2] = (P[i * 4 + 2] / 32767) * Q;
         light[i] = P[i * 4 + 3] / 32767;
       }
       const pg = new THREE.BufferGeometry();
       pg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
       pg.setAttribute("aLight", new THREE.BufferAttribute(light, 1));
-      const nm = opts.mobile ? Math.floor(m / 2) : m;
+      const nm = m;
       const lp = new Float32Array(nm * 6);
-      for (let i = 0; i < nm * 6; i++) lp[i] = L[i] / 32767;
+      for (let i = 0; i < nm * 6; i++) lp[i] = (L[i] / 32767) * Q;
       const lg = new THREE.BufferGeometry();
       lg.setAttribute("position", new THREE.BufferAttribute(lp, 3));
       faceGeos.push(pg, lg);
@@ -498,6 +508,20 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     })
     .catch(() => {});
   let facePhase = 0;
+  // sguardi: [yaw, pitch] in gradi; tra uno e l'altro un movimento lento e una pausa
+  const LOOKS: [number, number][] = [[0, 0], [-38, 4], [-30, -12], [12, 10], [40, -4], [34, 12], [-6, -8]];
+  const MOVE = 4.2;
+  const HOLD = 3.2;
+  const faceLook = (t: number): [number, number] => {
+    const span = MOVE + HOLD;
+    const k = Math.floor(t / span);
+    const f = Math.min(1, (t - k * span) / MOVE);
+    const e = f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2;
+    const a = LOOKS[k % LOOKS.length];
+    const b = LOOKS[(k + 1) % LOOKS.length];
+    const d2r = Math.PI / 180;
+    return [(a[0] + (b[0] - a[0]) * e) * d2r, (a[1] + (b[1] - a[1]) * e) * d2r];
+  };
 
   // Nomi: agganciati alla camera, ruotano nello spazio davanti a chi guarda.
   scene.add(camera);
@@ -632,11 +656,16 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     mUniforms.uTime.value = time;
     {
       const env = smoothstep(0.5, 1.4, facePhase) * (1 - smoothstep(5.1, 5.7, facePhase));
-      const breath = 0.55 + 0.45 * Math.sin(time * 0.21);
-      fUniforms.uOpacity.value = env * breath * 1.1;
-      lUniforms.uOpacity.value = env * breath * 0.32;
-      // ruota piano, al contrario della materia
-      face.rotation.y = Math.sin(time * 0.07) * 0.3 - (facePhase - 3) * 0.07;
+      // ogni tanto si dissolve in particelle e si ricompone
+      const cyc = time % 30;
+      const dis = smoothstep(22, 24.5, cyc) * (1 - smoothstep(25.5, 29, cyc));
+      fUniforms.uDis.value = dis;
+      fUniforms.uTime.value = time;
+      fUniforms.uOpacity.value = env * 0.85;
+      lUniforms.uOpacity.value = env * 0.13 * (1 - dis);
+      // si gira come per guardare, alza e abbassa la testa, con pause; deriva al contrario della materia
+      const [yaw, pitch] = faceLook(time);
+      face.rotation.set(pitch, yaw - (facePhase - 3) * 0.06, 0, "YXZ");
     }
     nUniforms.uTime.value = time;
     // un solo nome alla volta

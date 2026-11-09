@@ -9,3 +9,6 @@ Attenzione:
 - è una schermata a bassa risoluzione (924 px di larghezza); per le particelle basta, ma la foto non va pubblicata così com'è;
 - non è una foto da mostrare: serve solo come fonte per i punti;
 - Giangi vede il risultato sull'anteprima prima di qualsiasi pubblicazione.
+
+## Maglia 3D (maglia.json)
+Ricavata una volta con MediaPipe Face Landmarker (modello face_landmarker.task, float16) dalla foto in primo piano: 478 punti 3D e le connessioni della maglia. Per rifarla serve un ambiente Python con `mediapipe` e le librerie EGL; poi `python3 scripts/volto.py` (solo numpy e Pillow) genera `public/volto/volto.bin`.

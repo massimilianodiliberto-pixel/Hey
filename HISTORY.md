@@ -123,3 +123,5 @@ numerazione delle fasi come nel moodboard.
 - scripts/volto.py ricava dalla foto in riferimenti/ (mai pubblicata) public/volto/volto.bin, ~140 KB: 14 000 punti mescolati (6000 su telefono) e le linee di livello della luce, come curve di un rilievo.
 - In lib/materia.ts: punti e linee dietro la materia, a z -26, emergono dopo la nascita e svaniscono prima della luce finale, respirano lentamente e ruotano piano al contrario della materia.
 - Per toglierlo: revert di questo commit.
+- Volto in 3D vero (feedback: "piatto"): maglia MediaPipe portata in posa frontale, lato in ombra ricostruito specchiando quello illuminato (cucitura sulla linea del naso), guscio rado della testa con i capelli chiari, linee come sezioni orizzontali della maglia e contorni dei tratti. 16 400 punti, 134 KB.
+- Movimento: sguardi con pause (yaw fino a ±40°, pitch ±12°), deriva al contrario della materia, ogni 30 s si dissolve in particelle e si ricompone. Parallasse vera: sta nello spazio 3D a z -26.
