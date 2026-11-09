@@ -21,7 +21,7 @@ const PAL: [number, number, number, number, number][] = [
   [0xd49a3c, 0xbfe6ee, 0x061417, 0x0f3236, 0x050c0d], // 04 espansione: blu petrolio e oro
   [0xb9b4aa, 0xffffff, 0x16181a, 0x4a4d50, 0x101112], // 05 composizione: grigio, argento
   [0xe0703a, 0xffd9a8, 0x2a1630, 0xe88a4a, 0x1a0f12], // 06 sintesi: tramonto caldo
-  [0x8a6436, 0xc9a064, 0xc9c4ba, 0xf4efe6, 0xa39a8c], // 07 continua: avorio, il nastro d'oro si dissolve
+  [0x4a3a2a, 0x8a6a44, 0xb9b6b0, 0xf2eee6, 0x8f8a82], // 07 continua: luce quasi bianca, granuli scuri controluce
 ];
 
 const NOISE = /* glsl */ `
@@ -48,7 +48,6 @@ const PARTICLE_VERT = /* glsl */ `
   uniform float uTime;
   uniform float uSize;
   uniform float uFocus;
-  uniform float uLight;
   uniform float uAperture;
   uniform vec3 uColA0; uniform vec3 uColA1; uniform vec3 uColB0; uniform vec3 uColB1;
   varying vec3 vColor;
@@ -66,17 +65,6 @@ const PARTICLE_VERT = /* glsl */ `
     return sin(x * 0.42 + z * 0.55) * 1.5 + sin(x * 0.95 - z * 0.3) * 0.55 * k;
   }
 
-  // Il nastro della sintesi, riusato dalla dissoluzione finale.
-  vec3 ribbon(vec4 s, vec3 d) {
-    float t = s.x * 2.0 * PI; float u = (s.y - 0.5) * 1.6;
-    float R = 4.2 + 0.6 * sin(3.0 * t);
-    vec3 c = vec3(cos(t) * R, sin(2.0 * t) * 1.1, sin(t) * R);
-    vec3 n = normalize(vec3(cos(t), 0.0, sin(t)));
-    vec3 b = vec3(0.0, 1.0, 0.0);
-    float tw = t * 1.5;
-    return c + (n * cos(tw) + b * sin(tw)) * u + d * 0.05 * s.w;
-  }
-
   // Le sette forme. a = visibilità della particella in quella forma.
   vec3 shape(int k, vec4 s, out float a) {
     a = 1.0;
@@ -85,46 +73,41 @@ const PARTICLE_VERT = /* glsl */ `
       a = step(s.w, 0.06);
       return d * (3.0 + s.z * 9.0);
     }
-    if (k == 1) { // ricordo: un'impronta concentrica fatta di granuli, la prima identità
-      float ring = floor(s.z * 24.0);
-      float t = s.x * 2.0 * PI;
-      float r = 0.22 + ring * 0.15 + (s.y - 0.5) * 0.045;
-      r += 0.32 * sin(t * 2.0 + r * 0.9) * smoothstep(0.4, 2.0, r); // il vortice dell'impronta
-      vec3 p = vec3(cos(t) * r * 1.15, sin(t) * r * 0.92 + 0.3, -r * 0.18 + (s.w - 0.5) * 0.08);
-      if (s.w < 0.16) p += d * (0.2 + s.w * 3.0); // un po' di polvere attorno
+    if (k == 1) { // ricordo: massa compatta che respira
+      float r = 2.4 * pow(s.z, 0.33);
+      r *= 1.0 + 0.32 * noise(d * 1.8 + 3.0);
+      return d * r + vec3(0.0, 0.2, 0.0);
+    }
+    if (k == 2) { // salto: dispersione veloce, stirata nella direzione del moto
+      vec3 p = d * (3.0 + s.z * 11.0);
+      p.x = p.x * 2.4 + (s.w - 0.5) * 10.0;
+      p.y *= 0.7;
       return p;
     }
-    if (k == 2) { // salto: l'impronta si rompe ed esplode a ventaglio dal suolo, asimmetrica
-      if (s.w < 0.22) return vec3((s.x - 0.5) * 9.0 + 0.6, -3.1 + s.y * 0.7, (s.z - 0.5) * 4.0); // detriti a terra
-      float th = (s.x - 0.5) * 2.2;
-      float el = 0.2 + s.y * 0.95;
-      float dist = 0.8 + pow(s.z, 1.5) * 8.0; // denso alla radice, rado in punta
-      vec3 dir = vec3(sin(th) * cos(el), sin(el), -cos(th) * cos(el) * 0.7);
-      return vec3(-0.5, -2.8, 0.0) + dir * dist + vec3(dist * 0.25, 0.0, 0.0);
+    if (k == 3) { // espansione: la materia diventa fluida, un'onda larga
+      float x = (s.x - 0.5) * 26.0; float z = (s.y - 0.5) * 9.0;
+      float th = (s.z - 0.5) * (0.12 + 0.9 * pow(s.w, 3.0));
+      return vec3(x, wave(x, z, 1.0) + th, z);
     }
-    if (k == 3) { // espansione: più fasce fluide e irregolari, la materia si concentra sulle creste
-      float band = floor(s.z * 3.0);
-      float x = (s.x - 0.5) * 30.0; float z = (s.y - 0.5) * 9.0;
-      float y = wave(x + band * 3.1, z, 1.0) * (0.75 + 0.3 * band) + band * 0.95 - 0.8
-              + noise(vec3(x * 0.12, band * 2.0, z * 0.18)) * 1.4;
-      float th = (fract(s.z * 3.0) - 0.5) * (0.08 + 0.7 * pow(s.w, 4.0));
-      return vec3(x, y + th, z - band * 1.2);
-    }
-    if (k == 4) { // composizione: lamine ondulate sovrapposte, come livelli di una composizione
+    if (k == 4) { // composizione: livelli sovrapposti, come strati di un'immagine
       float layer = floor(s.z * 4.0);
-      float x = (s.x - 0.5) * 20.0; float z = (s.y - 0.5) * 6.0;
-      float y = (layer - 1.5) * 1.55 + sin(x * 0.3 + layer * 1.7 + z * 0.4) * 0.85
-              + noise(vec3(x * 0.15, layer, z * 0.2)) * 0.5 + (s.w - 0.5) * 0.08;
-      return vec3(x, y, z - layer * 0.7);
+      float x = (s.x - 0.5) * 18.0; float z = (s.y - 0.5) * 6.0;
+      float y = (layer - 1.5) * 1.9 + sin(x * 0.35 + layer) * 0.35 + (s.w - 0.5) * 0.12;
+      return vec3(x, y, z - layer * 0.6);
     }
     if (k == 5) { // sintesi: una forma nuova, ordinata, un nastro che si avvolge su se stesso
-      return ribbon(s, d);
+      float t = s.x * 2.0 * PI; float u = (s.y - 0.5) * 1.6;
+      float R = 4.2 + 0.6 * sin(3.0 * t);
+      vec3 c = vec3(cos(t) * R, sin(2.0 * t) * 1.1, sin(t) * R);
+      vec3 n = normalize(vec3(cos(t), 0.0, sin(t)));
+      vec3 b = vec3(0.0, 1.0, 0.0);
+      float tw = t * 1.5;
+      return c + (n * cos(tw) + b * sin(tw)) * u + d * 0.05 * s.w;
     }
-    // continua: il nastro si dissolve nella luce; i granuli si staccano e proseguono oltre i bordi
-    vec3 rib = ribbon(s, d) * 1.15 + vec3(0.0, 0.6, -3.0);
-    float free = step(0.42, s.w);
-    a = 0.55 + 0.45 * (1.0 - free);
-    return rib + d * (2.0 + s.z * 14.0) * free + vec3(free * (s.x - 0.5) * 18.0, 0.0, 0.0);
+    // continua: la forma si libera, rarefatta, oltre i bordi
+    float x = (s.x - 0.5) * 70.0; float z = (s.y - 0.5) * 20.0;
+    a = 0.35 + 0.65 * step(s.w, 0.35);
+    return vec3(x, wave(x * 0.6, z, 0.6) * 1.2 - 1.0 + (s.z - 0.5) * 2.5, z);
   }
 
   void main() {
@@ -149,9 +132,9 @@ const PARTICLE_VERT = /* glsl */ `
     // Nella nascita i pochi granuli sono più grandi e più luminosi: devono vedersi nel buio.
     float born = k == 0 ? mix(2.4, 1.0, ff) : 1.0;
     // Un granulo su trenta è un sasso: più grande, sferico, illuminato. Dà corpo alla materia.
-    vPebble = step(fract(aSeed.w * 37.0), 0.004);
-    float pebble = 1.0 + vPebble * (0.9 + aSeed.z * 2.0);
-    gl_PointSize = (uSize * (0.45 + aSeed.z * 1.1) * born * pebble + coc * (5.0 + vPebble * 6.0)) * (26.0 / depth);
+    vPebble = step(fract(aSeed.w * 37.0), 0.006);
+    float pebble = 1.0 + vPebble * (1.8 + aSeed.z * 3.5);
+    gl_PointSize = (uSize * (0.45 + aSeed.z * 1.1) * born * pebble + coc * (5.0 + vPebble * 12.0)) * (26.0 / depth);
     gl_Position = projectionMatrix * mv;
 
     vec3 c0 = mix(uColA0, uColA1, pow(aSeed.y, 3.0));
@@ -162,10 +145,7 @@ const PARTICLE_VERT = /* glsl */ `
     // Pochi grani molto luminosi, la maggior parte appena percettibile: la luce nasce dalla densità.
     float lift = (k == 0 ? mix(5.0, 1.0, ff) : 1.0) * (k == 1 || k == 2 ? 1.25 : 1.0);
     vAlpha = mix(a0, a1, ff) * (0.1 + 0.55 * pow(aSeed.x, 8.0)) * lift * dens / (1.0 + coc * 2.5);
-    vAlpha = mix(vAlpha, mix(a0, a1, ff) * 0.55 / (1.0 + coc * 1.2) * (1.0 - 0.75 * uLight), vPebble);
-    // Nella luce finale i granuli diventano oro: più pieni, più caldi, leggibili sull'avorio.
-    vColor = mix(vColor, vColor * 1.7 + vec3(0.1, 0.06, 0.0), uLight);
-    vAlpha *= 1.0 + uLight * 1.6;
+    vAlpha = mix(vAlpha, mix(a0, a1, ff) * 0.55 / (1.0 + coc * 1.2), vPebble);
   }
 `;
 
@@ -179,12 +159,12 @@ const PARTICLE_FRAG = /* glsl */ `
     float disc = smoothstep(0.5, 0.18, r);
     vec3 col = vColor;
     if (vPebble > 0.5) {
-      // Micro-sfera di vetro: centro trasparente, bordo che prende la luce, un riflesso.
-      disc = smoothstep(0.5, 0.46, r);
-      float rim = smoothstep(0.3, 0.47, r);
-      float spec = smoothstep(0.1, 0.0, length(c - vec2(-0.16, 0.16)));
-      col = vColor * (0.15 + 1.35 * rim) + vec3(1.0, 0.9, 0.75) * spec * 0.9;
-      disc *= 0.3 + 0.7 * max(rim, spec);
+      // Sasso: una piccola sfera illuminata da una luce calda in alto a sinistra.
+      disc = smoothstep(0.5, 0.44, r);
+      vec3 n = vec3(c * 2.0, sqrt(max(0.0, 1.0 - 4.0 * r * r)));
+      float dif = max(0.0, dot(n, normalize(vec3(-0.5, 0.6, 0.65))));
+      float spec = pow(max(0.0, dot(n, normalize(vec3(-0.3, 0.4, 1.0)))), 24.0);
+      col = vColor * (0.12 + 0.95 * dif) + vec3(1.0, 0.85, 0.6) * spec * 0.6;
     }
     if (disc * vAlpha < 0.01) discard;
     gl_FragColor = vec4(col, disc * vAlpha);
@@ -203,27 +183,37 @@ const BG_FRAG = /* glsl */ `
   uniform float uTime;
   uniform float uAspect;
   uniform vec3 uSky; uniform vec3 uHorizon; uniform vec3 uGround;
+  uniform float uPitch; uniform float uYaw; uniform float uFov;
   ${NOISE}
   void main() {
     vec2 uv = vUv;
-    float land = smoothstep(4.2, 5.2, uPhase) * (1.0 - smoothstep(6.0, 6.0, uPhase) * 0.4); // paesaggio da metà percorso
-    float hz = 0.42 + 0.05 * noise(vec3(uv.x * 3.0 * uAspect, 0.0, 1.0)) * land
-             + 0.035 * noise(vec3(uv.x * 9.0 * uAspect, 2.0, 0.0)) * land;
+    // Il fondale segue la camera: quando inclina l'orizzonte sale o scende, quando fa pan i rilievi scorrono.
+    float px = uv.x + uYaw / uFov / uAspect;
+    float land = max(0.45 * smoothstep(0.6, 1.4, uPhase), smoothstep(4.2, 5.2, uPhase)) * (1.0 - smoothstep(6.0, 6.0, uPhase) * 0.4);
+    float hz = clamp(0.42 - uPitch / uFov * 0.55, -0.2, 1.1)
+             + 0.05 * noise(vec3(px * 3.0 * uAspect, 0.0, 1.0)) * land
+             + 0.035 * noise(vec3(px * 9.0 * uAspect, 2.0, 0.0)) * land;
+    // una seconda catena più lontana e più chiara: due piani di profondità dietro la materia
+    float hz2 = hz + 0.035 + 0.04 * noise(vec3(px * 1.6 * uAspect + 7.0, 1.0, 3.0)) * land;
     float sky = smoothstep(hz - 0.02, 0.95, uv.y);
     vec3 col = mix(uHorizon, uSky, sky);
     // sotto l'orizzonte: terra, con una sagoma di colline che appare solo verso il tramonto
     float below = smoothstep(hz + 0.005, hz - 0.03, uv.y);
+    float far = smoothstep(hz2 + 0.004, hz2 - 0.02, uv.y) * (1.0 - below);
+    col = mix(col, mix(uGround, uHorizon, 0.55), far * 0.6 * land);
     col = mix(col, uGround, below * mix(0.55, 1.0, land));
     // nebbia volumetrica che scorre lentamente
-    float fog = noise(vec3(uv * vec2(2.0 * uAspect, 3.0), uTime * 0.02)) * 0.5 + 0.5;
+    float fog = noise(vec3(vec2(px, uv.y) * vec2(2.0 * uAspect, 3.0), uTime * 0.02)) * 0.5 + 0.5;
     col += uHorizon * fog * 0.18 * smoothstep(0.6, 2.0, uPhase);
+    // banco di foschia sull'orizzonte: separa il vicino dal lontano
+    col += uHorizon * 0.35 * smoothstep(0.12, 0.0, abs(uv.y - hz)) * smoothstep(0.6, 1.6, uPhase);
     // luce volumetrica: un alone caldo dietro la materia, più forte nel ricordo e nell'espansione
     float vol = smoothstep(0.4, 1.2, uPhase) * (1.0 - smoothstep(4.6, 5.4, uPhase) * 0.6);
-    float dv = length((uv - vec2(0.62, 0.55)) * vec2(uAspect * 0.7, 1.0));
+    float dv = length((vec2(px, uv.y) - vec2(0.62, hz + 0.13)) * vec2(uAspect * 0.7, 1.0));
     col += uHorizon * 1.6 * vol * smoothstep(0.75, 0.0, dv) * (0.75 + 0.25 * noise(vec3(uv * 4.0, uTime * 0.05)));
     // un sole basso solo nella sintesi
     float sun = smoothstep(4.8, 5.4, uPhase) * (1.0 - smoothstep(5.8, 6.0, uPhase));
-    float d = length((uv - vec2(0.72, hz + 0.03)) * vec2(uAspect, 1.0));
+    float d = length((vec2(px, uv.y) - vec2(0.72, hz + 0.03)) * vec2(uAspect, 1.0));
     col += vec3(1.0, 0.75, 0.45) * sun * (smoothstep(0.05, 0.0, d) + 0.35 * smoothstep(0.5, 0.0, d));
     // vignettatura e grana leggera
     float vig = smoothstep(1.25, 0.35, length((uv - 0.5) * vec2(uAspect * 0.8, 1.0)));
@@ -236,26 +226,27 @@ const BG_FRAG = /* glsl */ `
 
 // Le inquadrature delle sette fasi: posizione camera, punto guardato, apertura del fuoco.
 const CAM: { pos: [number, number, number]; look: [number, number, number]; focus: number }[] = [
-  { pos: [0, 0.5, 26], look: [0, 0, 0], focus: 14 }, // nascita: lontano, nel buio
-  { pos: [1.2, 0.8, 9], look: [0, 0.2, 0], focus: 9 }, // ricordo: zoom in sulla massa
-  { pos: [0.5, -2.2, 11], look: [0.5, -1.6, 0], focus: 11 }, // salto: la camera scende verso il suolo
-  { pos: [-3.5, -1.2, 12], look: [1, -0.8, -1], focus: 12 }, // espansione: leggero pan sull'onda
-  { pos: [1.5, 0, 18], look: [0, -0.2, -1], focus: 17 }, // composizione: zoom out, gli strati interi
-  { pos: [0, 2.2, 15], look: [0, 0, 0], focus: 15 }, // sintesi: la forma intera, appena dall'alto
-  { pos: [0, 1, 24], look: [0, 0, -4], focus: 30 }, // continua: si arretra, i granuli escono dai bordi
+  { pos: [0, 0.5, 36], look: [0, 0, 0], focus: 18 }, // nascita: molto lontano, nel buio
+  { pos: [1.6, 1.0, 7.5], look: [0, 0.2, 0], focus: 7.5 }, // ricordo: zoom in lungo e profondo dentro la massa
+  { pos: [1.0, -2.3, 12], look: [0.4, -3.6, -1], focus: 12 }, // salto: scende e inclina verso il suolo (tilt down)
+  { pos: [-8, -1.2, 11], look: [3, -0.9, -2], focus: 12 }, // espansione: pan laterale marcato
+  { pos: [3, 0.6, 27], look: [0, -0.4, -1], focus: 25 }, // composizione: zoom out ampio
+  { pos: [0, 5.5, 13], look: [0, -0.4, 0], focus: 14 }, // sintesi: risale, la forma vista dall'alto (tilt)
+  { pos: [0, 1, 36], look: [0, -1.6, -4], focus: 36 }, // continua: arretra lungo l'asse, frontale
 ];
 
 // Il suolo: una base di particelle sotto la materia, per sentire che la camera avanza nello spazio.
 const GROUND_VERT = /* glsl */ `
   uniform float uTime;
   uniform float uSize;
+  uniform float uDune;
   varying float vAlpha;
   varying float vCrest;
   void main() {
     vec3 p = position;
     // dune granulari: rilievi lenti, creste che prendono la luce
     float dune = sin(p.x * 0.16 + p.z * 0.11) * 0.55 + sin(p.x * 0.41 - p.z * 0.23 + 1.3) * 0.22;
-    p.y += dune * smoothstep(-2.0, -14.0, p.z) + sin(p.x * 0.35 + uTime * 0.25) * 0.05;
+    p.y += dune * uDune * smoothstep(-2.0, -14.0, p.z) + sin(p.x * 0.35 + uTime * 0.25) * 0.05;
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     float depth = -mv.z;
     vCrest = smoothstep(0.35, 0.75, dune);
@@ -275,6 +266,37 @@ const GROUND_FRAG = /* glsl */ `
     if (r > 0.5) discard;
     vec3 c = mix(uColor, uColor * 1.6 + vec3(0.12, 0.08, 0.02), vCrest);
     gl_FragColor = vec4(c, vAlpha * uOpacity * (0.8 + 0.4 * vCrest) * smoothstep(0.5, 0.1, r));
+  }
+`;
+
+// Pulviscolo d'ambiente: pochi granuli grandi e sfocati sparsi in un volume enorme.
+// Non è la materia: è l'aria. La camera ci passa attraverso e lo zoom si sente.
+const MOTE_VERT = /* glsl */ `
+  attribute float aR;
+  uniform float uTime;
+  uniform float uSize;
+  varying float vAlpha;
+  void main() {
+    vec3 p = position;
+    p.y += sin(uTime * 0.15 + aR * 40.0) * 0.4;
+    p.x += cos(uTime * 0.11 + aR * 30.0) * 0.4;
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    float depth = max(-mv.z, 0.1);
+    gl_PointSize = uSize * (0.6 + aR * 1.4) * (90.0 / depth);
+    gl_Position = projectionMatrix * mv;
+    // vicino: grande e sfocato; lontano: piccolo; troppo vicino o troppo lontano sparisce
+    vAlpha = smoothstep(0.8, 3.0, depth) * smoothstep(60.0, 20.0, depth) * (0.25 + 0.75 * aR) / (1.0 + depth * 0.02);
+  }
+`;
+const MOTE_FRAG = /* glsl */ `
+  uniform vec3 uColor;
+  uniform float uOpacity;
+  varying float vAlpha;
+  void main() {
+    float r = length(gl_PointCoord - 0.5);
+    if (r > 0.5) discard;
+    float a = smoothstep(0.5, 0.3, r) * (0.55 + 0.45 * smoothstep(0.32, 0.46, r)); // disco di bokeh con bordo
+    gl_FragColor = vec4(uColor, a * vAlpha * uOpacity);
   }
 `;
 
@@ -323,6 +345,9 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     uSky: { value: new THREE.Color() },
     uHorizon: { value: new THREE.Color() },
     uGround: { value: new THREE.Color() },
+    uPitch: { value: 0 },
+    uYaw: { value: 0 },
+    uFov: { value: THREE.MathUtils.degToRad(opts.mobile ? 52 : 36) },
   };
   const bg = new THREE.Mesh(
     new THREE.PlaneGeometry(2, 2),
@@ -344,7 +369,6 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     uTime: { value: 0 },
     uSize: { value: opts.mobile ? 1.5 : 1.15 },
     uFocus: { value: 12 },
-    uLight: { value: 0 },
     uAperture: { value: opts.mobile ? 0.0 : 0.09 },
     uColA0: { value: new THREE.Color() },
     uColA1: { value: new THREE.Color() },
@@ -369,11 +393,30 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
   for (let x = -40; x <= 40; x += gStep) for (let z = -60; z <= 30; z += gStep) gPts.push(x + (Math.random() - 0.5) * gStep * 0.6, -3.7, z + (Math.random() - 0.5) * gStep * 0.6);
   const gGeo = new THREE.BufferGeometry();
   gGeo.setAttribute("position", new THREE.Float32BufferAttribute(gPts, 3));
-  const gUniforms = { uTime: { value: 0 }, uSize: { value: opts.mobile ? 1.9 : 1.6 }, uColor: { value: new THREE.Color() }, uOpacity: { value: 0 } };
+  const gUniforms = { uDune: { value: 1 }, uTime: { value: 0 }, uSize: { value: opts.mobile ? 1.9 : 1.6 }, uColor: { value: new THREE.Color() }, uOpacity: { value: 0 } };
   const gMat = new THREE.ShaderMaterial({ vertexShader: GROUND_VERT, fragmentShader: GROUND_FRAG, uniforms: gUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
   const ground = new THREE.Points(gGeo, gMat);
   ground.frustumCulled = false;
   scene.add(ground);
+
+  // Pulviscolo d'ambiente
+  const MOTES = opts.mobile ? 160 : 420;
+  const mPos = new Float32Array(MOTES * 3);
+  const mR = new Float32Array(MOTES);
+  for (let i = 0; i < MOTES; i++) {
+    mPos[i * 3] = (Math.random() - 0.5) * 50;
+    mPos[i * 3 + 1] = -3 + Math.random() * 11;
+    mPos[i * 3 + 2] = -40 + Math.random() * 78;
+    mR[i] = Math.random();
+  }
+  const mGeo = new THREE.BufferGeometry();
+  mGeo.setAttribute("position", new THREE.BufferAttribute(mPos, 3));
+  mGeo.setAttribute("aR", new THREE.BufferAttribute(mR, 1));
+  const mUniforms = { uTime: { value: 0 }, uSize: { value: opts.mobile ? 1.3 : 1.0 }, uColor: { value: new THREE.Color() }, uOpacity: { value: 0 } };
+  const mMat = new THREE.ShaderMaterial({ vertexShader: MOTE_VERT, fragmentShader: MOTE_FRAG, uniforms: mUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+  const motes = new THREE.Points(mGeo, mMat);
+  motes.frustumCulled = false;
+  scene.add(motes);
 
   // Nomi: agganciati alla camera, ruotano nello spazio davanti a chi guarda.
   scene.add(camera);
@@ -454,10 +497,15 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     camera.position.copy(v1);
     v1.fromArray(ca.look).lerp(v2.fromArray(cb.look), e);
     camera.lookAt(v1);
+    // direzione dello sguardo per il fondale (tilt e pan)
+    v2.copy(v1).sub(camera.position).normalize();
+    bgUniforms.uPitch.value = Math.asin(v2.y);
+    bgUniforms.uYaw.value = Math.atan2(v2.x, -v2.z);
     pUniforms.uFocus.value = ca.focus + (cb.focus - ca.focus) * e;
-    pUniforms.uLight.value = Math.min(1, Math.max(0, (p - 5.55) / 0.45));
     gUniforms.uColor.value.set(A[1]).lerp(tmp.set(B[1]), e).multiplyScalar(0.55);
     gUniforms.uOpacity.value = Math.min(1, p * 1.2) * (p > 5.55 ? 0.55 : 0.95);
+    mUniforms.uColor.value.set(A[1]).lerp(tmp.set(B[1]), e);
+    mUniforms.uOpacity.value = (0.35 + 0.65 * Math.min(1, p)) * (p > 5.55 ? 0.35 : 0.8);
     nUniforms.uColor.value.set(A[1]).lerp(tmp.set(B[1]), e).lerp(tmp.set(0xffffff), 0.35);
     // Verso la luce quasi bianca la materia smette di emettere luce e diventa polvere controluce.
     const normal = p > 5.55;
@@ -466,6 +514,8 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
       mat.needsUpdate = true;
       gMat.blending = mat.blending;
       gMat.needsUpdate = true;
+      mMat.blending = mat.blending;
+      mMat.needsUpdate = true;
     }
   }
 
@@ -488,6 +538,7 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     pUniforms.uTime.value = time;
     bgUniforms.uTime.value = time;
     gUniforms.uTime.value = time;
+    mUniforms.uTime.value = time;
     nUniforms.uTime.value = time;
     // un solo nome alla volta
     const ni = nameState.i;

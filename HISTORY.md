@@ -106,3 +106,8 @@ numerazione delle fasi come nel moodboard.
 - Micro-sfere di vetro (bordo luminoso, riflesso) al posto dei sassi opachi; più piccole e rade.
 - Suolo: dune granulari con creste che prendono la luce.
 - Invariati: camera, scroll, contenuti, tipografia, schede, form.
+
+## Ritorno alla materia di 1af5be0 + fondali e camera amplificata
+- Feedback di Massimiliano (via regia): dai riferimenti ChatGPT si era preso troppo. Via impronta, ventaglio, fasce, lamine, micro-sfere di vetro e finale oro centrato: particelle e chiusura tornano a 1af5be0.
+- Dai riferimenti restano solo i fondali: il fondale segue la camera (l'orizzonte sale e scende col tilt, i rilievi scorrono col pan), una seconda catena di colline più lontana, un banco di foschia sull'orizzonte, dune sul suolo, pulviscolo d'ambiente sfocato in un grande volume da attraversare.
+- Camera amplificata, stessa sequenza: nascita più lontana (z 36), zoom in più profondo (z 7.5), tilt down vero nel salto, pan marcato (x -8), zoom out più ampio (z 27), sintesi dall'alto, arretramento finale lungo l'asse.
