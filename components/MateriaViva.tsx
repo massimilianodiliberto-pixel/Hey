@@ -9,6 +9,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { phases, materia, contact } from "@/content/materia";
+import type { FaceMode } from "@/lib/materia";
 import { projects, sheetUi, type Project } from "@/content/projects";
 
 // Dove emergono i lavori di una fase: tre posti a destra, a profondità diverse (desktop).
@@ -138,7 +139,7 @@ function Sheet({ project, onClose }: { project: Project; onClose: () => void }) 
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function MateriaViva() {
+export default function MateriaViva({ face = "3d" }: { face?: FaceMode }) {
   const root = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [active, setActive] = useState(0);
@@ -165,7 +166,7 @@ export default function MateriaViva() {
       .then(({ createMateria }) => {
         if (!alive) return;
         try {
-          m = createMateria(cv, { mobile, names: projects.map((pr) => pr.title) });
+          m = createMateria(cv, { mobile, names: projects.map((pr) => pr.title), face });
           m.setPhase(state.p);
         } catch {
           setFallback(true);
@@ -275,7 +276,7 @@ export default function MateriaViva() {
         lenis.destroy();
       }
     };
-  }, []);
+  }, [face]);
 
   return (
     <div ref={root} className={`mv${fallback ? " mv-fallback" : ""}${active === phases.length - 1 ? " mv-light" : ""}`}>

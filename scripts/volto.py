@@ -11,7 +11,7 @@ La cucitura cade sulla linea del naso.
 
 La foto resta in riferimenti/ e non viene pubblicata.  Uso: python3 scripts/volto.py
 
-Formato di public/volto/volto.bin (little endian):
+Formato di public/volto/volto-3d.bin (little endian):
   uint32 nPunti, uint32 nSegmenti
   nPunti    x int16[4]  (x, y, z, luce)    coordinate / QSCALE * 32767, luce * 32767
   nSegmenti x int16[6]  (x1, y1, z1, x2, y2, z2)
@@ -26,7 +26,7 @@ from PIL import Image, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 REF = ROOT / "riferimenti/volto-giangi"
-OUT = ROOT / "public/volto/volto.bin"
+OUT = ROOT / "public/volto/volto-3d.bin"
 N_POINTS = 15000
 LEVELS = [0.36, 0.54, 0.72]
 QSCALE = 2.4

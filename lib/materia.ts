@@ -379,7 +379,12 @@ const NAME_FRAG = /* glsl */ `
   }
 `;
 
-export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean; names?: string[] }): Materia {
+// Il volto dietro la materia: nessuno, piatto (curve di livello dalla foto) o in 3D (stessi tratti con profondità vera).
+export type FaceMode = "none" | "flat" | "3d";
+
+export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean; names?: string[]; face?: FaceMode }): Materia {
+  const faceMode: FaceMode = opts.face ?? "3d";
+  const flat = faceMode === "flat";
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, opts.mobile ? 1.5 : 2));
   const scene = new THREE.Scene();
@@ -468,19 +473,19 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
 
   // Volto: caricato a parte, se il file manca il resto funziona lo stesso.
   const face = new THREE.Group();
-  face.position.set(0.5, -1.2, -26);
-  face.scale.setScalar(7.5);
+  face.position.set(0.5, flat ? -0.2 : -1.2, -26);
+  face.scale.setScalar(flat ? 9.5 : 7.5);
   scene.add(face);
   const fUniforms = { uSize: { value: opts.mobile ? 1.6 : 1.25 }, uOpacity: { value: 0 }, uDis: { value: 0 }, uTime: { value: 0 }, uColor: { value: new THREE.Color() } };
   const lUniforms = { uOpacity: { value: 0 }, uColor: { value: new THREE.Color() } };
   const fMat = new THREE.ShaderMaterial({ vertexShader: FACE_VERT, fragmentShader: FACE_FRAG, uniforms: fUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
   const lMat = new THREE.ShaderMaterial({ vertexShader: LINE_VERT, fragmentShader: LINE_FRAG, uniforms: lUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
   const faceGeos: THREE.BufferGeometry[] = [];
-  fetch("/volto/volto.bin")
+  (faceMode === "none" ? Promise.reject() : fetch(flat ? "/volto/volto-piatto.bin" : "/volto/volto-3d.bin"))
     .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject()))
     .then((buf) => {
       const [n, m] = new Uint32Array(buf, 0, 2);
-      const Q = 2.4; // scala di quantizzazione di scripts/volto.py
+      const Q = flat ? 1 : 2.4; // scala di quantizzazione di scripts/volto-piatto.py e scripts/volto.py
       const P = new Int16Array(buf, 8, n * 4);
       const L = new Int16Array(buf, 8 + n * 8, m * 6);
       const np = opts.mobile ? Math.min(n, 8000) : n; // i punti sono già mescolati: su telefono bastano i primi
@@ -659,13 +664,22 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
       // ogni tanto si dissolve in particelle e si ricompone
       const cyc = time % 30;
       const dis = smoothstep(22, 24.5, cyc) * (1 - smoothstep(25.5, 29, cyc));
-      fUniforms.uDis.value = dis;
       fUniforms.uTime.value = time;
-      fUniforms.uOpacity.value = env * 0.85;
-      lUniforms.uOpacity.value = env * 0.22 * (1 - dis);
-      // si gira come per guardare, alza e abbassa la testa, con pause; deriva al contrario della materia
-      const [yaw, pitch] = faceLook(time);
-      face.rotation.set(pitch, yaw - (facePhase - 3) * 0.03, 0, "YXZ");
+      if (flat) {
+        // il volto piatto respira e ruota piano su un solo asse, al contrario della materia
+        const breath = 0.55 + 0.45 * Math.sin(time * 0.21);
+        fUniforms.uDis.value = 0;
+        fUniforms.uOpacity.value = env * breath * 1.1;
+        lUniforms.uOpacity.value = env * breath * 0.32;
+        face.rotation.set(0, Math.sin(time * 0.07) * 0.3 - (facePhase - 3) * 0.07, 0);
+      } else {
+        fUniforms.uDis.value = dis;
+        fUniforms.uOpacity.value = env * 0.85;
+        lUniforms.uOpacity.value = env * 0.22 * (1 - dis);
+        // si gira come per guardare, alza e abbassa la testa, con pause; deriva al contrario della materia
+        const [yaw, pitch] = faceLook(time);
+        face.rotation.set(pitch, yaw - (facePhase - 3) * 0.03, 0, "YXZ");
+      }
     }
     nUniforms.uTime.value = time;
     // un solo nome alla volta

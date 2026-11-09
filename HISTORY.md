@@ -127,3 +127,8 @@ numerazione delle fasi come nel moodboard.
 - Movimento: sguardi con pause (yaw fino a ±40°, pitch ±12°), deriva al contrario della materia, ogni 30 s si dissolve in particelle e si ricompone. Parallasse vera: sta nello spazio 3D a z -26.
 - Volto, terza versione (feedback: "non sembra più Giangi"): ritorno allo stile della prima (punti e linee di livello dalla luminanza della foto, stessa posa) con la profondità vera presa dalla maglia MediaPipe, usata solo come stampo invisibile; fuori dalla maglia un ellissoide raccordato senza gradino. Lato in ombra: punti del volto illuminato specchiati sul piano di simmetria e tenuti solo dove la foto è buia. Via guscio e sezioni orizzontali. 20 500 punti, 189 KB (8000 su telefono).
 - Movimento appena accennato: yaw fino a ±18°, pitch fino a ±7°, lento con pause; dissolvenza ogni 30 s; prova in docs/volto/.
+
+## Tre versioni di Materia Viva per l'email a Giangi
+- Un solo codice, il volto è un parametro (`face`: "flat" | "none" | "3d" in createMateria e in <MateriaViva/>).
+- /materia-viva/1 «Il volto» (volto piatto di 1ba9d3e, public/volto/volto-piatto.bin, scripts/volto-piatto.py), /materia-viva/2 «Materia e fondali» (senza volto), /materia-viva/3 «Il volto in 3D» (public/volto/volto-3d.bin, scripts/volto.py).
+- /materia-viva, /a, /b, /c rimandano alla 3. L'indice mostra HEY e le tre versioni.
