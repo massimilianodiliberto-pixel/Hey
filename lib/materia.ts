@@ -468,8 +468,8 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
 
   // Volto: caricato a parte, se il file manca il resto funziona lo stesso.
   const face = new THREE.Group();
-  face.position.set(0.5, 0.3, -26);
-  face.scale.setScalar(7.2);
+  face.position.set(0.5, -1.2, -26);
+  face.scale.setScalar(7.5);
   scene.add(face);
   const fUniforms = { uSize: { value: opts.mobile ? 1.6 : 1.25 }, uOpacity: { value: 0 }, uDis: { value: 0 }, uTime: { value: 0 }, uColor: { value: new THREE.Color() } };
   const lUniforms = { uOpacity: { value: 0 }, uColor: { value: new THREE.Color() } };
@@ -483,7 +483,7 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
       const Q = 2.4; // scala di quantizzazione di scripts/volto.py
       const P = new Int16Array(buf, 8, n * 4);
       const L = new Int16Array(buf, 8 + n * 8, m * 6);
-      const np = opts.mobile ? Math.min(n, 7000) : n; // i punti sono già mescolati: su telefono bastano i primi
+      const np = opts.mobile ? Math.min(n, 8000) : n; // i punti sono già mescolati: su telefono bastano i primi
       const pos = new Float32Array(np * 3);
       const light = new Float32Array(np);
       for (let i = 0; i < np; i++) {
@@ -509,9 +509,9 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     .catch(() => {});
   let facePhase = 0;
   // sguardi: [yaw, pitch] in gradi; tra uno e l'altro un movimento lento e una pausa
-  const LOOKS: [number, number][] = [[0, 0], [-38, 4], [-30, -12], [12, 10], [40, -4], [34, 12], [-6, -8]];
-  const MOVE = 4.2;
-  const HOLD = 3.2;
+  const LOOKS: [number, number][] = [[0, 0], [-17, 3], [-12, -7], [8, 6], [18, -3], [14, 7], [-4, -5]];
+  const MOVE = 5;
+  const HOLD = 3.5;
   const faceLook = (t: number): [number, number] => {
     const span = MOVE + HOLD;
     const k = Math.floor(t / span);
@@ -662,10 +662,10 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
       fUniforms.uDis.value = dis;
       fUniforms.uTime.value = time;
       fUniforms.uOpacity.value = env * 0.85;
-      lUniforms.uOpacity.value = env * 0.13 * (1 - dis);
+      lUniforms.uOpacity.value = env * 0.22 * (1 - dis);
       // si gira come per guardare, alza e abbassa la testa, con pause; deriva al contrario della materia
       const [yaw, pitch] = faceLook(time);
-      face.rotation.set(pitch, yaw - (facePhase - 3) * 0.06, 0, "YXZ");
+      face.rotation.set(pitch, yaw - (facePhase - 3) * 0.03, 0, "YXZ");
     }
     nUniforms.uTime.value = time;
     // un solo nome alla volta
