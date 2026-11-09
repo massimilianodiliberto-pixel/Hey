@@ -1,0 +1,46 @@
+// L'indice delle proposte: un solo link da mandare. Si aggiorna qui.
+export const versioni = {
+  kicker: "Anteprima per Giangi",
+  title: "Le proposte",
+  intro: "Un sito per HEY e tre versioni di Materia Viva, il sito di Gianluca Magnoni. Stessi contenuti, tre modi di far vivere la materia.",
+  open: "Apri",
+  note: "Si guarda scorrendo, su computer o telefono. Contenuti e immagini sono segnaposto.",
+  items: [
+    {
+      id: "hey",
+      label: "HEY",
+      title: "Il sito HEY",
+      text: "La proposta di sito per HEY.",
+      href: "https://massimilianodiliberto-pixel.github.io/Hey/",
+      thumb: "",
+      external: true,
+    },
+    {
+      id: "a",
+      label: "Versione A",
+      title: "Materia Viva",
+      text: "La materia granulare nella sua forma originale: si addensa, si rompe, si espande, trova un nastro e si dissolve nella luce.",
+      href: "/a",
+      thumb: "/versioni/a.jpg",
+      external: false,
+    },
+    {
+      id: "b",
+      label: "Versione B",
+      title: "Materia Viva · Forme",
+      text: "La materia prende forme disegnate per ogni capitolo: un'impronta, un ventaglio, onde, lamine. Il finale si dissolve in oro.",
+      href: "/b",
+      thumb: "/versioni/b.jpg",
+      external: false,
+    },
+    {
+      id: "c",
+      label: "Versione C",
+      title: "Materia Viva · Profondità",
+      text: "La materia della versione A, con fondali che seguono la camera e movimenti più ampi: lo spazio si sente di più.",
+      href: "/c",
+      thumb: "/versioni/c.jpg",
+      external: false,
+    },
+  ],
+};

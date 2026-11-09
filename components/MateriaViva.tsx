@@ -138,7 +138,15 @@ function Sheet({ project, onClose }: { project: Project; onClose: () => void }) 
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function MateriaViva() {
+export type Version = "a" | "b" | "c";
+// Le tre versioni condividono contenuti e regia: cambia solo il motore della materia.
+const engines = {
+  a: () => import("@/lib/materia-a"),
+  b: () => import("@/lib/materia-b"),
+  c: () => import("@/lib/materia"),
+};
+
+export default function MateriaViva({ version = "c" }: { version?: Version }) {
   const root = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [active, setActive] = useState(0);
@@ -161,7 +169,7 @@ export default function MateriaViva() {
     let alive = true;
     const state = { p: 0 };
 
-    import("@/lib/materia")
+    engines[version]()
       .then(({ createMateria }) => {
         if (!alive) return;
         try {
@@ -275,10 +283,10 @@ export default function MateriaViva() {
         lenis.destroy();
       }
     };
-  }, []);
+  }, [version]);
 
   return (
-    <div ref={root} className={`mv${fallback ? " mv-fallback" : ""}${active === phases.length - 1 ? " mv-light" : ""}`}>
+    <div ref={root} className={`mv mv-v${version}${fallback ? " mv-fallback" : ""}${active === phases.length - 1 ? " mv-light" : ""}`}>
       <canvas ref={canvas} className="mv-canvas" aria-hidden="true" />
 
       <header className="mv-head">

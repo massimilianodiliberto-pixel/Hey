@@ -111,3 +111,8 @@ numerazione delle fasi come nel moodboard.
 - Feedback di Massimiliano (via regia): dai riferimenti ChatGPT si era preso troppo. Via impronta, ventaglio, fasce, lamine, micro-sfere di vetro e finale oro centrato: particelle e chiusura tornano a 1af5be0.
 - Dai riferimenti restano solo i fondali: il fondale segue la camera (l'orizzonte sale e scende col tilt, i rilievi scorrono col pan), una seconda catena di colline più lontana, un banco di foschia sull'orizzonte, dune sul suolo, pulviscolo d'ambiente sfocato in un grande volume da attraversare.
 - Camera amplificata, stessa sequenza: nascita più lontana (z 36), zoom in più profondo (z 7.5), tilt down vero nel salto, pan marcato (x -8), zoom out più ampio (z 27), sintesi dall'alto, arretramento finale lungo l'asse.
+
+## Indice delle proposte
+- La home diventa un indice da mandare con un solo link: HEY (GitHub Pages, non toccato) e tre versioni di Materia Viva.
+- /a = 1af5be0 (lib/materia-a.ts), /b = 18fadb4 (lib/materia-b.ts, finale centrato con .mv-vb), /c = versione attuale (lib/materia.ts). Contenuti e componente condivisi.
+- Testi dell'indice in content/versioni.ts, miniature in public/versioni/.
