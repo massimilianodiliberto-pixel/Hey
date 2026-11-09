@@ -11,7 +11,7 @@ export const versioni = {
       label: "HEY",
       title: "Il sito HEY",
       text: "La proposta di sito per HEY.",
-      href: "https://massimilianodiliberto-pixel.github.io/Hey/",
+      href: "https://hey-site-anteprima.vercel.app",
       thumb: "",
       external: true,
     },
