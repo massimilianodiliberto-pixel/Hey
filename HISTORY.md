@@ -118,3 +118,8 @@ numerazione delle fasi come nel moodboard.
 - Testi dell'indice in content/versioni.ts, miniature in public/versioni/.
 - Decisione di Massimiliano: resta solo la versione C, ora su /materia-viva (/a, /b, /c rimandano lì). A e B restano nella storia git (1af5be0, 18fadb4).
 - Didascalie dei lavori sopra le piattaforme, con ombra di leggibilità; nel finale un velo d'avorio dietro l'indice dei capitoli.
+
+## Volto di Giangi (commit separato, si toglie facilmente)
+- scripts/volto.py ricava dalla foto in riferimenti/ (mai pubblicata) public/volto/volto.bin, ~140 KB: 14 000 punti mescolati (6000 su telefono) e le linee di livello della luce, come curve di un rilievo.
+- In lib/materia.ts: punti e linee dietro la materia, a z -26, emergono dopo la nascita e svaniscono prima della luce finale, respirano lentamente e ruotano piano al contrario della materia.
+- Per toglierlo: revert di questo commit.

@@ -300,6 +300,45 @@ const MOTE_FRAG = /* glsl */ `
   }
 `;
 
+// Il volto di Giangi: punti e linee precalcolati dalla foto (scripts/volto.py), dietro la materia.
+// Emerge e svanisce, ruota piano al contrario della materia. Discreto: una presenza, non un ologramma.
+const FACE_VERT = /* glsl */ `
+  attribute float aLight;
+  uniform float uSize;
+  uniform float uOpacity;
+  varying float vAlpha;
+  void main() {
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    float depth = -mv.z;
+    gl_PointSize = uSize * (0.6 + aLight) * (30.0 / depth);
+    gl_Position = projectionMatrix * mv;
+    vAlpha = uOpacity * (0.15 + 0.85 * aLight * aLight) * smoothstep(95.0, 35.0, depth);
+  }
+`;
+const FACE_FRAG = /* glsl */ `
+  uniform vec3 uColor;
+  varying float vAlpha;
+  void main() {
+    float r = length(gl_PointCoord - 0.5);
+    if (r > 0.5) discard;
+    gl_FragColor = vec4(uColor, vAlpha * smoothstep(0.5, 0.1, r));
+  }
+`;
+const LINE_VERT = /* glsl */ `
+  uniform float uOpacity;
+  varying float vAlpha;
+  void main() {
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * mv;
+    vAlpha = uOpacity * smoothstep(95.0, 35.0, -mv.z);
+  }
+`;
+const LINE_FRAG = /* glsl */ `
+  uniform vec3 uColor;
+  varying float vAlpha;
+  void main() { gl_FragColor = vec4(uColor, vAlpha); }
+`;
+
 // I nomi: un secondo sistema di particelle. Da polvere sparsa si compongono nel titolo e si disfano.
 const NAME_VERT = /* glsl */ `
   attribute vec3 aTarget;
@@ -418,6 +457,48 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
   motes.frustumCulled = false;
   scene.add(motes);
 
+  // Volto: caricato a parte, se il file manca il resto funziona lo stesso.
+  const face = new THREE.Group();
+  face.position.set(0.5, -0.2, -26);
+  face.scale.setScalar(9.5);
+  scene.add(face);
+  const fUniforms = { uSize: { value: opts.mobile ? 1.6 : 1.25 }, uOpacity: { value: 0 }, uColor: { value: new THREE.Color() } };
+  const lUniforms = { uOpacity: { value: 0 }, uColor: { value: new THREE.Color() } };
+  const fMat = new THREE.ShaderMaterial({ vertexShader: FACE_VERT, fragmentShader: FACE_FRAG, uniforms: fUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+  const lMat = new THREE.ShaderMaterial({ vertexShader: LINE_VERT, fragmentShader: LINE_FRAG, uniforms: lUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+  const faceGeos: THREE.BufferGeometry[] = [];
+  fetch("/volto/volto.bin")
+    .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject()))
+    .then((buf) => {
+      const [n, m] = new Uint32Array(buf, 0, 2);
+      const P = new Int16Array(buf, 8, n * 4);
+      const L = new Int16Array(buf, 8 + n * 8, m * 6);
+      const np = opts.mobile ? Math.min(n, 6000) : n; // i punti sono già mescolati: su telefono bastano i primi
+      const pos = new Float32Array(np * 3);
+      const light = new Float32Array(np);
+      for (let i = 0; i < np; i++) {
+        pos[i * 3] = P[i * 4] / 32767;
+        pos[i * 3 + 1] = P[i * 4 + 1] / 32767;
+        pos[i * 3 + 2] = P[i * 4 + 2] / 32767;
+        light[i] = P[i * 4 + 3] / 32767;
+      }
+      const pg = new THREE.BufferGeometry();
+      pg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+      pg.setAttribute("aLight", new THREE.BufferAttribute(light, 1));
+      const nm = opts.mobile ? Math.floor(m / 2) : m;
+      const lp = new Float32Array(nm * 6);
+      for (let i = 0; i < nm * 6; i++) lp[i] = L[i] / 32767;
+      const lg = new THREE.BufferGeometry();
+      lg.setAttribute("position", new THREE.BufferAttribute(lp, 3));
+      faceGeos.push(pg, lg);
+      const fp = new THREE.Points(pg, fMat);
+      const fl = new THREE.LineSegments(lg, lMat);
+      fp.frustumCulled = fl.frustumCulled = false;
+      face.add(fl, fp);
+    })
+    .catch(() => {});
+  let facePhase = 0;
+
   // Nomi: agganciati alla camera, ruotano nello spazio davanti a chi guarda.
   scene.add(camera);
   const namesGroup = new THREE.Group();
@@ -470,6 +551,11 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
   let phase = 0;
   let shown = -1;
   const tmp = new THREE.Color();
+  const tmp2 = new THREE.Color();
+  const smoothstep = (a: number, b: number, x: number) => {
+    const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+    return t * t * (3 - 2 * t);
+  };
   const v1 = new THREE.Vector3();
   const v2 = new THREE.Vector3();
   const smooth = (t: number) => t * t * (3 - 2 * t);
@@ -505,6 +591,11 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     gUniforms.uColor.value.set(A[1]).lerp(tmp.set(B[1]), e).multiplyScalar(0.55);
     gUniforms.uOpacity.value = Math.min(1, p * 1.2) * (p > 5.55 ? 0.55 : 0.95);
     mUniforms.uColor.value.set(A[1]).lerp(tmp.set(B[1]), e);
+    // il volto emerge dopo la nascita e svanisce prima della luce finale
+    facePhase = p;
+    fUniforms.uColor.value.set(A[1]).lerp(tmp2.set(B[1]), e);
+    lUniforms.uColor.value.copy(fUniforms.uColor.value);
+    fUniforms.uColor.value.lerp(tmp2.set(0xffffff), 0.25);
     mUniforms.uOpacity.value = (0.35 + 0.65 * Math.min(1, p)) * (p > 5.55 ? 0.35 : 0.8);
     nUniforms.uColor.value.set(A[1]).lerp(tmp.set(B[1]), e).lerp(tmp.set(0xffffff), 0.35);
     // Verso la luce quasi bianca la materia smette di emettere luce e diventa polvere controluce.
@@ -539,6 +630,14 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     bgUniforms.uTime.value = time;
     gUniforms.uTime.value = time;
     mUniforms.uTime.value = time;
+    {
+      const env = smoothstep(0.5, 1.4, facePhase) * (1 - smoothstep(5.1, 5.7, facePhase));
+      const breath = 0.55 + 0.45 * Math.sin(time * 0.21);
+      fUniforms.uOpacity.value = env * breath * 1.1;
+      lUniforms.uOpacity.value = env * breath * 0.32;
+      // ruota piano, al contrario della materia
+      face.rotation.y = Math.sin(time * 0.07) * 0.3 - (facePhase - 3) * 0.07;
+    }
     nUniforms.uTime.value = time;
     // un solo nome alla volta
     const ni = nameState.i;
@@ -576,6 +675,8 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
       window.removeEventListener("resize", resize);
       geo.dispose();
       gGeo.dispose();
+      mGeo.dispose();
+      faceGeos.forEach((g) => g.dispose());
       nameMeshes.forEach((m) => m?.geometry.dispose());
       renderer.dispose();
     },
