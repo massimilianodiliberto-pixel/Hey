@@ -113,6 +113,8 @@ numerazione delle fasi come nel moodboard.
 - Camera amplificata, stessa sequenza: nascita più lontana (z 36), zoom in più profondo (z 7.5), tilt down vero nel salto, pan marcato (x -8), zoom out più ampio (z 27), sintesi dall'alto, arretramento finale lungo l'asse.
 
 ## Indice delle proposte
-- La home diventa un indice da mandare con un solo link: HEY (GitHub Pages, non toccato) e tre versioni di Materia Viva.
+- La home diventa un indice da mandare con un solo link: HEY (GitHub Pages, non toccato) e Materia Viva.
 - /a = 1af5be0 (lib/materia-a.ts), /b = 18fadb4 (lib/materia-b.ts, finale centrato con .mv-vb), /c = versione attuale (lib/materia.ts). Contenuti e componente condivisi.
 - Testi dell'indice in content/versioni.ts, miniature in public/versioni/.
+- Decisione di Massimiliano: resta solo la versione C, ora su /materia-viva (/a, /b, /c rimandano lì). A e B restano nella storia git (1af5be0, 18fadb4).
+- Didascalie dei lavori sopra le piattaforme, con ombra di leggibilità; nel finale un velo d'avorio dietro l'indice dei capitoli.

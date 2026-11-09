@@ -421,7 +421,7 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
   // Nomi: agganciati alla camera, ruotano nello spazio davanti a chi guarda.
   scene.add(camera);
   const namesGroup = new THREE.Group();
-  namesGroup.position.set(opts.mobile ? 0 : 1.4, opts.mobile ? 2.2 : 0.7, -14);
+  namesGroup.position.set(opts.mobile ? 0 : -3.1, opts.mobile ? 3.9 : -0.4, -14); // desktop: nello spazio libero a sinistra, lontano dalle didascalie
   camera.add(namesGroup);
   const nUniforms = { uForm: { value: 0 }, uTime: { value: 0 }, uSize: { value: opts.mobile ? 1.3 : 1.0 }, uColor: { value: new THREE.Color(0xffd6a0) } };
   const nMat = new THREE.ShaderMaterial({ vertexShader: NAME_VERT, fragmentShader: NAME_FRAG, uniforms: nUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
@@ -442,7 +442,7 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     const px: number[] = [];
     for (let yy = 0; yy < c.height; yy += 2) for (let xx = 0; xx < c.width; xx += 2) if (data[(yy * c.width + xx) * 4 + 3] > 120) px.push(xx, yy);
     const n = Math.min(cap, px.length / 2);
-    const worldW = opts.mobile ? 5.2 : 8.2;
+    const worldW = opts.mobile ? 5.2 : 7.0;
     const k = worldW / Math.max(w, 400);
     const tgt = new Float32Array(n * 3);
     const rnd = new Float32Array(n * 4);

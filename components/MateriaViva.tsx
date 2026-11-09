@@ -13,9 +13,9 @@ import { projects, sheetUi, type Project } from "@/content/projects";
 
 // Dove emergono i lavori di una fase: tre posti a destra, a profondità diverse (desktop).
 const SLOTS = [
-  { x: 44, y: 12, w: 21, depth: 0.6 },
-  { x: 63, y: 36, w: 16, depth: 1.0 },
-  { x: 47, y: 60, w: 13, depth: 1.5 },
+  { x: 44, y: 13, w: 21, depth: 0.6 },
+  { x: 63, y: 40, w: 16, depth: 1.0 },
+  { x: 47, y: 66, w: 13, depth: 1.5 },
 ];
 const smoothstep = (a: number, b: number, x: number) => {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -138,15 +138,7 @@ function Sheet({ project, onClose }: { project: Project; onClose: () => void }) 
 
 gsap.registerPlugin(ScrollTrigger);
 
-export type Version = "a" | "b" | "c";
-// Le tre versioni condividono contenuti e regia: cambia solo il motore della materia.
-const engines = {
-  a: () => import("@/lib/materia-a"),
-  b: () => import("@/lib/materia-b"),
-  c: () => import("@/lib/materia"),
-};
-
-export default function MateriaViva({ version = "c" }: { version?: Version }) {
+export default function MateriaViva() {
   const root = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [active, setActive] = useState(0);
@@ -169,7 +161,7 @@ export default function MateriaViva({ version = "c" }: { version?: Version }) {
     let alive = true;
     const state = { p: 0 };
 
-    engines[version]()
+    import("@/lib/materia")
       .then(({ createMateria }) => {
         if (!alive) return;
         try {
@@ -283,10 +275,10 @@ export default function MateriaViva({ version = "c" }: { version?: Version }) {
         lenis.destroy();
       }
     };
-  }, [version]);
+  }, []);
 
   return (
-    <div ref={root} className={`mv mv-v${version}${fallback ? " mv-fallback" : ""}${active === phases.length - 1 ? " mv-light" : ""}`}>
+    <div ref={root} className={`mv${fallback ? " mv-fallback" : ""}${active === phases.length - 1 ? " mv-light" : ""}`}>
       <canvas ref={canvas} className="mv-canvas" aria-hidden="true" />
 
       <header className="mv-head">
