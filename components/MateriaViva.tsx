@@ -239,8 +239,15 @@ export default function MateriaViva({ face = "3d" }: { face?: FaceMode }) {
       gsap.ticker.lagSmoothing(0);
     }
 
-    // Lo scroll muove la fase in modo continuo; lo scrub dà l'inerzia alla camera e alla materia.
+    // Lo scroll muove la fase con una sosta su ogni capitolo: metà del tratto la scena resta sul capitolo
+    // (mentre arrivano i lavori e i nomi), l'altra metà passa al successivo. Lo scrub dà l'inerzia.
     const n = phases.length - 1;
+    const HOLD = 0.25;
+    const dwell = (raw: number) => {
+      const k = Math.floor(raw);
+      const f = raw - k;
+      return Math.min(n, k + smoothstep(HOLD, 1 - HOLD, f));
+    };
     const st = ScrollTrigger.create({
       trigger: el.querySelector(".mv-track"),
       start: "top top",
@@ -249,7 +256,7 @@ export default function MateriaViva({ face = "3d" }: { face?: FaceMode }) {
       onUpdate: (self) => {
         const raw = self.progress * n;
         // Con movimento ridotto la materia salta da una forma compiuta all'altra, senza trasformazioni.
-        state.p = reduced ? Math.round(raw) : raw;
+        state.p = reduced ? Math.round(raw) : dwell(raw);
         m?.setPhase(state.p);
         placeWorks(raw);
         setActive(Math.min(n, Math.round(raw)));

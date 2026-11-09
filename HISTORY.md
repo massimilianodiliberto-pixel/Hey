@@ -132,3 +132,7 @@ numerazione delle fasi come nel moodboard.
 - Un solo codice, il volto è un parametro (`face`: "flat" | "none" | "3d" in createMateria e in <MateriaViva/>).
 - /materia-viva/1 «Il volto» (volto piatto di 1ba9d3e, public/volto/volto-piatto.bin, scripts/volto-piatto.py), /materia-viva/2 «Materia e fondali» (senza volto), /materia-viva/3 «Il volto in 3D» (public/volto/volto-3d.bin, scripts/volto.py).
 - /materia-viva, /a, /b, /c rimandano alla 3. L'indice mostra HEY e le tre versioni.
+
+## Sosta su ogni capitolo (tutte e tre le versioni)
+- La scena si ferma su ogni capitolo per metà del suo tratto di scroll (mentre arrivano lavori e nomi), l'altra metà passa al successivo. Tratti più lunghi: 210vh per capitolo su computer, 170vh su telefono.
+- Mai fermo: la camera respira in un piccolo loop lento attorno all'inquadratura del capitolo; la materia continua a fluire.

@@ -580,6 +580,9 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
   let phase = 0;
   let shown = -1;
   const tmp = new THREE.Color();
+  const camPos = new THREE.Vector3(0, 0.5, 36);
+  const camLook = new THREE.Vector3();
+  const v3 = new THREE.Vector3();
   const tmp2 = new THREE.Color();
   const smoothstep = (a: number, b: number, x: number) => {
     const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -608,12 +611,10 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
     // Camera: inquadrature interpolate con inerzia (l'inerzia vera arriva dallo scrub dello scroll)
     const ca = CAM[k];
     const cb = CAM[k + 1];
-    v1.fromArray(ca.pos).lerp(v2.fromArray(cb.pos), e);
-    camera.position.copy(v1);
-    v1.fromArray(ca.look).lerp(v2.fromArray(cb.look), e);
-    camera.lookAt(v1);
+    camPos.fromArray(ca.pos).lerp(v2.fromArray(cb.pos), e);
+    camLook.fromArray(ca.look).lerp(v2.fromArray(cb.look), e);
     // direzione dello sguardo per il fondale (tilt e pan)
-    v2.copy(v1).sub(camera.position).normalize();
+    v2.copy(camLook).sub(camPos).normalize();
     bgUniforms.uPitch.value = Math.asin(v2.y);
     bgUniforms.uYaw.value = Math.atan2(v2.x, -v2.z);
     pUniforms.uFocus.value = ca.focus + (cb.focus - ca.focus) * e;
@@ -694,6 +695,15 @@ export function createMateria(canvas: HTMLCanvasElement, opts: { mobile: boolean
       apply(phase);
       shown = phase;
     }
+    // Mai fermo: anche quando lo scroll fa sosta su un capitolo la camera respira, in un piccolo loop lento.
+    const br = opts.mobile ? 0.6 : 1;
+    camera.position.set(
+      camPos.x + Math.sin(time * 0.23) * 0.32 * br,
+      camPos.y + Math.sin(time * 0.31 + 1.3) * 0.18 * br,
+      camPos.z + Math.sin(time * 0.17 + 2.1) * 0.45 * br,
+    );
+    v3.set(camLook.x + Math.sin(time * 0.19 + 0.7) * 0.12, camLook.y + Math.sin(time * 0.27) * 0.08, camLook.z);
+    camera.lookAt(v3);
     renderer.render(scene, camera);
   }
   const onVis = () => void (visible = document.visibilityState === "visible");
